@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.linea_azul {
+    display: flex;
+    height: 100vh;
+}
+
+.ancho_linea {
+    width: 200px;
+    background-color: #c54b00;
+    color: white;
+    padding: 20px;
+}
+
+.ancho_linea h2 {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.ancho_linea ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ancho_linea li {
+    margin-bottom: 15px;
+}
+
+.ancho_linea a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.ancho_linea a:hover {
+    background-color: #893501;
+}
+
+.panel {
+    flex: 1;
+    padding: 20px;
+}
+
+.altura_cuadro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.altura_cuadro h1 {
+    margin: 0;
+}
+
+.datos-cliente p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.btn-imprimir {
+    background-color: #c54b00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-imprimir:hover {
+    background-color: #983b01;
+}
+
+.fatura {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgb(252, 252, 252);
+    margin-bottom: 20px;
+}
+
+.fatura th,
+.fatura td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 15px;
+    border-top: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.fatura {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.fatura th,
+.fatura td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.fatura th {
+    background-color: #f4f4f4;
+}
+
+.datos-cliente {
+    line-height: 1.6;
+    margin: 20px 0;
+    border-left: 5px solid #c54b00;
+    padding-left: 15px;
+}
+
+.metodo-pago-box {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.pago-debito {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.pago-credito {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+}

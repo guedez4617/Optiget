@@ -1,0 +1,114 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.linea_azul {
+    display: flex;
+    height: 100vh;
+}
+
+.ancho_linea {
+    width: 200px;
+    background-color: #c54b00;
+    color: white;
+    padding: 20px;
+}
+
+.ancho_linea h2 {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.ancho_linea ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ancho_linea li {
+    margin-bottom: 15px;
+}
+
+.ancho_linea a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.ancho_linea a:hover {
+    background-color: #833302;
+}
+
+.panel {
+    flex: 1;
+    padding: 30px;
+}
+
+.altura_cuadro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.altura_cuadro h1 {
+    margin: 0;
+}
+
+.busqueda {
+    display: flex;
+    gap: 10px;
+}
+
+.busqueda input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-buscar {
+    background-color: #c54b00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-buscar:hover {
+    background-color: #a03f02;
+}
+
+.ventas-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.ventas-tabla th,
+.ventas-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.icono-ver {
+    cursor: pointer;
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.icono-ver:hover {
+    background-color: #c54b00;
+    color: white;
+}

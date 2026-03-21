@@ -1,0 +1,116 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.linea_azul {
+    display: flex;
+    height: 100vh;
+}
+
+.ancho_linea {
+    width: 200px;
+    background-color: #c54b00;
+    color: white;
+    padding: 20px;
+}
+
+.ancho_linea h2 {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.ancho_linea ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ancho_linea li {
+    margin-bottom: 15px;
+}
+
+.ancho_linea a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.ancho_linea a:hover {
+    background-color: #963b02;
+}
+
+.panel {
+    flex: 1;
+    padding: 30px;
+}
+
+.altura_cuadro {
+    margin-bottom: 20px;
+}
+
+.altura_cuadro h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.formulario-usuario {
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.formulario-usuario label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.formulario-usuario input,
+.formulario-usuario select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-registro,
+.btn-volver {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-registro {
+    background-color: #c54b00;
+    color: white;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.btn-registro:hover {
+    background-color: #853402;
+}
+
+.btn-volver {
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-volver:hover {
+    background-color: #333;
+}

@@ -1,0 +1,178 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.linea_azul {
+    display: flex;
+    height: 100vh;
+}
+
+
+/* Sidebar */
+
+.ancho_linea {
+    width: 220px;
+    background-color: #c54b00;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.ancho_linea h2 {
+    font-size: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.ancho_linea ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ancho_linea li {
+    margin-bottom: 10px;
+}
+
+.ancho_linea a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.ancho_linea a:hover {
+    background-color: #983c03;
+}
+
+
+/* Panel Principal */
+
+.cuadro_personal {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.altura_cuadro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.altura_cuadro h1 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+
+/* Buscador y Botones */
+
+.busqueda {
+    display: flex;
+    gap: 12px;
+}
+
+.busqueda input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 280px;
+    outline: none;
+}
+
+.btn-busqueda {
+    background-color: #c54b00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-busqueda:hover {
+    background-color: #a03d00;
+}
+
+
+/* Tabla Estilo Almacén */
+
+.personal-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.personal-table th {
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 3px solid #c54b00;
+    /* Línea naranja de Almacén */
+    font-weight: 600;
+}
+
+.personal-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+}
+
+.personal-table tr:hover {
+    background-color: #fff9f5;
+}
+
+
+/* Iconos de Acción */
+
+.icono-editar,
+.icono-eliminar {
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    transition: all 0.3s;
+}
+
+.icono-editar {
+    color: #963b02;
+}
+
+.icono-editar:hover {
+    background-color: #e7f1ff;
+}
+
+.icono-eliminar {
+    color: #dc3545;
+}
+
+.icono-eliminar:hover {
+    background-color: #ffeef0;
+}
+
+
+/* Etiqueta de Rango */
+
+.rango-badge {
+    background-color: #eee;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+}

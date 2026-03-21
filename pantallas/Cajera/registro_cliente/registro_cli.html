@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Nuevo Cliente</title>
+    <link rel="stylesheet" href="/pantallas/Cajera/registro_cliente/registro_cli.css" />
+</head>
+
+<body>
+    <div class="linea_azul">
+        <aside class="ancho_linea">
+            <h2>Clientes</h2>
+            <nav>
+                <ul>
+                    <li><a href="/pantallas/inicio/inicio.html">Inicio</a></li>
+                    <li><a href="/pantallas/Gerente/panel_general/panel_general.html">Panel General</a></li>
+                    <li><a href="/pantallas/Gerente/personal/per.html">Usuarios</a></li>
+                    <li><a href="/pantallas/Gerente/lista de deudore/lis.html">Créditos</a></li>
+                    <li><a href="/pantallas/Cajera/caja/principal.html">Facturación</a></li>
+                    <li><a href="/pantallas/Cajera/historial_ventas/his.html">Historial de ventas</a></li>
+                    <li><a href="/pantallas/Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
+                    <li><a href="/pantallas/Almacen/historial_de_salida/historial_de_salida.html">Historial de salida</a></li>
+                    <li><a href="/pantallas/inicio de secion/index.html">Salir</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="panel">
+            <div class="altura_cuadro">
+                <h1>Registro de Nuevo Cliente</h1>
+            </div>
+
+            <div class="centrar-formulario">
+                <form class="formulario-cliente" id="formCliente">
+                    <label for="cedula">Cédula:</label>
+                    <input type="text" id="cedula" placeholder="Ej. V-12345678" required />
+
+                    <button type="button" class="btn-buscar" id="btnBuscar">Buscar</button>
+
+                    <label for="nombre">Nombre completo:</label>
+                    <input type="text" id="nombre" placeholder="Ej. Raúl Martinez" required />
+
+                    <label for="telefono">Numero de Telefono:</label>
+                    <input type="text" id="telefono" placeholder="Ej. 0412-****-**-**" required />
+
+                    <label for="correo">Correo electronico:</label>
+                    <input type="email" id="correo" placeholder="Ej. hola@gmail.com" required />
+
+                    <label for="direccion">Direccion:</label>
+                    <input type="text" id="direccion" placeholder="Ej. acarigua" required />
+
+                    <button class="btn-nueva" type="submit">Continuar a la compra</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/javascript/guardar_cliente.js"></script>
+</body>
+
+</html>

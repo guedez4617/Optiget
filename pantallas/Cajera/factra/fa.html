@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Factura Final</title>
+    <link rel="stylesheet" href="/pantallas/Cajera/factra/fa.css">
+
+</head>
+
+<body>
+    <div class="linea_azul">
+        <main class="panel">
+            <header>
+                <h1>Factura de Venta</h1>
+                <p><strong>Fecha:</strong> <span id="fechaFactura"></span></p>
+            </header>
+
+            <section class="datos-cliente">
+                <p><strong>Cliente:</strong> <span id="facNombre">---</span></p>
+                <p><strong>Cédula:</strong> <span id="facCedula">---</span></p>
+                <p><strong>Teléfono:</strong> <span id="facTelefono">---</span></p>
+                <p><strong>Residencia:</strong> <span id="facDireccion">---</span></p>
+                <p><strong>Condición de Venta:</strong> <span id="facMetodo" class="metodo-pago-box"></span></p>
+            </section>
+
+            <table class="fatura">
+                <thead>
+                    <tr>
+                        <th>Cant.</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>P. Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoFactura">
+                </tbody>
+            </table>
+
+            <div style="text-align: right; margin-top: 20px;">
+                <h2>Total Pagado: $<span id="facTotal">0.00</span></h2>
+                <button class="no-print" onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #c54b00; color: white; border: none;">Imprimir Factura</button>
+                <button class="no-print" onclick="nuevaVenta()" style="padding: 10px 20px; cursor: pointer; background: #6c757d; color: white; border: none;">Nueva Venta</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="/javascript/factura.js"></script>
+</body>
+
+</html>

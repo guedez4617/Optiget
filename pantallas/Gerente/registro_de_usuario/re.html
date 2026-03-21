@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Usuario</title>
+    <link rel="stylesheet" href="/pantallas/Gerente/registro_de_usuario/re.css" />
+</head>
+
+<body>
+    <div class="linea_azul">
+        <aside class="ancho_linea">
+            <h2>Gerente</h2>
+            <nav>
+                <ul>
+                    <li><a href="/pantallas/inicio/inicio.html">Inicio</a></li>
+                    <li><a href="/pantallas/Gerente/panel_general/panel_general.html">Panel General</a></li>
+                    <li><a href="/pantallas/Gerente/personal/per.html">Usuarios</a></li>
+                    <li><a href="/pantallas/Gerente/lista de deudore/lis.html">Créditos</a></li>
+                    <li><a href="/pantallas/Cajera/caja/principal.html">Facturación</a></li>
+                    <li><a href="/pantallas/Cajera/historial_ventas/his.html">Historial de ventas</a></li>
+                    <li><a href="/pantallas/Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
+                    <li><a href="/pantallas/Almacen/historial_de_salida/historial_de_salida.html">Historial de salida</a></li>
+                    <li><a href="/pantallas/inicio de secion/index.html">Salir</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="panel">
+            <header class="altura_cuadro">
+                <h1 id="tituloPantalla">Registro de Usuario</h1>
+            </header>
+
+            <form class="formulario-usuario" id="formUsuario">
+                <label for="usuario">Nombre de usuario:</label>
+                <input type="text" id="usuario" required />
+
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" required />
+
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" required />
+
+                <label for="clave">Contraseña:</label>
+                <input type="password" id="clave" required />
+
+                <label for="rango">Rango:</label>
+                <select id="rango" required>
+                    <option value="">Seleccione un rango</option>
+                    <option value="cajero">Cajero</option>
+                    <option value="gerente">Gerente</option>
+                    <option value="supervisor">Almacén</option>
+                </select>
+
+                <button class="btn-registro" type="submit" id="btnAccion">Registrar Usuario</button>
+                <a href="/pantallas/Gerente/personal/per.html" onclick="localStorage.removeItem('usuarioAEditar')" style="display:block; text-align:center; margin-top:10px; color:gray; text-decoration:none;">Cancelar</a>
+            </form>
+        </main>
+    </div>
+
+    <script src="/javascript/guardar_personal.js"></script>
+</body>
+
+</html>

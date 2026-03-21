@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Produtos</title>
+    <link rel="stylesheet" href="gestion_de_produtos.css" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="linea_azul">
+        <aside class="ancho_linea">
+            <h4>Almacén</h4>
+            <nav>
+                <ul>
+                    <li><a href="/pantallas/inicio de secion/index.html">Inicio</a></li>
+                    <li><a href="/pantallas/Gerente/panel_general/panel_general.html">Panel General</a></li>
+                    <li><a href="/pantallas/Gerente/personal/per.html">Usuarios</a></li>
+                    <li><a href="/pantallas/Gerente/lista de deudore/lis.html">Créditos</a></li>
+                    <li><a href="/pantallas/Cajera/caja/principal.html">Facturación</a></li>
+                    <li><a href="/pantallas/Cajera/historial_ventas/his.html">Historial de ventas</a></li>
+                    <li><a href="/pantallas/Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
+                    <li><a href="/pantallas/Almacen/historial_de_salida/historial_de_salida.html">Historial de salida</a></li>
+                    <li><a href="/pantallas/inicio de secion/index.html">Salir</a></li>
+                </ul>
+            </nav>
+            <div class="usuario"></div>
+        </aside>
+
+        <main class="panel">
+            <header class="product-header">
+                <h1>Productos</h1>
+                <div class="ancho_boton">
+                    <input type="text" id="buscarInput" placeholder="Buscar..." />
+                    <button id="btnBuscar">Buscar</button>
+                    <button onclick="nuevoProducto()" id="btnAñadir">Añadir Produto</button>
+                </div>
+            </header>
+
+            <table class="producto-tabla">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Marca</th>
+                        <th>Nombre</th>
+                        <th>Unidades</th>
+                        <th>Precio</th>
+                        <th>I.V.A.</th>
+                        <th>Stock</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script src="/javascript/gestion_de_producto.js"></script>
+</body>
+
+</html>
