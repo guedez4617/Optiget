@@ -20,6 +20,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         window.location.href = "/pantallas/inicio/inicio.html";
     } else {
         // Si los datos son incorrectos
-        alert("Usuario o contraseña incorrectos. Por favor, intente de nuevo.");
+        alert("Usuario o contraseña incorrectos. Por favor, intente de nuevo. pepe");
     }
 });
