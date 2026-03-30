@@ -43,5 +43,5 @@
             }
 
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
-            window.location.href = "/pantallas/Gerente/personal/per.html";
+            window.location.href = "../personal/per.html";
         });

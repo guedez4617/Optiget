@@ -70,7 +70,7 @@
             localStorage.setItem("metodoPagoSeleccionado", tipo);
 
             // AHORA AMBOS MANDAN A LA FACTURA DIRECTAMENTE
-            window.location.href = '/pantallas/Cajera/factra/fa.html';
+            window.location.href = '../factra/fa.html';
         }
 
         window.onclick = (e) => {

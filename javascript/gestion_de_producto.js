@@ -31,14 +31,14 @@ function editarProducto(index) {
     // Guardamos el índice para que la pantalla de registro sepa qué producto cargar
     localStorage.setItem("indiceEditar", index);
     // Redirigimos a la pantalla de registro
-    window.location.href = "../pantallas/Almacen/Gestión de Productos/registro_de_productos.html";
+    window.location.href = "../registro_de_producto/registro_de_producto.html";
 }
 
 // --- FUNCIÓN NUEVO PRODUCTO ---
 function nuevoProducto() {
     // Limpiamos el índice de edición por si acaso
     localStorage.removeItem("indiceEditar");
-    window.location.href = "../pantallas/Almacen/Gestión de Productos/registro_de_productos.html";
+    window.location.href = "../registro_de_producto/registro_de_producto.html";
 }
 
 // --- BUSCADOR ---

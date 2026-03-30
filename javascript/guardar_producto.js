@@ -56,10 +56,10 @@
 
         alert("¡Datos procesados correctamente!");
         // Volvemos a la tabla automáticamente
-        window.location.href = "/pantallas/Almacen/Gestión de Productos/gestion_de_produtos.html";
+        window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
     });
 
     function cancelar() {
         localStorage.removeItem("indiceEditar"); // Limpiar por si acaso
-        window.location.href = "/pantallas/Almacen/Gestión de Productos/gestion_de_produtos.html";
+        window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
     }

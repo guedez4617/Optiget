@@ -44,5 +44,5 @@ window.onload = function() {
 function nuevaVenta() {
     localStorage.removeItem("ultimaVenta");
     localStorage.removeItem("metodoPagoSeleccionado");
-    window.location.href = "/pantallas/Cajera/caja/principal.html";
+    window.location.href = "../caja/principal.html";
 }
