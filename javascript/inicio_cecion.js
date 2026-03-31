@@ -14,7 +14,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         // Guardar en sesión quién entró (para usar su nombre en el Inicio)
         localStorage.setItem('usuarioActivo', JSON.stringify(usuarioValido));
 
-        alert("¡Bienvenido, " + usuarioValido.usuario + " (" + usuarioValido.rango + ")!");
 
         // Redirigir al inicio
         window.location.href = "pantallas/inicio/inicio.html";
