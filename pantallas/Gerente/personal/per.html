@@ -29,9 +29,9 @@
 
         <main class="cuadro_personal">
             <header class="altura_cuadro">
-                <h1>Usuarios del Sistema</h1>
+                <h1>Personal</h1>
                 <div class="busqueda">
-                    <input type="text" id="inputBusqueda" placeholder="Buscar por nombre o cédula..." onkeyup="cargarUsuarios()" />
+                    <input type="text" id="inputBusqueda" placeholder="Buscar por nombre o cédula..." />
                     <a href="../registro_de_usuario/re.html" onclick="localStorage.removeItem('usuarioAEditar')">
                         <button class="btn-busqueda">+ Añadir Nuevo</button>
                     </a>
@@ -42,7 +42,8 @@
                 <thead>
                     <tr>
                         <th>Cédula</th>
-                        <th>Nombre / Usuario</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
                         <th>Teléfono</th>
                         <th>Rango</th>
                         <th style="text-align: center;">Acciones</th>

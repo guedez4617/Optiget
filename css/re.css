@@ -46,10 +46,14 @@ body {
 .panel {
     flex: 1;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .altura_cuadro {
-    margin-bottom: 20px;
+    margin-bottom: 2px;
 }
 
 .altura_cuadro h1 {
@@ -59,9 +63,9 @@ body {
 
 .formulario-usuario {
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 6px;
-    max-width: 400px;
+    max-width: 300px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 

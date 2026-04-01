@@ -1,24 +1,37 @@
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Evita que la página se recargue
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
     const userIn = document.getElementById('usuario').value.trim();
     const passIn = document.getElementById('password').value;
 
-    //  Obtener la lista de usuarios del LocalStorage
-    const usuariosGuardados = JSON.parse(localStorage.getItem('usuariosSistema')) || [];
+    try {
+        // Enviamos los datos al servidor
+        const response = await fetch('php/login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario: userIn,
+                password: passIn
+            })
+        });
 
-    //  Buscar si existe un usuario que coincida con nombre y clave
-    const usuarioValido = usuariosGuardados.find(u => u.usuario === userIn && u.clave === passIn);
+        const resultado = await response.json();
 
-    if (usuarioValido) {
-        // Guardar en sesión quién entró (para usar su nombre en el Inicio)
-        localStorage.setItem('usuarioActivo', JSON.stringify(usuarioValido));
+        if (resultado.status === "success") {
+            // Guardamos los datos del usuario (Nombre, Rol, CI) para usarlos en el Inicio
+            localStorage.setItem('usuarioActivo', JSON.stringify(resultado.usuario));
 
+            // Redirigir según el ROL si lo deseas, o al inicio general
+            alert("¡Bienvenido " + resultado.usuario.NOMBRE + "!");
+            window.location.href = "pantallas/inicio/inicio.html";
 
-        // Redirigir al inicio
-        window.location.href = "pantallas/inicio/inicio.html";
-    } else {
-        // Si los datos son incorrectos
-        alert("Usuario o contraseña incorrectos. Por favor, intente de nuevo");
+        } else {
+            // Si el PHP dice que los datos son incorrectos
+            alert(resultado.message);
+        }
+
+    } catch (error) {
+        console.error("Error en el login:", error);
+        alert("No se pudo conectar con el servidor de autenticación.");
     }
 });
