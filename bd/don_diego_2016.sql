@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-03-2026 a las 20:34:52
+-- Tiempo de generación: 01-04-2026 a las 23:35:50
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `dondiego2016`
+-- Base de datos: `don_diego_2016`
 --
 
 -- --------------------------------------------------------
@@ -31,7 +31,7 @@ CREATE TABLE `clientes` (
   `c.i` int(11) NOT NULL,
   `NOMBRE` varchar(20) NOT NULL,
   `APELLIDO` varchar(20) NOT NULL,
-  `tlf` varchar(11) NOT NULL,
+  `telefono` varchar(11) NOT NULL,
   `correo` varchar(50) NOT NULL,
   `direccion` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -73,13 +73,20 @@ CREATE TABLE `factura` (
 CREATE TABLE `productos` (
   `Codigo` int(50) NOT NULL,
   `marca` text NOT NULL,
-  `nombre_produc` text NOT NULL,
+  `nombre` text NOT NULL,
   `categoria` text NOT NULL,
-  `unidades` int(10) NOT NULL,
-  `presentación` varchar(50) NOT NULL,
-  `precio` decimal(20,0) NOT NULL,
-  `i.v.a.` date NOT NULL
+  `unidades` int(255) NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `i.v.a.` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `precio`, `i.v.a.`) VALUES
+(256341, 'coca cola', 'coca cola', 'bebida', 50, 2.00, 0),
+(321456, 'polar', 'polar lata', 'bebida', 38, 0.70, 0);
 
 -- --------------------------------------------------------
 
@@ -92,9 +99,17 @@ CREATE TABLE `usuarios` (
   `NOMBRE` varchar(20) NOT NULL,
   `APELLIDO` varchar(20) NOT NULL,
   `N_USUARIO` varchar(20) NOT NULL,
-  `CONTRASEÑA` varchar(20) NOT NULL,
-  `ROL` varchar(20) NOT NULL
+  `CONTRASEÑA` varchar(300) NOT NULL,
+  `ROL` varchar(20) NOT NULL,
+  `telefono` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`C.I`, `NOMBRE`, `APELLIDO`, `N_USUARIO`, `CONTRASEÑA`, `ROL`, `telefono`) VALUES
+(30766666, 'Eliezer', 'Guedez', 'eliezer guedez', '$2y$10$nd0f.pNFW4v7A4z63MgwC.ZHbdSYvR5Q5aFNgnbUugkutvgv4qXOu', 'gerente', '04125113952');
 
 --
 -- Índices para tablas volcadas
