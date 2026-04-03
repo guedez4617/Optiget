@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Caja Registradora</title>
     <link rel="stylesheet" href="../../../css/ca.css" />
-
 </head>
 
 <body>
     <div class="linea_azul">
-        <aside class="ancho_linea" <h2>Caja</h2>
+        <aside class="ancho_linea">
+            <h2>Caja</h2>
             <nav>
                 <ul>
                     <li><a href="../../inicio/inicio.html">Inicio</a></li>
@@ -27,24 +27,40 @@
             </nav>
         </aside>
 
-        <main class="panel">
+        <main class="panel" style="position: relative;">
+            <div class="contenedor-tasa">
+                <span class="valor-tasa-texto">Tasa: Bs. <span id="valorTasaDisplay">0.00</span></span>
+                <button class="btn-tasa" onclick="cambiarTasa()">Establecer Tasa</button>
+            </div>
+
             <header class="altura_cuadros">
                 <h1>Facturación</h1>
                 <div class="busqueda">
                     <input id="buscar" type="text" placeholder="Buscar por código o nombre..." onkeyup="buscarProducto()" />
+                    <button class="btn-finalizar" style="background-color: #e67e22;" onclick="agregarMontoBolivares()">
+                        + Monto Bs.
+                    </button>
                 </div>
                 <div class="total">
-                    <div class="acciones-izquierda">
-                        <a href="../registro_cliente/registro_cli.html"><button class="btn-cliente">Cliente</button></a>
+                    <div class="acciones-izquierda" style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <a href="../registro_cliente/registro_cli.html">
+                            <button class="btn-cliente">Cliente</button>
+                        </a>
+                        <div id="statusCliente" class="status-cliente-container no-cliente">
+                            ⚠️ No hay cliente cargado
+                        </div>
                     </div>
                     <div class="acciones-derecha">
-                        <div class="total-pagar">Total: $<span id="montoTotal">0.00</span></div>
+                        <div class="total-pagar">
+                            Total: $<span id="montoTotal">0.00</span> /
+                            <span class="bs-color">Bs. <span id="montoBolivares">0.00</span></span>
+                        </div>
                         <button class="btn-finalizar" id="abrirModal">Finalizar Venta</button>
                     </div>
                 </div>
             </header>
 
-            <h3>Productos</h3>
+            <h3>Productos con Existencia</h3>
             <table class="venta-tabla resultados-busqueda">
                 <thead>
                     <tr>
@@ -76,12 +92,54 @@
     </div>
 
     <div id="miModal" class="modal">
+        <div class="modal-contenido" style="width: 450px;">
+            <h2>Finalizar Venta</h2>
+            <p>Seleccione el método de pago:</p>
+            <div class="grid-pagos">
+                <button class="btn-metodo" onclick="procesarPago('Punto')">Punto</button>
+                <button class="btn-metodo" onclick="procesarPago('Efectivo')">Efectivo</button>
+                <button class="btn-metodo" onclick="procesarPago('Pago Móvil')">Pago Móvil</button>
+                <button class="btn-metodo" onclick="procesarPago('Biopago')">Biopago</button>
+                <button class="btn-metodo" onclick="procesarPago('Crédito')">Crédito</button>
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn-opcion" style="background-color: #7f8c8d; width: 100%;" onclick="cerrarModal('miModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalTasa" class="modal">
         <div class="modal-contenido">
-            <h2>Tipo de Pago</h2>
-            <p>¿Cómo desea procesar el pago?</p>
+            <h2>Tasa del Dólar</h2>
+            <p>Ingrese el valor del dólar en Bs:</p>
+            <input type="number" id="inputNuevaTasa" step="0.01" class="input-modal">
             <div class="botones">
-                <button class="btn-opcion" onclick="procesarPago('debito')">Débito</button>
-                <button class="btn-opcion" onclick="procesarPago('credito')">Crédito</button>
+                <button class="btn-opcion" style="background-color: #27ae60;" onclick="guardarNuevaTasa()">Guardar</button>
+                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalTasa')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalMontoBs" class="modal">
+        <div class="modal-contenido">
+            <h2>Agregar Monto Bs</h2>
+            <p>Monto en Bolívares a sumar:</p>
+            <input type="number" id="inputMontoBsManual" step="0.01" class="input-modal">
+            <div class="botones">
+                <button class="btn-opcion" style="background-color: #e67e22;" onclick="guardarMontoBsManual()">Sumar</button>
+                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalMontoBs')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCantidad" class="modal">
+        <div class="modal-contenido">
+            <h2 id="tituloModalCantidad">Producto</h2>
+            <p>Stock disponible: <span id="stockDisponible">0</span></p>
+            <input type="number" id="inputCantidadProducto" value="1" min="1" class="input-modal">
+            <div class="botones">
+                <button class="btn-opcion" style="background-color: #2980b9;" onclick="confirmarAgregarCarrito()">Agregar</button>
+                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalCantidad')">Cancelar</button>
             </div>
         </div>
     </div>

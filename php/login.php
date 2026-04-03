@@ -19,10 +19,16 @@ try {
     $stmt->execute([$userIn]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Verificamos si el usuario existe y si la contraseña coincide con el Hash
+    // Verificamos si la contraseña coincide
     if ($usuario && password_verify($passIn, $usuario['CONTRASEÑA'])) {
         
-        // No enviamos la contraseña de vuelta al navegador por seguridad
+        // --- GUARDAR EN LA SESIÓN ---
+        // Concatenamos Nombre y Apellido para la factura
+        $_SESSION['id_usuario'] = $usuario['C.I'];
+        $_SESSION['nombre_usuario'] = $usuario['NOMBRE'] . " " . $usuario['APELLIDO'];
+        $_SESSION['rol'] = $usuario['ROL'];
+        // ----------------------------
+
         unset($usuario['CONTRASEÑA']);
         
         echo json_encode([
@@ -34,6 +40,6 @@ try {
         echo json_encode(["status" => "error", "message" => "Usuario o contraseña incorrectos"]);
     }
 } catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Error de base de datos"]);
+    echo json_encode(["status" => "error", "message" => "Error de base de datos: " . $e->getMessage()]);
 }
 ?>

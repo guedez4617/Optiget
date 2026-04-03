@@ -196,3 +196,24 @@ div[style*="text-align: right"] {
     margin-top: 30px;
     padding-bottom: 20px;
 }
+
+.metodo-pago-box {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.pago-contado {
+    background-color: #eafaf1;
+    color: #27ae60;
+    /* Verde para pagos inmediatos */
+    border: 1px solid #27ae60;
+}
+
+.pago-credito {
+    background-color: #fef9e7;
+    color: #f39c12;
+    /* Naranja/Amarillo para crédito */
+    border: 1px solid #f39c12;
+}
