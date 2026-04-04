@@ -1,5 +1,6 @@
 // Variable global para guardar los datos originales de la base de datos
 let listaProductosGlobal = [];
+let mostrandoInactivos = false; // Controla qué vista estamos viendo
 
 /**
  * 1. CARGA INICIAL: Trae los productos de MySQL
@@ -9,15 +10,14 @@ async function cargarProductos() {
     tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Cargando inventario...</td></tr>';
 
     try {
-        const response = await fetch('../../../php/obtener_productos.php');
+        // Añadimos el parámetro inactivos según el estado de la variable global
+        const url = `../../../php/obtener_productos.php?inactivos=${mostrandoInactivos}`;
+        const response = await fetch(url);
         const productos = await response.json();
 
         if (productos.error) throw new Error(productos.error);
 
-        // Guardamos los datos en la variable global
         listaProductosGlobal = productos;
-
-        // Mostramos la tabla completa al cargar
         renderizarTabla(listaProductosGlobal);
 
     } catch (error) {
@@ -27,31 +27,36 @@ async function cargarProductos() {
 }
 
 /**
- * 2. RENDERIZAR TABLA: Dibuja las filas según los datos que reciba
+ * 2. RENDERIZAR TABLA
  */
 function renderizarTabla(datos) {
     const tbody = document.getElementById("cuerpoTabla");
     tbody.innerHTML = "";
 
     if (datos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px; color:gray;">No se encontraron productos.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:20px; color:gray;">
+            ${mostrandoInactivos ? 'No hay productos inactivos.' : 'No se encontraron productos activos.'}
+        </td></tr>`;
         return;
     }
 
     datos.forEach((p) => {
         const fila = document.createElement("tr");
 
-        // Cálculo de IVA (16%) y Precio Final
         const esIva = parseInt(p.tieneIva) === 1;
         const precioBase = parseFloat(p.precio) || 0;
         const precioFinal = esIva ? (precioBase * 1.16) : precioBase;
 
-        // Lógica de Stock (unidades)
         const unidades = parseInt(p.unidades) || 0;
         const stockClase = unidades > 5 ? "in-stock" : "low-stock";
         const stockTexto = unidades > 5 ? "Bastante" : "Poco";
 
-        // MODIFICACIÓN: Pasamos p.codigo y p.nombre (escapado) a eliminarProducto
+        // --- LÓGICA DE BOTÓN DINÁMICO ---
+        // Si estamos viendo inactivos, mostramos botón de reactivar. Si no, el de eliminar.
+        const botonAccion = mostrandoInactivos ?
+            `<span class="icono-reactivar" title="Reactivar" onclick="reactivarProducto('${p.codigo}')" style="cursor:pointer; font-size:1.2rem;">🔄</span>` :
+            `<span class="icono-eliminar" title="Eliminar" onclick="eliminarProducto('${p.codigo}')">🗑️</span>`;
+
         fila.innerHTML = `
             <td>${p.codigo}</td>
             <td>${p.categoria || '-'}</td>
@@ -64,23 +69,59 @@ function renderizarTabla(datos) {
             </td>
             <td><span class="tamaño ${stockClase}">${stockTexto}</span></td>
             <td><span class="icono-editar" onclick='editarProducto(${JSON.stringify(p)})'>✎</span></td>
-            <td><span class="icono-eliminar" onclick="eliminarProducto('${p.codigo}', '${p.nombre.replace(/'/g, "\\'")}')">🗑️</span></td>
+            <td>${botonAccion}</td>
         `;
         tbody.appendChild(fila);
     });
 }
 
 /**
- * 3. BUSCADOR POR NOMBRE (TIEMPO REAL)
+ * NUEVA FUNCIÓN: Alternar entre ver Activos e Inactivos
+ * Debes llamar a esta función desde un botón en tu HTML
+ */
+function alternarVistaInactivos() {
+    mostrandoInactivos = !mostrandoInactivos;
+
+    // Opcional: Cambiar texto de un botón en el HTML si existe
+    const btnText = document.getElementById("btnFiltroInactivos");
+    if (btnText) {
+        btnText.textContent = mostrandoInactivos ? "Ver Activos" : "Ver Inactivos";
+    }
+
+    cargarProductos();
+}
+
+/**
+ * NUEVA FUNCIÓN: Reactivar Producto
+ */
+function reactivarProducto(codigo) {
+    if (!confirm("¿Deseas volver a activar este producto en el inventario?")) return;
+
+    fetch('../../../php/activar_producto.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: codigo })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                alert(data.mensaje);
+                cargarProductos(); // Refresca la lista
+            } else {
+                alert("Error: " + data.mensaje);
+            }
+        })
+        .catch(err => console.error("Error al reactivar:", err));
+}
+
+/**
+ * 3. BUSCADOR POR NOMBRE
  */
 document.getElementById("buscarInput").addEventListener("input", (e) => {
     const valorBusqueda = e.target.value.toLowerCase().trim();
-
-    const resultadosFiltrados = listaProductosGlobal.filter(p => {
-        const nombreProducto = (p.nombre || "").toLowerCase();
-        return nombreProducto.includes(valorBusqueda);
-    });
-
+    const resultadosFiltrados = listaProductosGlobal.filter(p =>
+        (p.nombre || "").toLowerCase().includes(valorBusqueda)
+    );
     renderizarTabla(resultadosFiltrados);
 });
 
@@ -106,31 +147,31 @@ function editarProducto(p) {
 }
 
 /**
- * 5. ELIMINAR PRODUCTO (ACTUALIZADO)
- * Ahora recibe el nombre para mostrarlo en la alerta de confirmación
+ * 5. ELIMINAR PRODUCTO (BORRADO LÓGICO)
  */
-async function eliminarProducto(codigo, nombre) {
-    // La alerta ahora muestra el nombre del producto
-    if (confirm(`¿Estás seguro de que deseas eliminar el producto: "${nombre}"?`)) {
-        try {
-            const response = await fetch('../../../php/eliminar_producto.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ codigo: codigo })
-            });
-            const res = await response.json();
+function eliminarProducto(codigo) {
+    if (!confirm("¿Estás seguro de que deseas retirar este producto?")) return;
 
-            if (res.status === "success") {
-                alert(`El producto "${nombre}" ha sido eliminado correctamente.`);
-                cargarProductos(); // Recarga la tabla desde la DB
+    fetch('../../../php/eliminar_producto.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: codigo })
+        })
+        .then(async res => {
+            if (!res.ok) throw new Error("Error en el servidor");
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "ok") {
+                alert(data.mensaje);
+                cargarProductos();
             } else {
-                alert("Error al eliminar: " + res.message);
+                alert("Error: " + data.mensaje);
             }
-        } catch (e) {
-            alert("Error de conexión con el servidor.");
-        }
-    }
+        })
+        .catch(err => {
+            alert("No se pudo conectar con el servidor.");
+        });
 }
 
-// Iniciar carga al abrir la página
 window.onload = cargarProductos;
