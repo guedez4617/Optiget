@@ -17,7 +17,6 @@ async function cargarDatos(id, esConsulta) {
         if (data.status === "ok") {
             const c = data.cabecera;
 
-            // Función para evitar errores si falta algún ID
             const llenar = (idEl, texto) => {
                 const el = document.getElementById(idEl);
                 if (el) el.textContent = texto || "---";
@@ -41,7 +40,12 @@ async function cargarDatos(id, esConsulta) {
 
                 data.productos.forEach(p => {
                     totalVenta += p.subtotal;
-                    // Se mantiene la estructura de 5/6 columnas según tu tabla HTML
+
+                    // LÓGICA DEL IVA: 
+                    // Verificamos si p.iva viene como 1, "Si", true o mayor a 0
+                    const tieneIva = (p.iva == 1 || p.iva == "Si" || p.iva == "1") ? "Sí" : "No";
+
+                    // Se añade la celda de IVA al lado de subtotal
                     tabla.innerHTML += `
                         <tr>
                             <td>${p.cantidadFactura}</td>
@@ -49,13 +53,13 @@ async function cargarDatos(id, esConsulta) {
                             <td>${p.nombre}</td>
                             <td>$${p.precio.toFixed(2)}</td>
                             <td>$${p.subtotal.toFixed(2)}</td>
+                            <td style="text-align: center;">${tieneIva}</td>
                         </tr>`;
                 });
 
                 llenar("facTotal", totalVenta.toFixed(2));
             }
 
-            // --- CONFIGURACIÓN DINÁMICA DEL BOTÓN ---
             configurarBotonSalida();
 
         } else {
@@ -71,22 +75,17 @@ async function cargarDatos(id, esConsulta) {
  * Función que detecta la procedencia y ajusta el botón "Nueva Venta"
  */
 function configurarBotonSalida() {
-    // Detectamos si el usuario viene de la página de historial
     const vieneDeHistorial = document.referrer.includes("his.html");
-
-    // Buscamos el botón por su texto o por su atributo onclick
     const btnAccion = document.querySelector("button[onclick='nuevaVenta()']");
 
     if (btnAccion) {
         if (vieneDeHistorial) {
-            // Cambiamos el comportamiento para el Historial
             btnAccion.textContent = "Atrás al Historial";
             btnAccion.onclick = (e) => {
-                e.preventDefault(); // Evitamos la ejecución de la función original
+                e.preventDefault();
                 window.location.href = "../historial_ventas/his.html";
             };
         } else {
-            // Comportamiento normal para una venta recién hecha
             btnAccion.textContent = "Nueva Venta";
             btnAccion.onclick = (e) => {
                 e.preventDefault();

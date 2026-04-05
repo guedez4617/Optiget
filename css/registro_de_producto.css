@@ -11,6 +11,9 @@ body {
     color: rgb(249, 246, 246);
     height: 100vh;
     padding: 20px;
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .ancho_linea h2 {
@@ -43,6 +46,9 @@ body {
 .panel {
     flex: 1;
     padding: 30px;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .altura_formulario {

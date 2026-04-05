@@ -98,7 +98,7 @@ async function buscarProducto() {
 
         data.forEach(p => {
             let pFinal = parseFloat(p.precio);
-            if (p.iva && (p.iva > 0 || p.iva === "Si")) pFinal *= 1.16;
+            if (p.iva && (p.iva > 0 || p.iva === "Si" || p.iva == 1)) pFinal *= 1.16;
 
             const fila = document.createElement("tr");
             fila.innerHTML = `
@@ -116,7 +116,7 @@ async function buscarProducto() {
 }
 
 /**
- * 4. CARRITO
+ * 4. CARRITO (LÓGICA DE UNIFICACIÓN)
  */
 function actualizarTablaFactura() {
     const tbody = document.getElementById("tablaFactura");
@@ -143,6 +143,40 @@ function actualizarTablaFactura() {
     document.getElementById("montoBolivares").innerText = (total * tasaDolar).toLocaleString('es-VE', { minimumFractionDigits: 2 });
 }
 
+function confirmarAgregarCarrito() {
+    const inputCant = document.getElementById("inputCantidadProducto");
+    const cant = parseInt(inputCant.value);
+
+    if (cant > 0 && productoTemporal) {
+        // BUSCAR SI EL PRODUCTO YA ESTÁ EN EL CARRITO
+        const indiceExistente = carrito.findIndex(item => item.codigo === productoTemporal.codigo);
+
+        if (indiceExistente !== -1) {
+            // SI EXISTE: Validamos stock sumando lo actual + lo nuevo
+            const nuevaCantidadTotal = carrito[indiceExistente].cantidadFactura + cant;
+
+            if (nuevaCantidadTotal > productoTemporal.stock) {
+                alert(`Stock insuficiente. Ya tienes ${carrito[indiceExistente].cantidadFactura} en el carrito y el máximo es ${productoTemporal.stock}`);
+                return;
+            }
+            // Actualizamos la cantidad en la fila existente
+            carrito[indiceExistente].cantidadFactura = nuevaCantidadTotal;
+        } else {
+            // SI NO EXISTE: Validamos stock simple y agregamos
+            if (cant > productoTemporal.stock) return alert("Stock insuficiente");
+            carrito.push({...productoTemporal, cantidadFactura: cant });
+        }
+
+        actualizarTablaFactura();
+        cerrarModal('modalCantidad');
+
+        // Limpiar buscador e input de cantidad
+        inputCant.value = "";
+        document.getElementById("buscar").value = "";
+        document.getElementById("buscar").focus();
+    }
+}
+
 function eliminarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarTablaFactura();
@@ -157,18 +191,6 @@ function abrirModalCantidad(p) {
     document.getElementById("stockDisponible").innerText = p.stock;
     document.getElementById("modalCantidad").style.display = "flex";
     setTimeout(() => document.getElementById("inputCantidadProducto").focus(), 100);
-}
-
-function confirmarAgregarCarrito() {
-    const cant = parseInt(document.getElementById("inputCantidadProducto").value);
-    if (cant > 0 && productoTemporal) {
-        if (cant > productoTemporal.stock) return alert("Stock insuficiente");
-        carrito.push({...productoTemporal, cantidadFactura: cant });
-        actualizarTablaFactura();
-        cerrarModal('modalCantidad');
-        document.getElementById("buscar").value = "";
-        document.getElementById("buscar").focus();
-    }
 }
 
 function cambiarTasa() {
@@ -193,22 +215,32 @@ function agregarMontoBolivares() {
 }
 
 function guardarMontoBsManual() {
-    const m = parseFloat(document.getElementById("inputMontoBsManual").value);
+    const inputBs = document.getElementById("inputMontoBsManual");
+    const m = parseFloat(inputBs.value);
     if (m > 0) {
-        carrito.push({
-            codigo: "MANUAL-" + Date.now(),
-            nombre: "Monto Adicional Bs.",
-            cantidadFactura: 1,
-            precio: m / tasaDolar,
-            stock: 9999
-        });
+        // Opcional: Unificar montos manuales también
+        const indexManual = carrito.findIndex(p => p.codigo === "MANUAL-BS");
+
+        if (indexManual !== -1) {
+            carrito[indexManual].precio += (m / tasaDolar);
+        } else {
+            carrito.push({
+                codigo: "MANUAL-BS",
+                nombre: "Monto Adicional Bs.",
+                cantidadFactura: 1,
+                precio: m / tasaDolar,
+                stock: 9999
+            });
+        }
+
         actualizarTablaFactura();
+        inputBs.value = "";
         cerrarModal('modalMontoBs');
     }
 }
 
 /**
- * 6. PROCESAR PAGO (MODIFICADO PARA BOTÓN DINÁMICO)
+ * 6. PROCESAR PAGO
  */
 async function procesarPago(metodo) {
     const cliente = JSON.parse(localStorage.getItem("clienteActual"));
@@ -222,17 +254,12 @@ async function procesarPago(metodo) {
         const data = await res.json();
 
         if (data.status === "ok") {
-            // Guardar datos básicos para la visualización en la factura
             localStorage.setItem("idFacturaReciente", data.id_factura);
             localStorage.setItem("ultimaVenta", JSON.stringify(carrito));
             localStorage.setItem("metodoPagoSeleccionado", metodo);
             localStorage.setItem("tasaFactura", tasaDolar);
-
-            // INDICAR QUE ES UNA VENTA NUEVA
-            // Esto hará que el botón en fa.html diga "Nueva Compra"
             localStorage.setItem("modoConsulta", "false");
 
-            // Redirigir a la factura
             window.location.href = '../factra/fa.html';
         } else {
             alert("Error: " + data.mensaje);

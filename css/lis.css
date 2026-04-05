@@ -7,6 +7,7 @@ body {
 .linea_azul {
     display: flex;
     height: 200vh;
+    overflow: hidden;
 }
 
 .ancho_linea {
@@ -14,6 +15,9 @@ body {
     background-color: #c54b00;
     color: white;
     padding: 20px;
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .ancho_linea h2 {
@@ -45,7 +49,10 @@ body {
 
 .cuadro_lista {
     flex: 1;
-    padding: 20px;
+    padding: 30px;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .altura_lista {

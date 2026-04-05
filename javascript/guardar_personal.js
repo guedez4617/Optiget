@@ -44,7 +44,7 @@ document.getElementById('formUsuario').addEventListener('submit', async function
         const resultado = await response.json();
 
         if (resultado.status === "success") {
-            alert(resultado.message);
+
             localStorage.removeItem('usuarioAEditar');
             window.location.href = "../personal/per.html";
         } else {

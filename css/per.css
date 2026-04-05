@@ -7,10 +7,8 @@ body {
 .linea_azul {
     display: flex;
     height: 100vh;
+    overflow: hidden;
 }
-
-
-/* Sidebar */
 
 .ancho_linea {
     width: 220px;
@@ -18,6 +16,8 @@ body {
     color: white;
     padding: 20px;
     flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .ancho_linea h2 {
@@ -49,13 +49,12 @@ body {
     background-color: #983c03;
 }
 
-
-/* Panel Principal */
-
 .cuadro_personal {
     flex: 1;
     padding: 30px;
+    height: 100vh;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .altura_cuadro {
@@ -70,9 +69,6 @@ body {
     color: #333;
     font-size: 24px;
 }
-
-
-/* Buscador y Botones */
 
 .busqueda {
     display: flex;
@@ -101,9 +97,6 @@ body {
 .btn-busqueda:hover {
     background-color: #a03d00;
 }
-
-
-/* Tabla Estilo Almacén */
 
 .personal-table {
     width: 100%;

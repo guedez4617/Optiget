@@ -22,7 +22,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             localStorage.setItem('usuarioActivo', JSON.stringify(resultado.usuario));
 
             // Redirigir según el ROL si lo deseas, o al inicio general
-            alert("¡Bienvenido " + resultado.usuario.NOMBRE + "!");
             window.location.href = "pantallas/inicio/inicio.html";
 
         } else {

@@ -80,8 +80,6 @@ form.addEventListener('submit', async function(e) {
         const resultado = await response.json();
 
         if (resultado.status === "success") {
-            alert("✅ " + resultado.message);
-
             // Limpiamos el modo edición
             localStorage.removeItem("productoAEditar");
 
@@ -89,12 +87,12 @@ form.addEventListener('submit', async function(e) {
             window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
         } else {
             // Si el PHP envió un error controlado (ej: error de SQL)
-            alert("❌ Error: " + (resultado.message || "No se pudo guardar el producto"));
+            alert("Error: " + (resultado.message || "No se pudo guardar el producto"));
         }
 
     } catch (error) {
         console.error("Error detallado:", error);
-        alert("⚠️ No se pudo conectar con el servidor o la respuesta no es válida.");
+        alert("No se pudo conectar con el servidor o la respuesta no es válida.");
     }
 });
 

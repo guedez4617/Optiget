@@ -7,14 +7,19 @@ body {
 .linea_azul {
     display: flex;
     height: 100vh;
+    /*bloquear el ecrol*/
+    overflow: hidden;
 }
 
 .ancho_linea {
     width: 200px;
     background-color: #c54b00;
-    /* Color principal */
     color: white;
     padding: 20px;
+    /* */
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .ancho_linea h2 {
@@ -47,6 +52,10 @@ body {
 .panel {
     flex: 1;
     padding: 30px;
+    /**/
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .altura_cuadros h1 {
@@ -330,6 +339,14 @@ h3 {
     border-radius: 8px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /**/
+    position: sticky;
+    /* Cambiar absolute por sticky */
+    top: 0;
+    /* Se queda pegada arriba a la derecha */
+    float: right;
+    /* La empuja a la derecha */
+    z-index: 100;
 }
 
 .btn-tasa {

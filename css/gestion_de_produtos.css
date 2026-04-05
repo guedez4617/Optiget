@@ -11,13 +11,15 @@ body {
 }
 
 .ancho_linea {
-    width: 2=200px;
+    width: 200px;
     background-color: #c54b00;
     color: white;
     padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-shrink: 0;
+    height: 100vh;
     overflow-y: auto;
 }
 
@@ -58,9 +60,11 @@ body {
 }
 
 .panel {
-    flex: 20px;
+    flex: 1px;
     padding: 30px;
+    height: 100vh;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .product-header {
