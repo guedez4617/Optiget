@@ -427,12 +427,8 @@ h3 {
     max-width: 400px;
 }
 
-
-/* Esto ya deberías tenerlo parecido para el otro modal */
-
 .modal {
     display: none;
-    /* Oculto por defecto */
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -440,18 +436,23 @@ h3 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Fondo oscuro */
+    /* Estas 3 líneas centran el contenido */
     justify-content: center;
     align-items: center;
 }
 
+
+/* El cuadro blanco del modal */
+
 .modal-contenido {
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    width: 350px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    /* Quita cualquier top o left porcentual que tengas aquí */
 }
 
 .input-modal {

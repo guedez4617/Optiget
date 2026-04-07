@@ -3,50 +3,92 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Factura Final</title>
+    <title>Factura de Venta - Don Diego</title>
     <link rel="stylesheet" href="../../../css/fa.css">
-
 </head>
 
 <body>
-    <div class="linea_azul">
-        <main class="panel">
-            <header>
-                <h1>Factura de Venta</h1>
-                <p><strong>Fecha:</strong> <span id="fechaFactura"></span></p>
-                <p><strong>hora:</strong> <span id="horaFactura"></span></p>
-                <p><strong>empleado:</strong> <span id="empleado"></span></p>
-            </header>
+    <div class="no-print" style="text-align: center; margin-bottom: 20px; padding-top: 20px;">
+        <button onclick="window.print()" class="btn-imprimir">Imprimir Factura</button>
+        <button onclick="window.location.href='../caja/principal.html'" class="btn-nueva">Nueva Venta</button>
+    </div>
 
-            <section class="datos-cliente">
-                <p><strong>Cliente:</strong> <span id="facNombre">---</span></p>
-                <p><strong>Cédula:</strong> <span id="facCedula">---</span></p>
-                <p><strong>Teléfono:</strong> <span id="facTelefono">---</span></p>
-                <p><strong>Residencia:</strong> <span id="facDireccion">---</span></p>
-                <p><strong>Condición de Venta:</strong> <span id="facMetodo" class="metodo-pago-box"></span></p>
-            </section>
-
-            <table class="fatura">
-                <thead>
-                    <tr>
-                        <th>Cant.</th>
-                        <th>Código</th>
-                        <th>Descripción</th>
-                        <th>P. Unitario</th>
-                        <th>total</th>
-                        <th>con. I.V.A.</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpoFactura">
-                </tbody>
-            </table>
-
-            <div style="text-align: right; margin-top: 20px;">
-                <h2>Total Pagado: $<span id="facTotal">0.00</span></h2>
-                <button class="no-print" onclick="window.print()">Imprimir Factura</button>
-                <button class="no-print" onclick="nuevaVenta()">Nueva Venta</button>
+    <div class="factura-hoja">
+        <header class="header-aurora">
+            <div class="empresa-datos">
+                <h1 class="nombre-empresa-aurora">Bodegon Don Diego 2016 C.A.</h1>
+                <p>CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE</p>
+                <p>PAYARA - PORTUGUESA. ZONA POSTAL 3301</p>
+                <p><strong>RIF: J-40812157-7</strong> | TEL: 0412-5239290</p>
             </div>
-        </main>
+
+            <div class="cuadro-control-superior">
+                <span class="forma-libre-label">N° DE CONTROL</span>
+                <span class="numero-rojo-grande"></span>
+            </div>
+        </header>
+
+        <div class="seccion-datos">
+            <div class="cuadro-bordado cliente-box">
+                <p><strong>RAZÓN SOCIAL:</strong> <span id="nombreCliente"></span></p>
+                <p><strong>RIF / C.I.:</strong> <span id="rifCliente"></span></p>
+                <p><strong>TELÉFONO:</strong> <span id="telfCliente"></span></p>
+                <p><strong>DIRECCIÓN:</strong> <span id="dirCliente"></span></p>
+            </div>
+
+            <div class="cuadro-bordado factura-box">
+                <p><strong>FACTURA:</strong> <span id="nroFactura" class="resaltado-negro"></span></p>
+                <p><strong>FECHA:</strong> <span id="fechaFactura"></span></p>
+                <p><strong>PAGO:</strong> <span id="metodoPago"></span></p>
+                <p><strong>VENDEDOR:</strong> <span id="vendedor"></span></p>
+            </div>
+        </div>
+
+        <table class="tabla-aurora">
+            <thead>
+                <tr>
+                    <th width="12%">COD.</th>
+                    <th width="33%">DESCRIPCIÓN</th>
+                    <th width="20%">PRESENTACIÓN</th>
+                    <th width="7%">CANT.</th>
+                    <th width="10%">PRECIO</th>
+                    <th width="9%">SUBTOTAL</th>
+                    <th width="9%">IVA(16%)</th>
+                    <th width="10%">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="listaProductos">
+            </tbody>
+        </table>
+
+        <footer class="pie-factura">
+            <div class="bloque-izq">
+                <p class="aviso">NO SE ADMITEN DEVOLUCIONES DESPUÉS DE 24 HORAS</p>
+                <div class="firma-recibido">
+                    <div class="linea-firma"></div>
+                    <span>RECIBIDO POR / FIRMA Y SELLO</span>
+                </div>
+            </div>
+
+            <div class="cuadro-totales-final">
+                <div class="fila-total">
+                    <span>SUB-TOTAL USD:</span>
+                    <span id="subtotal">0.00</span>
+                </div>
+                <div class="fila-total">
+                    <span>I.V.A TOTAL:</span>
+                    <span id="iva">0.00</span>
+                </div>
+                <div class="fila-total total-destacado">
+                    <span>TOTAL USD:</span>
+                    <span id="totalFinal">0.00</span>
+                </div>
+                <div class="fila-total total-bs">
+                    <span>TOTAL Bs:</span>
+                    <span id="totalBs">0.00</span>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="../../../javascript/factura.js"></script>

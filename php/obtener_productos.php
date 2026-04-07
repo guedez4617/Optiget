@@ -6,17 +6,15 @@ $verInactivos = (isset($_GET['inactivos']) && $_GET['inactivos'] === 'true');
 
 try {
     if ($verInactivos) {
-        // Aquí aparecerán: 
-        // 1. Los que borraste tú.
-        // 2. Los que se agotaron solos (unidades = 0).
-        $sql = "SELECT codigo, categoria, marca, nombre, unidades, precio, `i.v.a.` AS tieneIva 
+        // Agregamos: AND Codigo <> '0' para excluir el Monto Adicional
+        $sql = "SELECT Codigo, categoria, marca, nombre, Presentacion, unidades, precio, `I.v.a.` AS tieneIva 
                 FROM productos 
-                WHERE estado = 0";
+                WHERE estado = 0 AND Codigo <> '0'";
     } else {
-        // Aquí solo verás lo que tiene stock y está activo.
-        $sql = "SELECT codigo, categoria, marca, nombre, unidades, precio, `i.v.a.` AS tieneIva 
+        // Agregamos: AND Codigo <> '0' para excluir el Monto Adicional
+        $sql = "SELECT Codigo, categoria, marca, nombre, Presentacion, unidades, precio, `I.v.a.` AS tieneIva 
                 FROM productos 
-                WHERE estado = 1";
+                WHERE estado = 1 AND Codigo <> '0'";
     }
             
     $stmt = $pdo->query($sql);

@@ -29,22 +29,28 @@
         <form class="altura_formulario" id="formRegistro">
 
             <label for="codigo_barra">Código</label>
-            <input type="number" id="codigo_barra" required>
+            <input type="text" id="codigo_barra" required>
 
-            <label for="categoria">categoria:</label>
+            <label for="categoria">Categoría:</label>
             <select id="categoria" required>
-                    <option value="">Seleccione un categoria</option>
-                    <option value="Bebida">Bebida</option>
-                    <option value="Comestible">Comestible</option>
-                    <option value="Enlatado">Enlatado</option>
-                    <option value="Higiene">Higiene</option>
-                </select>
+                <option value="">Seleccione una categoría</option>
+                <option value="Bebida Alcolicas">Bebida Alcolicas</option>
+                <option value="Bebida no Alcolicas">Bebida no Alcolicas</option>
+                <option value="Snacks y Pasapalos">Snacks y Pasapalos</option>
+                <option value="Despensa">Despensa</option>
+                <option value="Enlatado">Enlatado</option>
+                <option value="Cuidado Personal y Hogar">Cuidado Personal y Hogar</option>
+                <option value="Otro">Otro</option>
+            </select>
 
             <label for="marca">Marca</label>
             <input type="text" id="marca">
 
             <label for="nombre">Nombre</label>
             <input type="text" id="nombre" required>
+
+            <label for="Precentacion">Presentación</label>
+            <input type="text" id="Precentacion" required>
 
             <label for="cantidad">Cantidad</label>
             <input type="number" id="cantidad" required min="1">

@@ -10,48 +10,76 @@ if (!$data || !isset($data['codigo'])) {
     exit;
 }
 
-// Mapeo exacto según tu JS
-$codigo    = $data['codigo'];
-$categoria = $data['categoria'] ?? '';
-$marca     = $data['marca'] ?? '';
-$nombre    = $data['nombre'] ?? '';
-$cantidad  = intval($data['cantidad'] ?? 0); // Tu JS envía 'cantidad'
-$precio    = floatval($data['precio'] ?? 0);
-$conIva    = intval($data['conIva'] ?? 0);   // Tu JS envía 'conIva'
+// Mapeo de datos recibidos del JS
+$codigo       = trim($data['codigo']);
+$categoria    = $data['categoria'] ?? '';
+$marca        = $data['marca'] ?? '';
+$nombre       = $data['nombre'] ?? '';
+$presentacion = $data['presentacion'] ?? ''; // <-- NUEVO: Captura la presentación
+$cantidad     = intval($data['cantidad'] ?? 0);
+$precio       = floatval($data['precio'] ?? 0);
+$conIva       = intval($data['conIva'] ?? 0);
+$esEdicion    = isset($data['esEdicion']) && $data['esEdicion'] === true;
 
 try {
-    // Lógica de auto-activación: Si hay stock, el estado es 1 (Activo)
+    // Si hay stock, el estado es 1 (Activo), si no, 0 (Agotado)
     $nuevoEstado = ($cantidad > 0) ? 1 : 0;
 
-    // Usamos INSERT ... ON DUPLICATE KEY UPDATE para que sirva para NUEVOS y EDICIÓN
-    $sql = "INSERT INTO productos (codigo, categoria, marca, nombre, unidades, precio, `i.v.a.`, estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-                categoria = VALUES(categoria),
-                marca = VALUES(marca),
-                nombre = VALUES(nombre),
-                unidades = VALUES(unidades),
-                precio = VALUES(precio),
-                `i.v.a.` = VALUES(`i.v.a.`),
-                estado = VALUES(estado)";
+    if ($esEdicion) {
+        // --- LÓGICA DE ACTUALIZACIÓN (UPDATE) ---
+        $sql = "UPDATE productos SET 
+                categoria = ?, 
+                marca = ?, 
+                nombre = ?, 
+                presentacion = ?, 
+                unidades = ?, 
+                precio = ?, 
+                `i.v.a.` = ?, 
+                estado = ? 
+                WHERE codigo = ?";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $categoria, 
+            $marca, 
+            $nombre, 
+            $presentacion, // <-- Se añade aquí
+            $cantidad, 
+            $precio, 
+            $conIva, 
+            $nuevoEstado, 
+            $codigo
+        ]);
+        $mensaje = "Producto actualizado correctamente.";
+        
+    } else {
+        // --- LÓGICA DE INSERCIÓN NUEVA (INSERT) ---
+        $sql = "INSERT INTO productos (codigo, categoria, marca, nombre, presentacion, unidades, precio, `i.v.a.`, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $codigo, 
+            $categoria, 
+            $marca, 
+            $nombre, 
+            $presentacion, // <-- Se añade aquí
+            $cantidad, 
+            $precio, 
+            $conIva, 
+            $nuevoEstado
+        ]);
+        $mensaje = "Producto registrado exitosamente.";
+    }
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        $codigo, 
-        $categoria, 
-        $marca, 
-        $nombre, 
-        $cantidad, 
-        $precio, 
-        $conIva, 
-        $nuevoEstado
-    ]);
-
-    echo json_encode([
-        "status" => "success", 
-        "message" => "Producto guardado y " . ($nuevoEstado ? "activado" : "quedó como agotado")
-    ]);
+    echo json_encode(["status" => "success", "message" => $mensaje]);
 
 } catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Error DB: " . $e->getMessage()]);
+    $errorInfo = $e->errorInfo;
+    $mensajeRealDeMySQL = $errorInfo[2]; 
+
+    echo json_encode([
+        "status" => "error", 
+        "message" => "MySQL dice: " . $mensajeRealDeMySQL
+    ]);
 }

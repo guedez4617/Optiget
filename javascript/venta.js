@@ -1,281 +1,247 @@
 /**
- * ESTADO GLOBAL
+ * venta.js - Sistema Don Diego
  */
-let carrito = [];
-let tasaDolar = parseFloat(localStorage.getItem("tasaDolar")) || 0;
-let timeoutBusqueda;
-let productoTemporal = null;
 
-/**
- * INICIALIZACIÓN
- */
+// MODIFICACIÓN: Cargar carrito desde LocalStorage al iniciar
+let carrito = JSON.parse(localStorage.getItem("carritoTemporal")) || [];
+let productoSeleccionado = null;
+let tasaDolar = parseFloat(localStorage.getItem("tasaDolar")) || 1.00;
+let montoBsExtra = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Mostrar tasa guardada
-    const displayTasa = document.getElementById("valorTasaDisplay");
-    if (displayTasa) displayTasa.innerText = tasaDolar.toFixed(2);
-
-    verificarEstadoCliente();
-    actualizarTablaFactura();
-    configurarTeclasEnter();
-
-    // 2. Vincular botón de finalizar venta
-    const btnAbrir = document.getElementById("abrirModal");
-    if (btnAbrir) {
-        btnAbrir.onclick = () => {
-            if (carrito.length > 0) document.getElementById("miModal").style.display = "flex";
-            else alert("El carrito está vacío.");
-        };
+    // 1. Mostrar tasa y verificar cliente al cargar
+    if (document.getElementById("valorTasaDisplay")) {
+        document.getElementById("valorTasaDisplay").textContent = tasaDolar.toFixed(2);
     }
-});
+    verificarCliente();
 
-/**
- * 1. GESTIÓN DE CLIENTE
- */
-function verificarEstadoCliente() {
-    const statusDiv = document.getElementById("statusCliente");
-    const clienteData = JSON.parse(localStorage.getItem("clienteActual"));
+    // MODIFICACIÓN: Renderizar el carrito guardado al cargar la página
+    renderizarCarrito();
 
-    if (clienteData) {
-        statusDiv.className = "status-cliente-container cliente-cargado";
-        statusDiv.innerHTML = `
-            👤 ${clienteData.nombre} 
-            <span onclick="quitarCliente()" style="cursor:pointer; color:#e74c3c; font-weight:bold; margin-left:10px;">[X]</span>
-        `;
-    } else {
-        statusDiv.className = "status-cliente-container no-cliente";
-        statusDiv.innerHTML = "⚠️ No hay cliente cargado";
-    }
-}
-
-function quitarCliente() {
-    localStorage.removeItem("clienteActual");
-    verificarEstadoCliente();
-}
-
-/**
- * 2. SOPORTE PARA TECLA ENTER
- */
-function configurarTeclasEnter() {
-    document.getElementById("buscar").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") buscarProducto();
-    });
-
-    const mapeo = [
-        { id: "inputNuevaTasa", func: guardarNuevaTasa },
-        { id: "inputMontoBsManual", func: guardarMontoBsManual },
-        { id: "inputCantidadProducto", func: confirmarAgregarCarrito }
-    ];
-
-    mapeo.forEach(item => {
-        const el = document.getElementById(item.id);
-        if (el) {
-            el.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    item.func();
-                }
-            });
+    // 2. Manejo de teclado (ENTER)
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            if (isOpen("modalCantidad")) confirmarAgregarCarrito();
+            else if (isOpen("modalTasa")) guardarNuevaTasa();
+            else if (isOpen("modalMontoBs")) guardarMontoBsManual();
         }
     });
+});
+
+// --- LOGICA DE CLIENTE (CONEXIÓN CON CLIENTES.JS) ---
+function verificarCliente() {
+    const nombre = localStorage.getItem("nombreClienteSeleccionado");
+    const cedula = localStorage.getItem("cedulaClienteSeleccionado");
+    const statusDiv = document.getElementById("statusCliente");
+
+    if (!statusDiv) return;
+
+    if (nombre && cedula && nombre !== "undefined") {
+        statusDiv.innerHTML = `
+            <b style="color: #27ae60;">CLIENTE: ${nombre.toUpperCase()} (${cedula})</b>
+            <button onclick="limpiarCliente()" style="margin-left:10px; color:red; border:none; background:none; cursor:pointer;">[Cambiar]</button>
+        `;
+    } else {
+        statusDiv.innerHTML = `<span style="color: #7f8c8d;">CLIENTE GENERAL (CONTADO)</span>`;
+        localStorage.setItem("cedulaClienteSeleccionado", "999");
+    }
 }
 
-/**
- * 3. BUSCADOR
- */
-async function buscarProducto() {
-    const q = document.getElementById("buscar").value.trim();
-    const tbody = document.getElementById("tablaBusqueda");
+function limpiarCliente() {
+    localStorage.removeItem("nombreClienteSeleccionado");
+    localStorage.removeItem("cedulaClienteSeleccionado");
+    verificarCliente();
+}
 
-    if (q.length < 1) {
-        tbody.innerHTML = "";
-        return;
-    }
+// --- BUSQUEDA DE PRODUCTOS ---
+async function buscarProducto() {
+    const query = document.getElementById("buscar").value;
+    const tabla = document.getElementById("tablaBusqueda");
+    if (query.length < 1) { tabla.innerHTML = ""; return; }
 
     try {
-        const res = await fetch(`../../../php/buscar_productos_venta.php?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        tbody.innerHTML = "";
+        const res = await fetch(`../../../php/buscar_productos_venta.php?q=${query}`);
+        const productos = await res.json();
+        tabla.innerHTML = "";
 
-        data.forEach(p => {
-            let pFinal = parseFloat(p.precio);
-            if (p.iva && (p.iva > 0 || p.iva === "Si" || p.iva == 1)) pFinal *= 1.16;
-
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
-                <td>${p.codigo}</td>
-                <td>${p.nombre}</td>
-                <td>$${pFinal.toFixed(2)}</td>
-                <td>${p.unidades}</td>
-                <td><button class="icono-agregar" onclick='abrirModalCantidad(${JSON.stringify({
-                    codigo: p.codigo, nombre: p.nombre, precio: pFinal, stock: p.unidades
-                })})'>➕</button></td>
-            `;
-            tbody.appendChild(fila);
+        productos.forEach(p => {
+            const ivaLabel = (p.iva == 1 || p.iva == "Si") ? "16%" : "0%";
+            tabla.innerHTML += `
+                <tr>
+                    <td>${p.codigo}</td>
+                    <td>${p.nombre}</td>
+                    <td>${p.marca || '---'}</td>
+                    <td>${p.presentacion || '---'}</td>
+                    <td>$${parseFloat(p.precio).toFixed(2)}</td>
+                    <td>${ivaLabel}</td>
+                    <td>${p.unidades}</td>
+                    <td><button class="btn-cliente" onclick='abrirModalCantidad(${JSON.stringify(p)})'>+</button></td>
+                </tr>`;
         });
-    } catch (e) { console.error("Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
-/**
- * 4. CARRITO (LÓGICA DE UNIFICACIÓN)
- */
-function actualizarTablaFactura() {
-    const tbody = document.getElementById("tablaFactura");
-    let total = 0;
-    tbody.innerHTML = "";
+// --- CARRITO ---
+function abrirModalCantidad(producto) {
+    productoSeleccionado = producto;
+    document.getElementById("tituloModalCantidad").textContent = producto.nombre;
+    document.getElementById("stockDisponible").textContent = producto.unidades;
 
-    carrito.forEach((p, i) => {
-        const sub = p.cantidadFactura * p.precio;
-        total += sub;
-        tbody.innerHTML += `
-            <tr>
-                <td>${p.codigo}</td>
-                <td>${p.nombre}</td>
-                <td>${p.cantidadFactura}</td>
-                <td>$${p.precio.toFixed(2)}</td>
-                <td>$${sub.toFixed(2)}</td>
-                <td style="text-align:center;">
-                    <button class="icono-eliminar" onclick="eliminarDelCarrito(${i})">🗑️</button>
-                </td>
-            </tr>`;
-    });
+    const input = document.getElementById("inputCantidadProducto");
+    input.value = 1;
+    abrirModal("modalCantidad");
 
-    document.getElementById("montoTotal").innerText = total.toFixed(2);
-    document.getElementById("montoBolivares").innerText = (total * tasaDolar).toLocaleString('es-VE', { minimumFractionDigits: 2 });
+    setTimeout(() => {
+        input.focus();
+        let v = input.value;
+        input.value = '';
+        input.value = v;
+    }, 150);
 }
 
 function confirmarAgregarCarrito() {
-    const inputCant = document.getElementById("inputCantidadProducto");
-    const cant = parseInt(inputCant.value);
-
-    if (cant > 0 && productoTemporal) {
-        // BUSCAR SI EL PRODUCTO YA ESTÁ EN EL CARRITO
-        const indiceExistente = carrito.findIndex(item => item.codigo === productoTemporal.codigo);
-
-        if (indiceExistente !== -1) {
-            // SI EXISTE: Validamos stock sumando lo actual + lo nuevo
-            const nuevaCantidadTotal = carrito[indiceExistente].cantidadFactura + cant;
-
-            if (nuevaCantidadTotal > productoTemporal.stock) {
-                alert(`Stock insuficiente. Ya tienes ${carrito[indiceExistente].cantidadFactura} en el carrito y el máximo es ${productoTemporal.stock}`);
-                return;
-            }
-            // Actualizamos la cantidad en la fila existente
-            carrito[indiceExistente].cantidadFactura = nuevaCantidadTotal;
-        } else {
-            // SI NO EXISTE: Validamos stock simple y agregamos
-            if (cant > productoTemporal.stock) return alert("Stock insuficiente");
-            carrito.push({...productoTemporal, cantidadFactura: cant });
-        }
-
-        actualizarTablaFactura();
-        cerrarModal('modalCantidad');
-
-        // Limpiar buscador e input de cantidad
-        inputCant.value = "";
-        document.getElementById("buscar").value = "";
-        document.getElementById("buscar").focus();
+    const cant = parseInt(document.getElementById("inputCantidadProducto").value);
+    if (isNaN(cant) || cant <= 0 || (productoSeleccionado && cant > productoSeleccionado.unidades)) {
+        alert("Cantidad no válida");
+        return;
     }
+
+    const item = carrito.find(i => i.codigo === productoSeleccionado.codigo);
+    if (item) item.cantidadFactura += cant;
+    else {
+        carrito.push({
+            codigo: productoSeleccionado.codigo,
+            nombre: productoSeleccionado.nombre,
+            marca: productoSeleccionado.marca || '---',
+            presentacion: productoSeleccionado.presentacion || '---',
+            precio: parseFloat(productoSeleccionado.precio),
+            tieneIva: (productoSeleccionado.iva == 1 || productoSeleccionado.iva == "Si"),
+            cantidadFactura: cant
+        });
+    }
+    cerrarModal("modalCantidad");
+    renderizarCarrito();
+    document.getElementById("buscar").value = "";
+    document.getElementById("buscar").focus();
+    document.getElementById("tablaBusqueda").innerHTML = "";
 }
 
-function eliminarDelCarrito(index) {
-    carrito.splice(index, 1);
-    actualizarTablaFactura();
+function renderizarCarrito() {
+    const tabla = document.getElementById("tablaFactura");
+    if (!tabla) return;
+
+    tabla.innerHTML = "";
+    let subtotalUSD = 0,
+        totalIvaUSD = 0;
+
+    carrito.forEach((p, idx) => {
+        const sub = p.cantidadFactura * p.precio;
+        const iva = p.tieneIva ? (sub * 0.16) : 0;
+        subtotalUSD += sub;
+        totalIvaUSD += iva;
+
+        tabla.innerHTML += `
+            <tr>
+                <td>${p.codigo}</td>
+                <td>${p.nombre}</td>
+                <td>${p.marca}</td>
+                <td>${p.presentacion}</td>
+                <td>${p.cantidadFactura}</td>
+                <td>$${p.precio.toFixed(2)}</td>
+                <td>$${sub.toFixed(2)}</td>
+                <td>$${iva.toFixed(2)}</td>
+                <td>$${(sub + iva).toFixed(2)}</td>
+                <td><button onclick="eliminar(${idx})" style="color:red; border:none; background:none; cursor:pointer;">X</button></td>
+            </tr>`;
+    });
+
+    // MODIFICACIÓN: Guardar el carrito actual en LocalStorage cada vez que se actualiza
+    localStorage.setItem("carritoTemporal", JSON.stringify(carrito));
+
+    const totalUSD = subtotalUSD + totalIvaUSD;
+    const totalBS = (totalUSD * tasaDolar) + montoBsExtra;
+
+    document.getElementById("montoTotal").textContent = totalUSD.toFixed(2);
+    document.getElementById("montoBolivares").textContent = totalBS.toFixed(2);
 }
 
-/**
- * 5. MODALES Y TASA
- */
-function abrirModalCantidad(p) {
-    productoTemporal = p;
-    document.getElementById("tituloModalCantidad").innerText = p.nombre;
-    document.getElementById("stockDisponible").innerText = p.stock;
-    document.getElementById("modalCantidad").style.display = "flex";
-    setTimeout(() => document.getElementById("inputCantidadProducto").focus(), 100);
-}
-
+// --- TASA Y MONTO EXTRA ---
 function cambiarTasa() {
-    document.getElementById("modalTasa").style.display = "flex";
-    setTimeout(() => document.getElementById("inputNuevaTasa").focus(), 100);
+    document.getElementById("inputNuevaTasa").value = tasaDolar;
+    abrirModal("modalTasa");
 }
 
 function guardarNuevaTasa() {
-    const v = parseFloat(document.getElementById("inputNuevaTasa").value);
-    if (v > 0) {
-        tasaDolar = v;
-        localStorage.setItem("tasaDolar", v);
-        document.getElementById("valorTasaDisplay").innerText = v.toFixed(2);
-        actualizarTablaFactura();
-        cerrarModal('modalTasa');
+    const nueva = parseFloat(document.getElementById("inputNuevaTasa").value);
+    if (nueva > 0) {
+        tasaDolar = nueva;
+        localStorage.setItem("tasaDolar", tasaDolar);
+        document.getElementById("valorTasaDisplay").textContent = tasaDolar.toFixed(2);
+        renderizarCarrito();
+        cerrarModal("modalTasa");
     }
 }
 
 function agregarMontoBolivares() {
-    if (tasaDolar <= 0) return alert("Establezca la tasa primero");
-    document.getElementById("modalMontoBs").style.display = "flex";
+    document.getElementById("inputMontoBsManual").value = "";
+    abrirModal("modalMontoBs");
 }
 
 function guardarMontoBsManual() {
-    const inputBs = document.getElementById("inputMontoBsManual");
-    const m = parseFloat(inputBs.value);
-    if (m > 0) {
-        // Opcional: Unificar montos manuales también
-        const indexManual = carrito.findIndex(p => p.codigo === "MANUAL-BS");
-
-        if (indexManual !== -1) {
-            carrito[indexManual].precio += (m / tasaDolar);
-        } else {
-            carrito.push({
-                codigo: "MANUAL-BS",
-                nombre: "Monto Adicional Bs.",
-                cantidadFactura: 1,
-                precio: m / tasaDolar,
-                stock: 9999
-            });
-        }
-
-        actualizarTablaFactura();
-        inputBs.value = "";
-        cerrarModal('modalMontoBs');
+    const monto = parseFloat(document.getElementById("inputMontoBsManual").value);
+    if (!isNaN(monto)) {
+        montoBsExtra = monto;
+        renderizarCarrito();
+        cerrarModal("modalMontoBs");
     }
 }
 
-/**
- * 6. PROCESAR PAGO
- */
+// --- FINALIZAR VENTA ---
+document.getElementById("abrirModal").addEventListener("click", () => {
+    if (carrito.length === 0) return alert("Carrito vacío");
+    abrirModal("miModal");
+});
+
 async function procesarPago(metodo) {
-    const cliente = JSON.parse(localStorage.getItem("clienteActual"));
+    const datos = {
+        carrito,
+        metodo_pago: metodo,
+        tasa: tasaDolar,
+        monto_bs_extra: montoBsExtra,
+        cliente: { cedula: localStorage.getItem("cedulaClienteSeleccionado") || "999" }
+    };
+
     try {
-        const res = await fetch('../../../php/procesar_venta.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ carrito, metodo_pago: metodo, cliente, tasa: tasaDolar })
+        const res = await fetch("../../../php/procesar_venta.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
         });
+        const r = await res.json();
+        if (r.status === "ok") {
+            localStorage.setItem("idFacturaReciente", r.id_factura);
 
-        const data = await res.json();
+            // MODIFICACIÓN: Limpiar todo al finalizar con éxito
+            localStorage.removeItem("nombreClienteSeleccionado");
+            localStorage.removeItem("cedulaClienteSeleccionado");
+            localStorage.removeItem("carritoTemporal");
 
-        if (data.status === "ok") {
-            localStorage.setItem("idFacturaReciente", data.id_factura);
-            localStorage.setItem("ultimaVenta", JSON.stringify(carrito));
-            localStorage.setItem("metodoPagoSeleccionado", metodo);
-            localStorage.setItem("tasaFactura", tasaDolar);
-            localStorage.setItem("modoConsulta", "false");
-
-            window.location.href = '../factra/fa.html';
-        } else {
-            alert("Error: " + data.mensaje);
-        }
-    } catch (e) {
-        alert("Error de red o de servidor");
-    }
+            window.location.href = "../factra/fa.html";
+        } else alert(r.mensaje);
+    } catch (e) { alert("Error de servidor"); }
 }
 
-/**
- * 7. UTILIDADES MODALES
- */
+// --- UTILIDADES ---
+function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
+
 function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
 
-window.onclick = (e) => {
-    ["miModal", "modalTasa", "modalMontoBs", "modalCantidad"].forEach(id => {
-        if (e.target === document.getElementById(id)) cerrarModal(id);
-    });
-};
+function isOpen(id) {
+    const el = document.getElementById(id);
+    return el && (el.style.display === "flex" || el.style.display === "block");
+}
+
+function eliminar(idx) {
+    carrito.splice(idx, 1);
+    renderizarCarrito();
+}

@@ -38,7 +38,7 @@
                 <div class="busqueda">
                     <input id="buscar" type="text" placeholder="Buscar por código o nombre..." onkeyup="buscarProducto()" />
                     <button class="btn-finalizar" style="background-color: #e67e22;" onclick="agregarMontoBolivares()">
-                        + Monto Bs.
+                        Monto Bs
                     </button>
                 </div>
                 <div class="total">
@@ -47,7 +47,7 @@
                             <button class="btn-cliente">Cliente</button>
                         </a>
                         <div id="statusCliente" class="status-cliente-container no-cliente">
-                            ⚠️ No hay cliente cargado
+                            CLIENTE GENERAL
                         </div>
                     </div>
                     <div class="acciones-derecha">
@@ -66,9 +66,12 @@
                     <tr>
                         <th>Código</th>
                         <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Presentacion</th>
                         <th>Precio</th>
+                        <th>I.V.A.</th>
                         <th>Stock</th>
-                        <th>Acción</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="tablaBusqueda"></tbody>
@@ -80,10 +83,14 @@
                     <tr>
                         <th>Código</th>
                         <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Presentacion</th>
                         <th>Cant.</th>
                         <th>Precio</th>
-                        <th>total</th>
-                        <th>Acción</th>
+                        <th>Subtotal</th>
+                        <th>I.V.A.</th>
+                        <th>Total</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="tablaFactura"></tbody>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestión de Produtos</title>
     <link rel="stylesheet" href="../../../css/gestion_de_produtos.css" />
+
 </head>
 
 <body>
@@ -32,11 +33,21 @@
             <header class="product-header">
                 <h1>Productos</h1>
                 <div class="ancho_boton">
-                    <input type="text" id="buscarInput" placeholder="Escriba el nombre del producto..." />
+                    <select id="filtroColumna">
+                        <option value="nombre">Nombre</option>
+                        <option value="codigo">Código</option>
+                        <option value="categoria">Categoría</option>
+                        <option value="marca">Marca</option>
+                        <option value="presentacion">Presentación</option>
+                        <option value="tieneIva">I.V.A. (si/no)</option>
+                    </select>
+
+                    <input type="text" id="buscarInput" placeholder="Buscar..." />
+
                     <button onclick="nuevoProducto()" id="btnAñadir">Añadir Produto</button>
                     <button id="btnFiltroInactivos" onclick="alternarVistaInactivos()" class="btn-secundario">
-    Ver Inactivos
-</button>
+                        Ver Inactivos
+                    </button>
                 </div>
             </header>
 
@@ -47,9 +58,11 @@
                         <th>Categoría</th>
                         <th>Marca</th>
                         <th>Nombre</th>
+                        <th>Presentación</th>
                         <th>Unidades</th>
                         <th>Precio</th>
                         <th>I.V.A.</th>
+                        <th>total</th>
                         <th>Stock</th>
                         <th>Editar</th>
                         <th>Eliminar</th>

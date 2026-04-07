@@ -1,219 +1,226 @@
+/* --- ESTILOS DE IMPRESIÓN Y BASE --- */
+
+* {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-}
-
-.linea_azul {
-    display: flex;
-    height: 100vh;
-}
-
-.ancho_linea {
-    width: 200px;
-    background-color: #c54b00;
-    color: white;
-    padding: 20px;
-}
-
-.ancho_linea h2 {
-    font-size: 18px;
-    margin-bottom: 30px;
-}
-
-.ancho_linea ul {
-    list-style: none;
     padding: 0;
+    background-color: #f0f2f5;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #000;
 }
 
-.ancho_linea li {
+.factura-hoja {
+    width: 215.9mm;
+    min-height: 140mm;
+    /* Altura mínima, crecerá según los productos */
+    margin: 20px auto;
+    padding: 15mm;
+    background: white;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* --- MEMBRETE --- */
+
+.header-aurora {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.nombre-empresa-aurora {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.empresa-datos p {
+    margin: 2px 0;
+    font-size: 10px;
+}
+
+.cuadro-control-superior {
+    border: 1px solid #000;
+    padding: 10px;
+    text-align: center;
+    min-width: 180px;
+}
+
+.forma-libre-label {
+    display: block;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.numero-rojo-grande {
+    color: #d32f2f;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+
+
+/* --- BLOQUES DE DATOS --- */
+
+.seccion-datos {
+    display: flex;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
-.ancho_linea a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+.cuadro-bordado {
+    border: 1px solid #000;
+    padding: 8px;
 }
 
-.ancho_linea a:hover {
-    background-color: #893501;
+.cliente-box {
+    flex: 1.5;
 }
 
-.panel {
+.factura-box {
     flex: 1;
-    padding: 20px;
 }
 
-.altura_cuadro {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.cuadro-bordado p {
+    margin: 3px 0;
+    font-size: 11px;
 }
 
-.altura_cuadro h1 {
-    margin: 0;
-}
 
-.datos-cliente p {
-    margin: 4px 0;
-    font-size: 14px;
-}
+/* --- TABLA COMPACTA --- */
 
-.btn-imprimir {
-    background-color: #c54b00;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-imprimir:hover {
-    background-color: #983b01;
-}
-
-.fatura {
+.tabla-aurora {
     width: 100%;
     border-collapse: collapse;
-    background-color: rgb(252, 252, 252);
-    margin-bottom: 20px;
-}
-
-.fatura th,
-.fatura td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: left;
-}
-
-.total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 15px;
-    border-top: 1px solid #ccc;
-    font-size: 16px;
-}
-
-.fatura {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.fatura th,
-.fatura td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-
-.fatura th {
-    background-color: #f4f4f4;
-}
-
-.datos-cliente {
-    line-height: 1.6;
-    margin: 20px 0;
-    border-left: 5px solid #c54b00;
-    padding-left: 15px;
-}
-
-.metodo-pago-box {
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 4px;
-    display: inline-block;
-}
-
-.pago-debito {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.pago-credito {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-@media print {
-    .no-print {
-        display: none;
-    }
+    border: 1px solid #000;
+    margin-bottom: 15px;
 }
 
 
-/* --- Estilos para los Botones de la Factura --- */
+/* Ajuste de fuentes para que quepan 9 columnas */
 
-.no-print {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    /* A juego con tus otros botones */
-    font-weight: bold;
-    font-family: Arial, sans-serif;
-    transition: background-color 0.3s ease;
-    margin-left: 10px;
-}
-
-
-/* Botón de Imprimir (Naranja) */
-
-button.no-print[onclick="window.print()"] {
-    background-color: #c54b00;
-    color: white;
-}
-
-button.no-print[onclick="window.print()"]:hover {
-    background-color: #983b01;
-    /* El mismo tono de hover que ya usas */
-}
-
-
-/* Botón de Nueva Venta (Gris) */
-
-button.no-print[onclick="nuevaVenta()"] {
-    background-color: #6c757d;
-    color: white;
-}
-
-button.no-print[onclick="nuevaVenta()"]:hover {
-    background-color: #5a6268;
-}
-
-
-/* Asegurar que el contenedor de los botones esté alineado */
-
-div[style*="text-align: right"] {
-    margin-top: 30px;
-    padding-bottom: 20px;
-}
-
-.metodo-pago-box {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: bold;
+.tabla-aurora th {
+    border: 1px solid #000;
+    background-color: #f2f2f2;
+    padding: 4px;
+    font-size: 9px;
+    /* Bajamos un punto para que no se amontone */
     text-transform: uppercase;
 }
 
-.pago-contado {
-    background-color: #eafaf1;
-    color: #27ae60;
-    /* Verde para pagos inmediatos */
-    border: 1px solid #27ae60;
+.tabla-aurora td {
+    border: 1px solid #000;
+    padding: 4px;
+    font-size: 10px;
+    text-align: center;
 }
 
-.pago-credito {
-    background-color: #fef9e7;
-    color: #f39c12;
-    /* Naranja/Amarillo para crédito */
-    border: 1px solid #f39c12;
+
+/* Alineación de texto */
+
+.tabla-aurora td:nth-child(2),
+
+/* Descripción */
+
+.tabla-aurora td:nth-child(3)
+/* Presentación */
+
+{
+    text-align: left;
+}
+
+
+/* --- PIE Y TOTALES --- */
+
+.pie-factura {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.aviso {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.firma-recibido {
+    margin-top: 40px;
+}
+
+.linea-firma {
+    width: 180px;
+    border-top: 1px solid #000;
+    margin-bottom: 5px;
+}
+
+.cuadro-totales-final {
+    width: 38%;
+    border: 1px solid #000;
+}
+
+.fila-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-bottom: 1px dotted #ccc;
+}
+
+.total-destacado {
+    background-color: #eee;
+    font-weight: bold;
+    font-size: 13px;
+    border-top: 1px solid #000;
+}
+
+.total-bs {
+    font-size: 11px;
+    color: #333;
+}
+
+
+/* --- BOTONES --- */
+
+.btn-imprimir {
+    background: #c54b00;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-nueva {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+
+/* --- PRINT --- */
+
+@media print {
+    body {
+        background: white;
+    }
+    .no-print {
+        display: none;
+    }
+    .factura-hoja {
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        width: 100%;
+    }
 }

@@ -26,9 +26,11 @@ $cliente = $data['cliente'] ?? null;
 // 5. Nombre del empleado
 $vendedor = $_SESSION['nombre_usuario'] ?? 'Empleado General';
 
-// 6. Limpiar cédula
-$ci_limpia = ($cliente && isset($cliente['cedula'])) ? preg_replace('/[^0-9]/', '', $cliente['cedula']) : '';
-$ci_cliente = (empty($ci_limpia)) ? 999 : intval($ci_limpia);
+/**
+ * 6. LIMPIAR CÉDULA
+ * Importante: No usar intval() para no perder ceros o formatos si la BD es VARCHAR
+ */
+$ci_cliente = ($cliente && isset($cliente['cedula'])) ? trim($cliente['cedula']) : '999';
 
 if (empty($carrito)) {
     echo json_encode(["status" => "error", "mensaje" => "El carrito está vacío"]);
@@ -48,31 +50,37 @@ try {
 
     // 8. INSERTAR DETALLES
     foreach ($carrito as $item) {
-        $esManual = (isset($item['codigo']) && strpos((string)$item['codigo'], 'MANUAL-') !== false);
-        $codigoFinal = $esManual ? 0 : intval($item['codigo']); 
+        $codigoOriginal = trim((string)$item['codigo']);
+        
+        // Lógica de códigos manuales o especiales
+        // CAMBIO CLAVE: Quitamos intval(). El código se queda como STRING.
+        $esManual = (strpos($codigoOriginal, 'MANUAL-') !== false || $codigoOriginal === "0" || $codigoOriginal === "999");
+        $codigoFinal = $codigoOriginal; 
+
         $cantidad = intval($item['cantidadFactura']);
         $precio = floatval($item['precio']);
         $subtotal = $cantidad * $precio;
 
+        // INSERTAR EN DETALLE
         $sqlDetalle = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total) 
                         VALUES (?, ?, ?, ?)";
         $stmtDet = $pdo->prepare($sqlDetalle);
         $stmtDet->execute([
             $idFacturaReal, 
-            $codigoFinal,
+            $codigoFinal, // Ahora enviará "00000123" completo
             $cantidad,
             $subtotal
         ]);
 
-        // 9. DESCONTAR STOCK Y AUTO-INACTIVAR
-        if (!$esManual && $codigoFinal > 0) {
-            // Restamos las unidades
+        // 9. DESCONTAR STOCK
+        // Solo si no es un código de ajuste manual
+        if ($codigoFinal !== "0" && $codigoFinal !== "999" && !$esManual) {
             $sqlStock = "UPDATE productos SET unidades = unidades - ? 
                         WHERE Codigo = ? AND unidades >= ?";
             $stmtS = $pdo->prepare($sqlStock);
             $stmtS->execute([$cantidad, $codigoFinal, $cantidad]);
 
-            // CAMBIO CLAVE: Si el producto llegó a 0, lo pasamos a estado 0 (Inactivo)
+            // Auto-Inactivar si llega a cero
             $sqlAutoInactivar = "UPDATE productos SET estado = 0 
                                 WHERE Codigo = ? AND unidades <= 0";
             $stmtAuto = $pdo->prepare($sqlAutoInactivar);
@@ -87,5 +95,6 @@ try {
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
+    // Este mensaje te dirá ahora si el error persiste por otra causa
     echo json_encode(["status" => "error", "mensaje" => "Error en servidor: " . $e->getMessage()]);
 }

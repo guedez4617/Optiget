@@ -183,3 +183,109 @@ body {
     color: #e74c3c;
     transform: scale(1.2);
 }
+
+.contenedor-busqueda {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+#filtroColumna {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+#buscarInput {
+    flex-grow: 1;
+    /* Hace que la barra de búsqueda ocupe el resto del espacio */
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+
+/* --- SECCIÓN DE BÚSQUEDA SIN FONDO BLANCO AL PASAR EL CURSOR --- */
+
+.ancho_boton {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    appearance: none
+}
+
+
+/* --- ESTILO PARA EL SELECTOR DE BÚSQUEDA (TEMA OSCURO) --- */
+
+#filtroColumna {
+    /* Eliminamos el estilo por defecto del navegador (adiós parte blanca/gris) */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Colores y bordes que combinan con tu panel */
+    background-color: #1a1a1a;
+    /* Ajusta a negro #000 si tu fondo es negro puro */
+    color: #ffffff;
+    border: 1px solid #c54b00;
+    /* Tu naranja principal */
+    padding: 8px 35px 8px 12px;
+    /* Más espacio a la derecha para la flecha */
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    /* Añadimos nuestra propia flecha minimalista en blanco */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+
+/* Evitamos que el navegador lo ponga blanco al pasar el mouse o hacer clic */
+
+#filtroColumna:hover,
+#filtroColumna:focus {
+    border-color: #ff6606;
+    /* Naranja más vivo */
+    background-color: #1a1a1a;
+}
+
+
+/* Estilo para la lista de opciones que se despliega */
+
+#filtroColumna option {
+    background-color: #2a2a2a;
+    /* Fondo oscuro para las opciones */
+    color: #ffffff;
+    padding: 10px;
+}
+
+
+/* Estilo para el input de búsqueda para que haga juego */
+
+#buscarInput {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #999999;
+    border-radius: 4px;
+    padding: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#buscarInput:focus {
+    border-color: #c54b00;
+}
+
+
+/* Para navegadores Firefox (elimina el borde de puntos interno) */
+
+#filtroColumna:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #ffffff;
+}

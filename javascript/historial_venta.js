@@ -1,3 +1,7 @@
+/**
+ * historial.js - Gestión de consulta de ventas pasadas
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
     cargarHistorial();
 
@@ -6,17 +10,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputBuscar = document.querySelector(".busqueda input");
 
     if (btnBuscar && inputBuscar) {
-        btnBuscar.addEventListener("click", () => {
-            const valor = inputBuscar.value.toLowerCase();
-            const filas = document.querySelectorAll(".ventas-tabla tbody tr");
+        // Buscar al hacer clic
+        btnBuscar.addEventListener("click", filtrarTabla);
 
-            filas.forEach(fila => {
-                const textoFila = fila.innerText.toLowerCase();
-                fila.style.display = textoFila.includes(valor) ? "" : "none";
-            });
+        // Buscar al presionar Enter en el input
+        inputBuscar.addEventListener("keyup", (e) => {
+            if (e.key === "Enter") filtrarTabla();
         });
     }
 });
+
+function filtrarTabla() {
+    const valor = document.querySelector(".busqueda input").value.toLowerCase();
+    const filas = document.querySelectorAll(".ventas-tabla tbody tr");
+
+    filas.forEach(fila => {
+        const textoFila = fila.innerText.toLowerCase();
+        fila.style.display = textoFila.includes(valor) ? "" : "none";
+    });
+}
 
 async function cargarHistorial() {
     try {
@@ -35,16 +47,15 @@ async function cargarHistorial() {
         ventas.forEach(v => {
             const tr = document.createElement("tr");
             const total = v.total_venta ? parseFloat(v.total_venta).toFixed(2) : "0.00";
-            // El nombre aquí viene del JOIN inicial para la tabla rápida
             const nombre = v.nombre_cliente ? v.nombre_cliente : "CLIENTE GENERAL";
 
             tr.innerHTML = `
                 <td style="text-transform: uppercase; font-weight: bold;">${v.tipo_pago}</td>
                 <td>${v.fecha}<br><small>${v.hora}</small></td>
-                <td>${nombre}</td>
+                <td style="text-transform: uppercase;">${nombre}</td>
                 <td>$${total}</td>
                 <td>
-                    <a href="#" class="icono-ver" onclick="verFactura(${v.Id_factura})">⌕</a>
+                    <button class="icono-ver" onclick="verFactura(${v.Id_factura})" style="cursor:pointer; background:none; border:none; font-size:1.2rem;">🔍</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -56,30 +67,37 @@ async function cargarHistorial() {
 
 async function verFactura(id) {
     try {
-        // Consultamos el detalle que ahora incluye la búsqueda de cliente por DB
+        // 1. Consultamos el detalle al servidor
         const res = await fetch(`../../../php/obtener_detalle_venta.php?id=${id}`);
         const data = await res.json();
 
         if (data.status === "ok") {
-            // Guardamos los datos recuperados de la DB en el LocalStorage
-            localStorage.setItem("idFacturaReciente", data.cabecera.id);
-            localStorage.setItem("ultimaVenta", JSON.stringify(data.productos));
+            // 2. LIMPIEZA PREVIA: Borramos datos de ventas activas para no mezclar
+            localStorage.removeItem("carritoTemporal");
+            localStorage.removeItem("nombreClienteSeleccionado");
+            localStorage.removeItem("cedulaClienteSeleccionado");
+
+            // 3. CARGA DE DATOS DE CONSULTA:
+            // Guardamos el ID para que el generador de factura sepa cuál buscar
+            localStorage.setItem("idFacturaReciente", id);
+
+            // Guardamos el método de pago y la info del cliente recuperada de la DB
             localStorage.setItem("metodoPagoSeleccionado", data.cabecera.tipo_pago);
 
-            // Guardamos los datos del cliente que el PHP buscó por C.I.
-            localStorage.setItem("clienteActual", JSON.stringify({
-                cedula: data.cabecera.ci_cliente,
-                nombre: data.cabecera.nombre_cliente
-            }));
+            // Sincronizamos con las llaves que usa tu factura actual
+            localStorage.setItem("nombreClienteSeleccionado", data.cabecera.nombre_cliente || "CLIENTE GENERAL");
+            localStorage.setItem("cedulaClienteSeleccionado", data.cabecera.ci_cliente || "999");
 
-            // Activamos el modo atrás
+            // 4. MODO CONSULTA: Esta bandera sirve para que la factura sepa que NO debe procesar nada, solo mostrar
             localStorage.setItem("modoConsulta", "true");
 
+            // 5. Redirección a la interfaz de factura
             window.location.href = "../factra/fa.html";
         } else {
-            alert("Error: " + data.mensaje);
+            alert("Error al recuperar detalle: " + data.mensaje);
         }
     } catch (e) {
-        alert("Error de conexión al recuperar el detalle");
+        console.error(e);
+        alert("Error de conexión al recuperar el detalle de la venta.");
     }
 }

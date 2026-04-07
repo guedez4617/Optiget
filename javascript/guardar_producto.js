@@ -1,14 +1,8 @@
-// almacen_registro.js
-
 const form = document.getElementById('formRegistro');
 const inputPrecio = document.getElementById('precio');
 const checkIva = document.getElementById('iva');
 
-let precioOriginal = 0;
-
-/**
- * 1. CARGA INICIAL: Si venimos de la tabla con "Editar", llenamos los campos
- */
+// 1. CARGA INICIAL
 const datosEdicion = JSON.parse(localStorage.getItem("productoAEditar"));
 
 window.onload = () => {
@@ -16,89 +10,75 @@ window.onload = () => {
         document.getElementById('tituloPagina').innerText = "Editar Producto";
 
         const p = datosEdicion;
-        // Llenado de campos
         document.getElementById('codigo_barra').value = p.codigo;
-        document.getElementById('codigo_barra').readOnly = true; // El código no se debe cambiar
+        document.getElementById('codigo_barra').readOnly = true;
         document.getElementById('categoria').value = p.categoria || "";
         document.getElementById('marca').value = p.marca || "";
         document.getElementById('nombre').value = p.nombre;
+        // Mantenemos el ID Precentacion como lo tienes en el HTML
+        document.getElementById('Precentacion').value = p.presentacion || "";
         document.getElementById('cantidad').value = p.cantidad;
         document.getElementById('precio').value = p.precio;
         document.getElementById('iva').checked = p.conIva;
 
-        precioOriginal = parseFloat(p.precio) || 0;
+    } else {
+        form.reset();
+        document.getElementById('codigo_barra').readOnly = false;
+        document.getElementById('tituloPagina').innerText = "Registrar Nuevo Producto";
     }
 };
 
 /**
- * 2. LÓGICA DE IVA (16%): Cálculo visual en el formulario
+ * 2. LÓGICA DE IVA (SIMPLIFICADA)
+ * Se eliminó el cálculo del 1.16. El checkbox ahora solo sirve como etiqueta.
  */
 checkIva.addEventListener('change', () => {
-    let valorActual = parseFloat(inputPrecio.value) || 0;
-    if (checkIva.checked) {
-        precioOriginal = valorActual;
-        inputPrecio.value = (precioOriginal * 1.16).toFixed(2);
-    } else {
-        // Al quitar el IVA, intentamos volver al precio base
-        // Si el precio fue modificado manualmente, el cálculo base cambia
-        inputPrecio.value = precioOriginal.toFixed(2);
-    }
+    console.log("Estado del IVA:", checkIva.checked ? "Activado" : "Desactivado");
 });
 
-/**
- * 3. GUARDAR / ACTUALIZAR EN BASE DE DATOS
- */
+// 3. GUARDAR / ACTUALIZAR
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    // Estructura de datos exacta para el PHP
     const productoData = {
-        codigo: document.getElementById('codigo_barra').value,
+        codigo: document.getElementById('codigo_barra').value.trim(),
         categoria: document.getElementById('categoria').value,
         marca: document.getElementById('marca').value,
         nombre: document.getElementById('nombre').value,
+        presentacion: document.getElementById('Precentacion').value,
         cantidad: parseInt(document.getElementById('cantidad').value) || 0,
+        // Se guarda el precio exactamente como se escribió en el input
         precio: parseFloat(document.getElementById('precio').value) || 0,
-        conIva: document.getElementById('iva').checked ? 1 : 0
+        // Solo enviamos 1 o 0 para indicar si el precio ya incluye IVA o debe marcarse con IVA
+        conIva: document.getElementById('iva').checked ? 1 : 0,
+        esEdicion: datosEdicion ? true : false
     };
 
     try {
-        // Enviamos a guardar_producto.php (que maneja Insert y Update)
         const response = await fetch('../../../php/guardar_producto.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(productoData)
         });
 
-        // Verificamos si la respuesta es válida antes de convertir a JSON
-        if (!response.ok) {
-            throw new Error("Error en la respuesta del servidor (Status: " + response.status + ")");
-        }
+        if (!response.ok) throw new Error("Error " + response.status);
 
         const resultado = await response.json();
 
         if (resultado.status === "success") {
-            // Limpiamos el modo edición
+            alert(resultado.message);
             localStorage.removeItem("productoAEditar");
-
-            // Redirección a la tabla de gestión
             window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
         } else {
-            // Si el PHP envió un error controlado (ej: error de SQL)
-            alert("Error: " + (resultado.message || "No se pudo guardar el producto"));
+            alert("Atención: " + resultado.message);
         }
 
     } catch (error) {
-        console.error("Error detallado:", error);
-        alert("No se pudo conectar con el servidor o la respuesta no es válida.");
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor.");
     }
 });
 
-/**
- * 4. BOTÓN CANCELAR (Opcional)
- */
 function cancelar() {
     localStorage.removeItem("productoAEditar");
     window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
