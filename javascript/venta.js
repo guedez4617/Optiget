@@ -4,6 +4,7 @@
 
 let carrito = JSON.parse(localStorage.getItem("carritoTemporal")) || [];
 let productoSeleccionado = null;
+let indexParaRestar = null; // NUEVA VARIABLE
 let tasaDolar = parseFloat(localStorage.getItem("tasaDolar")) || 1.00;
 let montoBsExtra = 0;
 
@@ -14,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     verificarCliente();
     renderizarCarrito();
 
-    // Evento para el botón Finalizar Venta que ya tienes con id="abrirModal"
     const btnFinalizar = document.getElementById("abrirModal");
     if (btnFinalizar) {
         btnFinalizar.onclick = () => {
@@ -28,9 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (isOpen("modalCantidad")) confirmarAgregarCarrito();
             else if (isOpen("modalTasa")) guardarNuevaTasa();
             else if (isOpen("modalMontoBs")) guardarMontoBsManual();
+            else if (isOpen("modalRestar")) confirmarResta(); // NUEVA LOGICA
         }
         if (e.key === "Escape") {
-            const modales = ["miModal", "modalTasa", "modalMontoBs", "modalCantidad"];
+            const modales = ["miModal", "modalTasa", "modalMontoBs", "modalCantidad", "modalRestar"];
             modales.forEach(id => cerrarModal(id));
         }
     });
@@ -74,15 +75,22 @@ async function buscarProducto() {
         tabla.innerHTML = "";
 
         productos.forEach(p => {
-            const ivaLabel = (p.iva == 1 || p.iva == "Si") ? "16%" : "0%";
+            const tieneIva = (p.iva == 1 || p.iva == "Si");
+            const ivaLabel = tieneIva ? "16%" : "0%";
+
+            const precioUSD = parseFloat(p.precio);
+            const precioConIvaUSD = tieneIva ? (precioUSD * 1.16) : precioUSD;
+            const precioBS = precioConIvaUSD * tasaDolar;
+
             tabla.innerHTML += `
                 <tr>
                     <td>${p.codigo}</td>
                     <td>${p.nombre}</td>
                     <td>${p.marca || '---'}</td>
                     <td>${p.presentacion || '---'}</td>
-                    <td>$${parseFloat(p.precio).toFixed(2)}</td>
+                    <td>$${precioUSD.toFixed(2)}</td>
                     <td>${ivaLabel}</td>
+                    <td style="font-weight: bold; color: #d35400;">Bs. ${precioBS.toFixed(2)}</td>
                     <td>${p.unidades}</td>
                     <td><button class="btn-cliente" style="padding: 5px 10px;" onclick='abrirModalCantidad(${JSON.stringify(p)})'>+</button></td>
                 </tr>`;
@@ -102,6 +110,43 @@ function abrirModalCantidad(producto) {
         input.focus();
         input.select();
     }, 150);
+}
+
+// NUEVAS FUNCIONES PARA RESTAR
+function abrirModalRestar(idx) {
+    indexParaRestar = idx;
+    const producto = carrito[idx];
+    document.getElementById("tituloModalRestar").textContent = "Quitar de: " + producto.nombre;
+    document.getElementById("cantActual").textContent = producto.cantidadFactura;
+
+    const input = document.getElementById("inputCantidadRestar");
+    input.value = 1;
+    input.max = producto.cantidadFactura;
+
+    abrirModal("modalRestar");
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 150);
+}
+
+function confirmarResta() {
+    const cantQuitar = parseInt(document.getElementById("inputCantidadRestar").value);
+    if (isNaN(cantQuitar) || cantQuitar <= 0) return;
+
+    const producto = carrito[indexParaRestar];
+
+    if (cantQuitar >= producto.cantidadFactura) {
+        carrito.splice(indexParaRestar, 1);
+    } else {
+        producto.cantidadFactura -= cantQuitar;
+        const sub = producto.cantidadFactura * producto.precio;
+        const iva = producto.tieneIva ? (sub * 0.16) : 0;
+        producto.total_bs = (sub + iva) * tasaDolar;
+    }
+
+    cerrarModal("modalRestar");
+    renderizarCarrito();
 }
 
 function cambiarTasa() {
@@ -126,16 +171,26 @@ function confirmarAgregarCarrito() {
     }
 
     const item = carrito.find(i => i.codigo === productoSeleccionado.codigo);
-    if (item) item.cantidadFactura += cant;
-    else {
+    if (item) {
+        item.cantidadFactura += cant;
+        const sub = item.cantidadFactura * item.precio;
+        const iva = item.tieneIva ? (sub * 0.16) : 0;
+        item.total_bs = (sub + iva) * tasaDolar;
+    } else {
+        const precio = parseFloat(productoSeleccionado.precio);
+        const tieneIva = (productoSeleccionado.iva == 1 || productoSeleccionado.iva == "Si");
+        const subUSD = cant * precio;
+        const ivaUSD = tieneIva ? (subUSD * 0.16) : 0;
+
         carrito.push({
             codigo: productoSeleccionado.codigo,
             nombre: productoSeleccionado.nombre,
             marca: productoSeleccionado.marca || '---',
             presentacion: productoSeleccionado.presentacion || '---',
-            precio: parseFloat(productoSeleccionado.precio),
-            tieneIva: (productoSeleccionado.iva == 1 || productoSeleccionado.iva == "Si"),
-            cantidadFactura: cant
+            precio: precio,
+            tieneIva: tieneIva,
+            cantidadFactura: cant,
+            total_bs: (subUSD + ivaUSD) * tasaDolar
         });
     }
     cerrarModal("modalCantidad");
@@ -156,6 +211,11 @@ function renderizarCarrito() {
     carrito.forEach((p, idx) => {
         const sub = p.cantidadFactura * p.precio;
         const iva = p.tieneIva ? (sub * 0.16) : 0;
+        const totalFilaUSD = sub + iva;
+        const totalFilaBS = totalFilaUSD * tasaDolar;
+
+        p.total_bs = totalFilaBS;
+
         subtotalUSD += sub;
         totalIvaUSD += iva;
 
@@ -169,15 +229,20 @@ function renderizarCarrito() {
                 <td>$${p.precio.toFixed(2)}</td>
                 <td>$${sub.toFixed(2)}</td>
                 <td>$${iva.toFixed(2)}</td>
-                <td>$${(sub + iva).toFixed(2)}</td>
-                <td><button onclick="eliminar(${idx})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">X</button></td>
+                <td>$${totalFilaUSD.toFixed(2)}</td>
+                <td style="font-weight: bold; color: #d35400;">Bs. ${totalFilaBS.toFixed(2)}</td>
+                <td>
+                    <button onclick="abrirModalRestar(${idx})" style="color:#d35400; border:none; background:none; cursor:pointer; font-weight:bold; font-size: 1.2rem;">
+                        x
+                    </button>
+                </td>
             </tr>`;
     });
 
     localStorage.setItem("carritoTemporal", JSON.stringify(carrito));
 
     const totalUSD = subtotalUSD + totalIvaUSD;
-    const totalBS = (totalUSD * tasaDolar) + montoBsExtra;
+    const totalBS = totalUSD * tasaDolar;
 
     document.getElementById("montoTotal").textContent = totalUSD.toFixed(2);
     document.getElementById("montoBolivares").textContent = totalBS.toFixed(2);
@@ -208,6 +273,7 @@ function guardarMontoBsManual() {
 
     if (itemComodin) {
         itemComodin.precio += precioUSD;
+        itemComodin.total_bs = itemComodin.precio * tasaDolar;
     } else {
         carrito.push({
             codigo: "0",
@@ -216,7 +282,8 @@ function guardarMontoBsManual() {
             presentacion: "---",
             precio: precioUSD,
             tieneIva: false,
-            cantidadFactura: 1
+            cantidadFactura: 1,
+            total_bs: montoBs
         });
     }
 
@@ -226,7 +293,6 @@ function guardarMontoBsManual() {
 
 // --- FINALIZAR VENTA ---
 async function procesarPago(metodo) {
-    // Validar si el método es Crédito y si hay un cliente real cargado
     if (metodo === 'Crédito') {
         const cedula = localStorage.getItem("cedulaClienteSeleccionado");
         if (!cedula || cedula === "999") {
@@ -264,10 +330,7 @@ async function procesarPago(metodo) {
 function abrirModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
-        console.log("Abriendo modal: " + id); // Esto te dirá en la consola (F12) si funciona
         modal.style.setProperty("display", "flex", "important");
-    } else {
-        console.error("No se encontró el modal con ID: " + id);
     }
 }
 

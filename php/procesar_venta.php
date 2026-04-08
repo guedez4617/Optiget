@@ -28,7 +28,6 @@ $vendedor = $_SESSION['nombre_usuario'] ?? 'Empleado General';
 
 /**
  * 6. LIMPIAR CÉDULA
- * Importante: No usar intval() para no perder ceros o formatos si la BD es VARCHAR
  */
 $ci_cliente = ($cliente && isset($cliente['cedula'])) ? trim($cliente['cedula']) : '999';
 
@@ -52,35 +51,35 @@ try {
     foreach ($carrito as $item) {
         $codigoOriginal = trim((string)$item['codigo']);
         
-        // Lógica de códigos manuales o especiales
-        // CAMBIO CLAVE: Quitamos intval(). El código se queda como STRING.
         $esManual = (strpos($codigoOriginal, 'MANUAL-') !== false || $codigoOriginal === "0" || $codigoOriginal === "999");
         $codigoFinal = $codigoOriginal; 
 
         $cantidad = intval($item['cantidadFactura']);
         $precio = floatval($item['precio']);
         $subtotal = $cantidad * $precio;
+        
+        // Capturamos el total_bs enviado desde el JS
+        $totalBs = isset($item['total_bs']) ? floatval($item['total_bs']) : 0;
 
-        // INSERTAR EN DETALLE
-        $sqlDetalle = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total) 
-                        VALUES (?, ?, ?, ?)";
+        // INSERTAR EN DETALLE (Incluyendo la nueva columna total_bs)
+        $sqlDetalle = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total, total_bs) 
+                        VALUES (?, ?, ?, ?, ?)";
         $stmtDet = $pdo->prepare($sqlDetalle);
         $stmtDet->execute([
             $idFacturaReal, 
-            $codigoFinal, // Ahora enviará "00000123" completo
+            $codigoFinal, 
             $cantidad,
-            $subtotal
+            $subtotal,
+            $totalBs // Se guarda el monto en Bs "congelado" según la tasa del momento
         ]);
 
         // 9. DESCONTAR STOCK
-        // Solo si no es un código de ajuste manual
         if ($codigoFinal !== "0" && $codigoFinal !== "999" && !$esManual) {
             $sqlStock = "UPDATE productos SET unidades = unidades - ? 
                         WHERE Codigo = ? AND unidades >= ?";
             $stmtS = $pdo->prepare($sqlStock);
             $stmtS->execute([$cantidad, $codigoFinal, $cantidad]);
 
-            // Auto-Inactivar si llega a cero
             $sqlAutoInactivar = "UPDATE productos SET estado = 0 
                                 WHERE Codigo = ? AND unidades <= 0";
             $stmtAuto = $pdo->prepare($sqlAutoInactivar);
@@ -95,6 +94,5 @@ try {
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    // Este mensaje te dirá ahora si el error persiste por otra causa
     echo json_encode(["status" => "error", "mensaje" => "Error en servidor: " . $e->getMessage()]);
 }

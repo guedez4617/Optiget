@@ -77,8 +77,9 @@
                         <th>Producto</th>
                         <th>Marca</th>
                         <th>Presentacion</th>
-                        <th>Precio</th>
+                        <th>Precio ($)</th>
                         <th>I.V.A.</th>
+                        <th>Precio Bs.</th>
                         <th>Stock</th>
                         <th></th>
                     </tr>
@@ -98,7 +99,8 @@
                         <th>Precio</th>
                         <th>Subtotal</th>
                         <th>I.V.A.</th>
-                        <th>Total</th>
+                        <th>Total ($)</th>
+                        <th>Total (Bs.)</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -132,6 +134,18 @@
             <div class="botones">
                 <button class="btn-opcion" style="background-color: #27ae60;" onclick="confirmarAgregarCarrito()">Confirmar</button>
                 <button class="btn-opcion" style="background-color: #e74c3c;" onclick="cerrarModal('modalCantidad')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalRestar" class="modal">
+        <div class="modal-contenido">
+            <h2 id="tituloModalRestar">Quitar Producto</h2>
+            <p>Cantidad actual en carrito: <span id="cantActual">0</span></p>
+            <input type="number" id="inputCantidadRestar" class="input-modal" min="1" value="1">
+            <div class="botones">
+                <button class="btn-opcion" style="background-color: #f39c12;" onclick="confirmarResta()">Quitar</button>
+                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalRestar')">Cancelar</button>
             </div>
         </div>
     </div>

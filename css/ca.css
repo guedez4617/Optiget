@@ -507,3 +507,52 @@
     body.modal-abierto {
         overflow: hidden;
     }
+    /* Estilos para los botones de acción en la tabla de factura */
+    
+    .venta-tabla td button {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    
+    .venta-tabla td button:hover {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    /* Color específico para el botón de restar unidades */
+    
+    button[onclick^="abrirModalRestar"] {
+        color: #f39c12 !important;
+        /* Color naranja/amarillo para diferenciarlo de la X roja */
+        font-size: 1.1rem;
+        padding: 0 5px;
+    }
+    /* Estilo para la X de eliminar todo el item */
+    
+    button[onclick^="eliminar"] {
+        color: #e74c3c !important;
+        font-size: 1.1rem;
+        padding: 0 5px;
+    }
+    /* Ajustes para el input dentro del modal de restar */
+    
+    #inputCantidadRestar {
+        width: 80%;
+        padding: 10px;
+        margin: 15px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+    /* Asegurar que el modal se vea bien sobre otros elementos */
+    
+    #modalRestar {
+        z-index: 2000;
+        /* Asegura que esté por encima de la tabla */
+    }
+    /* Estilo para el texto que indica la cantidad actual en el modal */
+    
+    #cantActual {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
