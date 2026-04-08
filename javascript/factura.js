@@ -1,7 +1,3 @@
-/**
- * print.js - Versión Optimizada Don Diego
- */
-
 document.addEventListener("DOMContentLoaded", () => {
     const idFactura = localStorage.getItem("idFacturaReciente");
     if (idFactura) cargarDatosFactura(idFactura);
@@ -18,13 +14,13 @@ async function cargarDatosFactura(id) {
             const tasa = parseFloat(localStorage.getItem("tasaDolar")) || 1.00;
 
             // Datos Cliente
-            document.getElementById("nombreCliente").textContent = cab.nombre_cliente || "CONTADO";
+            document.getElementById("nombreCliente").textContent = cab.nombre_cliente || "Cliente General";
             document.getElementById("rifCliente").textContent = cab.ci_cliente || "V-00000000";
             document.getElementById("telfCliente").textContent = cab.telefono || "---";
             document.getElementById("dirCliente").textContent = cab.residencia || "---";
 
             // Datos Factura
-            document.getElementById("nroFactura").textContent = `LAR1-${String(id).padStart(6, '0')}`;
+            document.getElementById("nroFactura").textContent = `${String(id).padStart(6, '0')}`;
             document.getElementById("fechaFactura").textContent = `${cab.fecha} ${cab.hora}`;
             document.getElementById("metodoPago").textContent = cab.tipo_pago;
             document.getElementById("vendedor").textContent = cab.empleado;

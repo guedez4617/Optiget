@@ -1,626 +1,509 @@
-body {
-    margin: 0;
-    font-family: "Segoe UI", Roboto, sans-serif;
-    background-color: #f4f6f9;
-}
-
-.linea_azul {
-    display: flex;
-    height: 100vh;
-    /*bloquear el ecrol*/
-    overflow: hidden;
-}
-
-.ancho_linea {
-    width: 200px;
-    background-color: #c54b00;
-    color: white;
-    padding: 20px;
-    /* */
-    flex-shrink: 0;
-    height: 100vh;
-    overflow-y: auto;
-}
-
-.ancho_linea h2 {
-    font-size: 18px;
-    margin-bottom: 30px;
-}
-
-.ancho_linea ul {
-    list-style: none;
-    padding: 0;
-}
-
-.ancho_linea li {
-    margin-bottom: 15px;
-}
-
-.ancho_linea a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.ancho_linea a:hover {
-    background-color: #9b3c02;
-}
-
-.panel {
-    flex: 1;
-    padding: 30px;
-    /**/
-    height: 100vh;
-    overflow-y: auto;
-    box-sizing: border-box;
-}
-
-.altura_cuadros h1 {
-    margin: 0;
-}
-
-.busqueda {
-    max-width: 400px;
-}
-
-.busqueda input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    outline: none;
-    transition: border-color 0.3s ease;
-    width: 100%;
-}
-
-.busqueda input:focus {
-    border-color: #c54b00;
-}
-
-.total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fcfcfc;
-    padding: 15px;
-    border-top: 1px solid #ccc;
-}
-
-.acciones-izquierda {
-    margin-right: 20px;
-}
-
-.btn-cliente {
-    background-color: #c54b00;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-cliente:hover {
-    background-color: #9f3e02;
-}
-
-
-/* --- ESTILO UNIFICADO PARA ICONOS DE ACCIÓN EN TABLAS (➕ y 🗑️) --- */
-
-.icono-agregar,
-.icono-eliminar {
-    border: none;
-    border-radius: 50%;
-    /* Forma circular perfecta */
-    width: 36px;
-    /* Tamaño igualado */
-    height: 36px;
-    /* Tamaño igualado */
-    font-size: 1.2rem;
-    /* Tamaño del emoji */
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    outline: none;
-    padding: 0;
-    /* Evita desajustes de padding por defecto */
-}
-
-
-/* Efecto hover general (pequeño salto) */
-
-.icono-agregar:hover,
-.icono-eliminar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Color específico para AGREGAR (Verde suave) */
-
-.icono-agregar {
-    background-color: #eafaf1;
-    /* Fondo verde muy claro */
-    color: #27ae60;
-    /* Emoji verde oscuro */
-    border: 1px solid #27ae60;
-}
-
-.icono-agregar:hover {
-    background-color: #27ae60;
-    /* Fondo verde oscuro al pasar mouse */
-    color: white;
-    /* Emoji blanco al pasar mouse */
-}
-
-
-/* Color específico para ELIMINAR (Rojo suave - ¡NUEVO!) */
-
-.icono-eliminar {
-    background-color: #fdf2f2;
-    /* Fondo rojo muy claro */
-    color: #c0392b;
-    /* Emoji rojo oscuro */
-    border: 1px solid #c0392b;
-    margin: 0 auto;
-    /* Centrar en la celda si es necesario */
-    display: flex;
-    /* Asegurar centrado del emoji */
-}
-
-.icono-eliminar:hover {
-    background-color: #c0392b;
-    /* Fondo rojo oscuro al pasar mouse */
-    color: white;
-    /* Emoji blanco al pasar mouse */
-}
-
-.venta-tabla {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    margin-bottom: 20px;
-}
-
-.venta-tabla th,
-.venta-tabla td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
-
-.venta-tabla th {
-    background-color: #ffffff;
-    color: rgb(4, 3, 3);
-}
-
-.venta-tabla tr:nth-child(even) {
-    background-color: #ffffff;
-}
-
-.icono-eliminar,
-.icono-agregar {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 6px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-.icono-eliminar:hover,
-.icono-agregar:hover {
-    background-color: #c54b00;
-    color: white;
-    transform: scale(1.1);
-}
-
-.total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fcfcfc;
-    padding: 15px;
-    border-top: 1px solid #ccc;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-contenido {
-    background: white;
-    padding: 20px 30px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    animation: aparecer 0.3s ease;
-}
-
-.modal-contenido h2 {
-    margin-top: 0;
-    color: #c54b00;
-}
-
-.botones {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.btn-opcion {
-    background-color: #c54b00;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-opcion:hover {
-    background-color: #9f3e02;
-}
-
-@keyframes aparecer {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
+    /* --- GENERALES Y FONDO OSCURO (Base de la imagen) --- */
+    
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, sans-serif;
+        background-color: #121212;
+        /* Fondo muy oscuro, casi negro */
+        color: #e0e0e0;
+        /* Texto claro para contraste */
     }
-    to {
-        transform: scale(1);
-        opacity: 1;
+    
+    .linea_azul {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
     }
-}
-
-.sr-only {
-    position: absolute;
-    left: -9999px;
-}
-
-.total-pagar {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #c54b00;
-    text-align: right;
-    margin: 10px 0;
-}
-
-.resultados-busqueda {
-    background: #fdfdfd;
-    border: 2px solid #f7d0ba;
-    margin-bottom: 30px;
-}
-
-.icono-eliminar,
-.icono-agregar {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 1.3rem;
-}
-
-.sr-only {
-    display: none;
-}
-
-h3 {
-    border-bottom: 2px solid #c54b00;
-    display: inline-block;
-    padding-bottom: 5px;
-    color: #333;
-}
-
-.contenedor-tasa {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #f8f9fa;
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /**/
-    position: sticky;
-    /* Cambiar absolute por sticky */
-    top: 0;
-    /* Se queda pegada arriba a la derecha */
-    float: right;
-    /* La empuja a la derecha */
-    z-index: 100;
-}
-
-.btn-tasa {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.btn-tasa:hover {
-    background-color: #219150;
-}
-
-.valor-tasa-texto {
-    font-weight: bold;
-    color: #2c3e50;
-    font-size: 14px;
-}
-
-.total-pagar {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.bs-color {
-    color: #e74c3c;
-}
-
-
-/* Color distintivo para Bolívares */
-
-.btn-monto-bs {
-    background-color: #e67e22;
-    color: white;
-    height: 40px;
-    /* Para que coincida con la altura del input de búsqueda */
-    margin-left: 5px;
-}
-
-.btn-monto-bs:hover {
-    background-color: #d35400;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(230, 126, 34, 0.3);
-}
-
-
-/* --- ESTILO PARA EL TOTAL DUAL --- */
-
-.total-pagar {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1.5rem;
-    color: #2c3e50;
-}
-
-.bs-color {
-    color: #c0392b;
-    /* Rojo oscuro para diferenciar los Bolívares */
-    margin-left: 5px;
-}
-
-
-/* Ajuste para la barra de búsqueda para que no se pegue al botón */
-
-.busqueda {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-#buscar {
-    flex: 1;
-    /* Hace que el input ocupe el espacio disponible */
-    max-width: 400px;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Estas 3 líneas centran el contenido */
-    justify-content: center;
-    align-items: center;
-}
-
-
-/* El cuadro blanco del modal */
-
-.modal-contenido {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-    /* Quita cualquier top o left porcentual que tengas aquí */
-}
-
-.input-modal {
-    width: 80%;
-    padding: 12px;
-    margin: 15px 0;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    text-align: center;
-    outline: none;
-}
-
-.input-modal:focus {
-    border-color: #3498db;
-}
-
-
-/* Contenedor de los 5 botones en cuadrícula */
-
-.grid-pagos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* Dos columnas */
-    gap: 10px;
-    margin-top: 15px;
-}
-
-
-/* El último botón (Crédito) ocupará las dos columnas para que se vea simétrico */
-
-.grid-pagos button:last-child {
-    grid-column: span 2;
-}
-
-.btn-metodo {
-    background-color: #34495e;
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-metodo:hover {
-    background-color: #2c3e50;
-    transform: scale(1.02);
-}
-
-
-/* ESTILO ÚNICO PARA BOTONES DE ACCIÓN PRINCIPAL */
-
-.btn-finalizar {
-    background-color: #e67e22;
-    /* Verde por defecto */
-    color: white;
-    border: none;
-    padding: 0 25px;
-    /* Espaciado interno horizontal */
-    height: 45px;
-    /* Altura fija para que coincida con el input */
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-transform: none;
-    /* Evita que se ponga todo en mayúsculas si no quieres */
-}
-
-
-/* Efecto al pasar el mouse (para ambos botones) */
-
-.btn-finalizar:hover {
-    background-color: #be0c0c;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Ajuste específico para el botón que está al lado del buscador */
-
-.busqueda .btn-finalizar {
-    background-color: #e67e22;
-    /* Naranja para diferenciar la función */
-    margin-left: 10px;
-    /* Separación del input */
-    min-width: 160px;
-    /* Ancho mínimo para que se vea importante */
-}
-
-.busqueda .btn-finalizar:hover {
-    background-color: #d35400;
-}
-
-
-/* Ajuste del input de búsqueda para que encaje con los botones */
-
-#buscar {
-    height: 45px;
-    /* Misma altura que los botones */
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 0 15px;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-#buscar:focus {
-    border-color: #ffffff;
-}
-
-.status-cliente-container {
-    margin-top: 8px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-
-/* Cuando SÍ hay cliente */
-
-.status-cliente-container {
-    margin-top: 5px;
-    /* Espacio pequeño debajo del botón */
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    /* Evita que el texto se rompa en dos líneas */
-}
-
-
-/* Estilo cuando NO hay cliente */
-
-.no-cliente {
-    color: #95a5a6;
-    font-style: italic;
-}
-
-
-/* Estilo cuando SÍ hay cliente */
-
-.cliente-cargado {
-    color: #27ae60;
-    font-weight: bold;
-    background-color: #eafaf1;
-    border: 1px solid #27ae60;
-}
-
-
-/* Botón pequeño para quitar cliente */
-
-.btn-quitar-cliente {
-    color: #e74c3c;
-    cursor: pointer;
-    margin-left: 5px;
-    text-decoration: underline;
-    font-size: 0.7rem;
-}
+    
+    .ancho_linea {
+        width: 200px;
+        background-color: #c54b00;
+        padding: 20px;
+        flex-shrink: 0;
+        height: 100vh;
+        overflow-y: auto;
+        border-right: none;
+    }
+    
+    .ancho_linea h2 {
+        font-size: 18px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: white;
+    }
+    
+    .ancho_linea ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .ancho_linea li {
+        margin-bottom: 10px;
+    }
+    
+    .ancho_linea a {
+        color: #ccc;
+        text-decoration: none;
+        display: block;
+        padding: 10px 12px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+    
+    .ancho_linea a:hover {
+        background-color: #e67e22;
+        color: white;
+    }
+    /* --- PANEL PRINCIPAL --- */
+    
+    .panel {
+        flex: 1;
+        padding: 30px;
+        height: 100vh;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+    /* Títulos h1 y h3 */
+    
+    h1 {
+        margin-top: 0;
+        color: #ffffff;
+        font-size: 2.5rem;
+    }
+    
+    h3 {
+        border-bottom: 2px solid #e67e22;
+        /* Subrayado naranja */
+        display: inline-block;
+        padding-bottom: 5px;
+        color: #ffffff;
+        margin-top: 30px;
+    }
+    /* --- TASA DEL DÓLAR (STICKY) --- */
+    
+    .contenedor-tasa {
+        position: sticky;
+        top: 0;
+        float: right;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #1a1a1a;
+        /* Fondo oscuro */
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        z-index: 100;
+    }
+    
+    .valor-tasa-texto {
+        font-weight: bold;
+        color: #ffffff;
+        font-size: 14px;
+    }
+    
+    .btn-tasa {
+        background-color: #27ae60;
+        /* Verde éxito */
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+    
+    .btn-tasa:hover {
+        background-color: #219150;
+    }
+    /* --- BARRA DE BÚSQUEDA UNIFICADA (Estilo Original) --- */
+    
+    .busqueda {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+        width: 100%;
+    }
+    
+    .busqueda-container {
+        display: flex;
+        align-items: stretch;
+        height: 45px;
+        max-width: 850px;
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #444;
+    }
+    
+    .select-filtro {
+        background-color: #2c2c2c;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 18px;
+        border: none;
+        /* Quitamos bordes individuales */
+        border-right: 1px solid #444;
+        /* Solo línea divisoria */
+        padding: 0 20px;
+        height: 100%;
+        cursor: pointer;
+        outline: none;
+        appearance: none;
+        /* Quita la flecha fea por defecto */
+    }
+    /* El Buscador del medio */
+    
+    #buscar {
+        background-color: #1e1e1e;
+        color: white;
+        font-size: 18px;
+        border: none;
+        /* Quitamos bordes para que parezca una pieza */
+        padding: 0 20px;
+        height: 100%;
+        flex: 1;
+        /* Se estira todo lo que puede */
+        outline: none;
+    }
+    /* El Botón Monto Bs (Naranja) */
+    
+    .btn-monto-bs {
+        background-color: #e67e22 !important;
+        /* Forzamos el naranja */
+        color: white !important;
+        font-weight: 800;
+        font-size: 18px;
+        border: none;
+        padding: 0 30px;
+        height: 100%;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-monto-bs:hover {
+        background-color: #d35400 !important;
+    }
+    
+    .total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #1a1a1a;
+        /* Fondo oscuro */
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin-top: 10px;
+    }
+    
+    .acciones-izquierda {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    /* Botón Cliente (NARANJA) */
+    
+    .btn-cliente {
+        background-color: #e67e22;
+        /* Naranja */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+    
+    .btn-cliente:hover {
+        background-color: #d35400;
+    }
+    /* Status del Cliente */
+    
+    .status-cliente-container {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #27ae60;
+        /* Verde cuando está cargado */
+        padding: 5px 0;
+    }
+    
+    .no-cliente {
+        color: #7f8c8d;
+        /* Gris cuando no hay cliente */
+        font-style: italic;
+    }
+    /* Botón para quitar cliente (X roja) */
+    
+    .btn-quitar-cliente {
+        color: #e74c3c;
+        cursor: pointer;
+        margin-left: 8px;
+        font-weight: bold;
+        border: none;
+        background: none;
+    }
+    /* --- SECCIÓN DERECHA DE TOTALES --- */
+    
+    .acciones-derecha {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .total-pagar {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffffff;
+        /* Texto blanco por defecto */
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    
+    .bs-color {
+        color: #e74c3c;
+        /* Rojo para resaltar los bolívares */
+    }
+    /* Botón Finalizar Venta (NARANJA grande) */
+    
+    .acciones-derecha .btn-finalizar {
+        background-color: #e67e22;
+        /* Naranja */
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .acciones-derecha .btn-finalizar:hover {
+        background-color: #d35400;
+        transform: translateY(-2px);
+    }
+    /* --- TABLAS DE VENTA (Estilo Oscuro) --- */
+    
+    .venta-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #1e1e1e;
+        /* Fondo de tabla oscuro */
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .venta-tabla th,
+    .venta-tabla td {
+        padding: 15px;
+        border-bottom: 1px solid #333;
+        /* Borde oscuro */
+        text-align: center;
+        color: #e0e0e0;
+    }
+    
+    .venta-tabla th {
+        background-color: #2c2c2c;
+        /* Cabecera más clara */
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+    }
+    /* Filas alternas para legibilidad */
+    
+    .venta-tabla tbody tr:nth-child(even) {
+        background-color: #1a1a1a;
+    }
+    /* Hover en las filas */
+    
+    .venta-tabla tbody tr:hover {
+        background-color: #252525;
+    }
+    /* Iconos de acción (➕ y 🗑️) - Manteniendo el estilo circular */
+    
+    .icono-agregar,
+    .icono-eliminar {
+        border: 1px solid transparent;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-size: 1.1rem;
+    }
+    
+    .icono-agregar {
+        color: #27ae60;
+        border-color: #27ae60;
+        background: rgba(39, 174, 96, 0.1);
+        /* Fondo verde tenue */
+    }
+    
+    .icono-agregar:hover {
+        background: #27ae60;
+        color: white;
+    }
+    
+    .icono-eliminar {
+        color: #e74c3c;
+        border-color: #e74c3c;
+        background: rgba(231, 76, 60, 0.1);
+        /* Fondo rojo tenue */
+    }
+    
+    .icono-eliminar:hover {
+        background: #e74c3c;
+        color: white;
+    }
+    /* --- MODALES --- */
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9) !important;
+        /* Más oscuro para notar si abre */
+        justify-content: center;
+        align-items: center;
+        z-index: 99999 !important;
+        /* El valor más alto posible */
+        pointer-events: all;
+    }
+    
+    .modal-contenido {
+        background: #1a1a1a;
+        /* Fondo oscuro del modal */
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 450px;
+        /* Un poco más ancho para la cuadrícula */
+        text-align: center;
+        border: 1px solid #333;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        animation: aparecer 0.3s ease;
+        color: #e0e0e0;
+    }
+    
+    .modal-contenido h2 {
+        margin-top: 0;
+        color: #e67e22;
+        /* Título naranja */
+        font-size: 1.8rem;
+    }
+    /* Inputs dentro del modal (Oscuros) */
+    
+    .input-modal {
+        width: 100%;
+        padding: 12px;
+        margin: 15px 0;
+        border: 2px solid #333;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        text-align: center;
+        box-sizing: border-box;
+        background-color: #1e1e1e;
+        color: #ffffff;
+        outline: none;
+    }
+    
+    .input-modal:focus {
+        border-color: #e67e22;
+    }
+    /* Botones genéricos de los modales (Guardar/Cancelar) */
+    
+    .botones {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .btn-opcion {
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+    /* Cuadrícula de métodos de pago */
+    
+    .grid-pagos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* Dos columnas */
+        gap: 15px;
+        margin-top: 20px;
+    }
+    /* Último botón (Crédito) ocupa dos columnas */
+    
+    .grid-pagos button:last-child {
+        grid-column: span 2;
+    }
+    /* Botones de método de pago (Estilo azul oscuro de la imagen 1) */
+    
+    .btn-metodo {
+        background-color: #34495e;
+        /* Azul oscuro grisáceo */
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-metodo:hover {
+        background-color: #2c3e50;
+        transform: scale(1.03);
+    }
+    
+    @keyframes aparecer {
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    .modal[style*="display: flex"] {
+        display: flex !important;
+    }
+    /* Asegurar que el contenido no sea transparente */
+    
+    .modal-contenido {
+        position: relative;
+        z-index: 2001;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    /* Evitar que otros elementos tapen el modal */
+    
+    body.modal-abierto {
+        overflow: hidden;
+    }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Caja Registradora</title>
+    <title>Caja Registradora - Sistema Don Diego</title>
     <link rel="stylesheet" href="../../../css/ca.css" />
 </head>
 
@@ -35,14 +35,23 @@
 
             <header class="altura_cuadros">
                 <h1>Facturación</h1>
+
                 <div class="busqueda">
-                    <input id="buscar" type="text" placeholder="Buscar por código o nombre..." onkeyup="buscarProducto()" />
-                    <button class="btn-finalizar" style="background-color: #e67e22;" onclick="agregarMontoBolivares()">
-                        Monto Bs
-                    </button>
+                    <div class="busqueda-container">
+                        <select id="filtroCategoria" class="select-filtro">
+                            <option value="nombre">Nombre</option>
+                            <option value="codigo">Código</option>
+                            <option value="marca">Marca</option>
+                        </select>
+
+                        <input type="text" id="buscar" placeholder="Buscar producto..." onkeyup="buscarProducto()">
+
+                        <button class="btn-monto-bs" onclick="agregarMontoBolivares()">Monto Bs</button>
+                    </div>
                 </div>
+
                 <div class="total">
-                    <div class="acciones-izquierda" style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div class="acciones-izquierda">
                         <a href="../registro_cliente/registro_cli.html">
                             <button class="btn-cliente">Cliente</button>
                         </a>
@@ -115,38 +124,38 @@
         </div>
     </div>
 
+    <div id="modalCantidad" class="modal">
+        <div class="modal-contenido">
+            <h2 id="tituloModalCantidad">Producto</h2>
+            <p>Stock disponible: <span id="stockDisponible">0</span></p>
+            <input type="number" id="inputCantidadProducto" class="input-modal" min="1" value="1">
+            <div class="botones">
+                <button class="btn-opcion" style="background-color: #27ae60;" onclick="confirmarAgregarCarrito()">Confirmar</button>
+                <button class="btn-opcion" style="background-color: #e74c3c;" onclick="cerrarModal('modalCantidad')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modalTasa" class="modal">
         <div class="modal-contenido">
-            <h2>Tasa del Dólar</h2>
-            <p>Ingrese el valor del dólar en Bs:</p>
-            <input type="number" id="inputNuevaTasa" step="0.01" class="input-modal">
+            <h2>Establecer Tasa</h2>
+            <p>Ingrese el valor del dólar hoy:</p>
+            <input type="number" id="inputNuevaTasa" class="input-modal" step="0.01">
             <div class="botones">
                 <button class="btn-opcion" style="background-color: #27ae60;" onclick="guardarNuevaTasa()">Guardar</button>
-                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalTasa')">Cancelar</button>
+                <button class="btn-opcion" style="background-color: #e74c3c;" onclick="cerrarModal('modalTasa')">Cancelar</button>
             </div>
         </div>
     </div>
 
     <div id="modalMontoBs" class="modal">
         <div class="modal-contenido">
-            <h2>Agregar Monto Bs</h2>
-            <p>Monto en Bolívares a sumar:</p>
-            <input type="number" id="inputMontoBsManual" step="0.01" class="input-modal">
+            <h2>Monto en Bolívares</h2>
+            <p>El monto se convertirá a dólares según la tasa actual:</p>
+            <input type="number" id="inputMontoBsManual" class="input-modal" step="0.01">
             <div class="botones">
-                <button class="btn-opcion" style="background-color: #e67e22;" onclick="guardarMontoBsManual()">Sumar</button>
-                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalMontoBs')">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalCantidad" class="modal">
-        <div class="modal-contenido">
-            <h2 id="tituloModalCantidad">Producto</h2>
-            <p>Stock disponible: <span id="stockDisponible">0</span></p>
-            <input type="number" id="inputCantidadProducto" value="1" min="1" class="input-modal">
-            <div class="botones">
-                <button class="btn-opcion" style="background-color: #2980b9;" onclick="confirmarAgregarCarrito()">Agregar</button>
-                <button class="btn-opcion" style="background-color: #7f8c8d;" onclick="cerrarModal('modalCantidad')">Cancelar</button>
+                <button class="btn-opcion" style="background-color: #27ae60;" onclick="guardarMontoBsManual()">Agregar</button>
+                <button class="btn-opcion" style="background-color: #e74c3c;" onclick="cerrarModal('modalMontoBs')">Cancelar</button>
             </div>
         </div>
     </div>
