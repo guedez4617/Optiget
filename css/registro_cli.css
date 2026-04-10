@@ -4,6 +4,19 @@ body {
     background-color: #f4f6f9;
 }
 
+.fondo.capa1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    z-index: -2;
+}
+
 .linea_azul {
     display: flex;
     height: 100vh;

@@ -1,7 +1,20 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.fondo.capa1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    z-index: -2;
 }
 
 .linea_azul {
@@ -15,15 +28,13 @@ body {
     background-color: #c54b00;
     color: white;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     flex-shrink: 0;
     height: 100vh;
     overflow-y: auto;
 }
 
 .ancho_linea h2 {
+    font-size: 18px;
     margin-bottom: 30px;
 }
 
@@ -33,30 +44,20 @@ body {
 }
 
 .ancho_linea li {
-    margin: 15px 0;
-    cursor: pointer;
+    margin-bottom: 15px;
 }
 
 .ancho_linea a {
     color: white;
     text-decoration: none;
     display: block;
-    padding: 8px 1px;
+    padding: 8px 12px;
     border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
-    background-color: #9b3d02;
-    color: #ffffff;
-}
-
-.usuario {
-    margin-top: auto;
-    font-size: 14px;
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #ff6606;
+    background-color: #a24002;
 }
 
 .panel {

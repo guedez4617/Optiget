@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <div class="fondo capa1"></div>
+
     <div class="ancho_linea">
         <h2>Órdenes</h2>
         <ul>
@@ -58,8 +60,10 @@
             <label for="precio">Precio</label>
             <input type="number" id="precio" required step="0.01">
 
-            <label for="iva">¿Aplica I.V.A.?</label>
-            <input type="checkbox" id="iva" style="width:20px; height:20px;">
+            <div class="contenedor-iva">
+                <label for="iva">¿Aplica I.V.A.?</label>
+                <input type="checkbox" id="iva">
+            </div>
 
             <button type="submit" class="btn-guardar" id="btnAccion">Guardar producto</button>
             <button type="button" class="btn-atras" onclick="cancelar()">Cancelar</button>

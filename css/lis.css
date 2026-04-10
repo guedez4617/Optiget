@@ -1,7 +1,20 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
+}
+
+.fondo.capa1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    z-index: -2;
 }
 
 .linea_azul {
@@ -40,11 +53,11 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
-    background-color: #9f3e01;
+    background-color: #a24002;
 }
 
 .cuadro_lista {

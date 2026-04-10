@@ -1,12 +1,20 @@
-    /* --- GENERALES Y FONDO OSCURO (Base de la imagen) --- */
-    
     body {
         margin: 0;
         font-family: "Segoe UI", Roboto, sans-serif;
-        background-color: #121212;
-        /* Fondo muy oscuro, casi negro */
-        color: #e0e0e0;
-        /* Texto claro para contraste */
+        background-color: #f4f6f9;
+    }
+    
+    .fondo.capa1 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("../imagenes/frente.png");
+        background-size: cover;
+        background-position: center;
+        filter: blur(6px);
+        z-index: -2;
     }
     
     .linea_azul {
@@ -18,19 +26,16 @@
     .ancho_linea {
         width: 200px;
         background-color: #c54b00;
+        color: white;
         padding: 20px;
         flex-shrink: 0;
         height: 100vh;
         overflow-y: auto;
-        border-right: none;
     }
     
     .ancho_linea h2 {
         font-size: 18px;
         margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: white;
     }
     
     .ancho_linea ul {
@@ -39,24 +44,21 @@
     }
     
     .ancho_linea li {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     
     .ancho_linea a {
-        color: #ccc;
+        color: white;
         text-decoration: none;
         display: block;
-        padding: 10px 12px;
+        padding: 8px 12px;
         border-radius: 4px;
-        transition: all 0.3s ease;
-        font-size: 14px;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
     
     .ancho_linea a:hover {
-        background-color: #e67e22;
-        color: white;
+        background-color: #a24002;
     }
-    /* --- PANEL PRINCIPAL --- */
     
     .panel {
         flex: 1;

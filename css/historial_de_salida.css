@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
 }
 
@@ -40,11 +40,11 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
-    background-color: #a13f03;
+    background-color: #a24002;
 }
 
 .panel {

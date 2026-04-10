@@ -5,6 +5,19 @@ body {
     background-color: #ffffff;
 }
 
+.fondo.capa1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    z-index: -2;
+}
+
 .ancho_linea {
     width: 200px;
     background-color: #c54b00;
@@ -46,30 +59,38 @@ body {
 .panel {
     flex: 1;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
     overflow-y: auto;
     box-sizing: border-box;
 }
 
 .altura_formulario {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    max-width: 600px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
 }
 
 .altura_formulario label {
-    grid-column: span 2;
+    display: block;
+    margin-bottom: 10px;
     font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
 .altura_formulario input,
 .altura_formulario select {
+    width: 95%;
     padding: 8px;
-    border: 1px solid #a0a0a0;
-    border-radius: 5px;
+    margin-bottom: 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .total {
@@ -92,7 +113,7 @@ body {
 }
 
 .btn-guardar:hover {
-    background-color: #963a01;
+    background-color: #960101;
     transform: scale(1.02);
 }
 
@@ -104,4 +125,75 @@ body {
     color: white;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.contenedor-iva {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 30xp;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+/* Contenedor para alinear en la misma línea y separar */
+
+.contenedor-iva {
+    display: flex;
+    flex-direction: row;
+    /* Alinea horizontalmente */
+    align-items: center;
+    /* Centra verticalmente el texto con el switch */
+    justify-content: center;
+    /* Mantiene el grupo centrado en el formulario */
+    gap: 25px;
+    /* <--- ESTO separa la palabra del checkbox */
+    margin: 20px 0;
+    /* Espaciado arriba y abajo respecto a otros inputs */
+}
+
+.contenedor-iva label {
+    margin-bottom: 0 !important;
+    /* Quitamos el margen inferior para que no se desalinee */
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#iva {
+    appearance: none;
+    width: 50px;
+    height: 26px;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    flex-shrink: 0;
+    /* Evita que el switch se deforme */
+}
+
+#iva:checked {
+    background-color: #c54b00;
+}
+
+#iva::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#iva:checked::before {
+    transform: translateX(24px);
 }

@@ -40,7 +40,7 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
@@ -51,7 +51,7 @@ body {
     flex: 1;
     position: relative;
     overflow: hidden;
-    color: white;
+    color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
     align-items: center;

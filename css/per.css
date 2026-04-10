@@ -1,7 +1,20 @@
 body {
     margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
+}
+
+.fondo.capa1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    z-index: -2;
 }
 
 .linea_azul {
@@ -11,7 +24,7 @@ body {
 }
 
 .ancho_linea {
-    width: 220px;
+    width: 200px;
     background-color: #c54b00;
     color: white;
     padding: 20px;
@@ -21,10 +34,8 @@ body {
 }
 
 .ancho_linea h2 {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 10px;
 }
 
 .ancho_linea ul {
@@ -33,20 +44,20 @@ body {
 }
 
 .ancho_linea li {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .ancho_linea a {
     color: white;
     text-decoration: none;
     display: block;
-    padding: 10px 15px;
-    border-radius: 6px;
-    transition: background 0.3s;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
-    background-color: #983c03;
+    background-color: #a24002;
 }
 
 .cuadro_personal {
