@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = ""; // Como indicaste, sin contraseña
+$pass = "";
 $db   = "don_diego_2016";
 
 try {

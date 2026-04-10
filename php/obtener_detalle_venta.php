@@ -12,7 +12,7 @@ try {
     $stC->execute([$id]);
     $cab = $stC->fetch(PDO::FETCH_ASSOC);
 
-    // Consulta Productos - SE AGREGÓ df.total_bs AQUÍ ABAJO
+    // Consulta Productos
     $sqlP = "SELECT df.codigo_producto, df.cantidad as cantidadFactura, df.sub_total as subtotal_base, 
                     df.total_bs, 
                     p.nombre as nombre_prod, p.presentacion as presentacion_prod, p.`i.v.a.` as tiene_iva

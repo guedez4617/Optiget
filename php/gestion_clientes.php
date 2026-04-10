@@ -4,10 +4,9 @@ include 'db_conexion.php';
 
 $metodo = $_SERVER['REQUEST_METHOD'];
 
-// --- ACCIÓN: BUSCAR ---
+// buscar
 if ($metodo === 'GET' && isset($_GET['cedula'])) {
     $cedula = $_GET['cedula'];
-    // Eliminado 'correo' del SELECT
     $stmt = $pdo->prepare("SELECT `c.i` as cedula, NOMBRE as nombre, telefono, direccion FROM clientes WHERE `c.i` = ?");
     $stmt->execute([$cedula]);
     $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -20,7 +19,7 @@ if ($metodo === 'GET' && isset($_GET['cedula'])) {
     exit;
 }
 
-// --- ACCIÓN: GUARDAR / ACTUALIZAR ---
+// guardar o actualizar
 if ($metodo === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
     
@@ -29,19 +28,19 @@ if ($metodo === 'POST') {
     $telefono  = $data['telefono'];
     $direccion = $data['direccion'];
 
-    // Verificamos si existe
+    // Verifica si existe
     $check = $pdo->prepare("SELECT `c.i` FROM clientes WHERE `c.i` = ?");
     $check->execute([$cedula]);
     $existe = $check->fetch();
 
     if ($existe) {
-        // Actualizar (sin correo)
+        // Actualizar
         $sql = "UPDATE clientes SET NOMBRE=?, telefono=?, direccion=? WHERE `c.i`=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$nombre, $telefono, $direccion, $cedula]);
         $mensaje = "Datos actualizados";
     } else {
-        // Insertar nuevo (sin correo)
+        // Insertar nuevo
         $sql = "INSERT INTO clientes (`c.i`, NOMBRE, telefono, direccion) VALUES (?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$cedula, $nombre, $telefono, $direccion]);

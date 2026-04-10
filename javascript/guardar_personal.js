@@ -2,7 +2,7 @@ const edicionInfo = JSON.parse(localStorage.getItem('usuarioAEditar'));
 const titulo = document.getElementById('tituloPantalla');
 const boton = document.getElementById('btnAccion');
 
-// MODO EDICIÓN: Rellenar el formulario si existe data en localStorage
+// Rellenar los datos si existen los dato en localStorage para editar
 if (edicionInfo) {
     titulo.innerText = "Editar Usuario";
     boton.innerText = "Guardar Cambios";

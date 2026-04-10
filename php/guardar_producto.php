@@ -15,18 +15,18 @@ $codigo       = trim($data['codigo']);
 $categoria    = $data['categoria'] ?? '';
 $marca        = $data['marca'] ?? '';
 $nombre       = $data['nombre'] ?? '';
-$presentacion = $data['presentacion'] ?? ''; // <-- NUEVO: Captura la presentación
+$presentacion = $data['presentacion'] ?? '';
 $cantidad     = intval($data['cantidad'] ?? 0);
 $precio       = floatval($data['precio'] ?? 0);
 $conIva       = intval($data['conIva'] ?? 0);
 $esEdicion    = isset($data['esEdicion']) && $data['esEdicion'] === true;
 
 try {
-    // Si hay stock, el estado es 1 (Activo), si no, 0 (Agotado)
+    // Si hay stock el estado es 1 si no 0
     $nuevoEstado = ($cantidad > 0) ? 1 : 0;
 
     if ($esEdicion) {
-        // --- LÓGICA DE ACTUALIZACIÓN (UPDATE) ---
+        // editar 
         $sql = "UPDATE productos SET 
                 categoria = ?, 
                 marca = ?, 
@@ -43,7 +43,7 @@ try {
             $categoria, 
             $marca, 
             $nombre, 
-            $presentacion, // <-- Se añade aquí
+            $presentacion,
             $cantidad, 
             $precio, 
             $conIva, 
@@ -53,7 +53,7 @@ try {
         $mensaje = "Producto actualizado correctamente.";
         
     } else {
-        // --- LÓGICA DE INSERCIÓN NUEVA (INSERT) ---
+        // nuevo producto
         $sql = "INSERT INTO productos (codigo, categoria, marca, nombre, presentacion, unidades, precio, `i.v.a.`, estado) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -63,7 +63,7 @@ try {
             $categoria, 
             $marca, 
             $nombre, 
-            $presentacion, // <-- Se añade aquí
+            $presentacion,
             $cantidad, 
             $precio, 
             $conIva, 

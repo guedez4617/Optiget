@@ -1,5 +1,4 @@
 <?php
-// login.php
 include 'db_conexion.php';
 session_start();
 
@@ -14,7 +13,7 @@ $userIn = $data['usuario'];
 $passIn = $data['password'];
 
 try {
-    // Buscamos al usuario por su N_USUARIO
+    // Buscamos al usuario
     $stmt = $pdo->prepare("SELECT `C.I`, NOMBRE, APELLIDO, ROL, CONTRASEÑA FROM usuarios WHERE N_USUARIO = ?");
     $stmt->execute([$userIn]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -22,8 +21,7 @@ try {
     // Verificamos si la contraseña coincide
     if ($usuario && password_verify($passIn, $usuario['CONTRASEÑA'])) {
         
-        // --- GUARDAR EN LA SESIÓN ---
-        // Concatenamos Nombre y Apellido para la factura
+        // guardamos Nombre y Apellido para la factura
         $_SESSION['id_usuario'] = $usuario['C.I'];
         $_SESSION['nombre_usuario'] = $usuario['NOMBRE'] . " " . $usuario['APELLIDO'];
         $_SESSION['rol'] = $usuario['ROL'];

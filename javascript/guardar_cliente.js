@@ -3,16 +3,15 @@ document.addEventListener("keydown", (e) => {
         const activeElement = document.activeElement;
         const cedulaInput = document.getElementById('cedula');
 
-        // Si el foco está en la cédula, ejecutamos la búsqueda
+        // buacar por la cudela
         if (activeElement === cedulaInput) {
             e.preventDefault(); // Evita enviar el formulario vacío
             buscarCliente();
         }
-        // En cualquier otro campo, el Enter enviará el formulario por defecto (Submit)
     }
 });
 
-// --- FUNCIÓN PARA BUSCAR CLIENTE ---
+// busca el cliente
 async function buscarCliente() {
     const cedulaInput = document.getElementById('cedula').value.trim();
     if (!cedulaInput) return alert("Ingrese una cédula para buscar.");
@@ -32,7 +31,7 @@ async function buscarCliente() {
             document.getElementById('telefono').value = datos.telefono || "";
             document.getElementById('direccion').value = datos.direccion || "";
 
-            // Guardamos preventivamente para asegurar la persistencia
+            // cargamos el cliente en cache 
             localStorage.setItem("nombreClienteSeleccionado", datos.nombre);
             localStorage.setItem("cedulaClienteSeleccionado", cedulaInput);
             alert("Cliente encontrado y cargado.");
@@ -46,10 +45,10 @@ async function buscarCliente() {
     }
 }
 
-// Evento para el clic en el botón físico de buscar
+// botón físico de buscar
 document.getElementById('btnBuscar').addEventListener('click', buscarCliente);
 
-// --- GUARDAR Y REGRESAR (CONTINUAR COMPRA) ---
+// guardar y continuar con la compre
 document.getElementById('formCliente').addEventListener('submit', async(e) => {
     e.preventDefault();
 
@@ -72,13 +71,10 @@ document.getElementById('formCliente').addEventListener('submit', async(e) => {
         const resultado = await response.json();
 
         if (resultado.status === "ok") {
-            // ENVIAR DATOS A LA CAJA MEDIANTE LOCALSTORAGE
+            // envia los datos del localstorage
             localStorage.setItem("nombreClienteSeleccionado", nombre);
             localStorage.setItem("cedulaClienteSeleccionado", cedula);
 
-            alert("Cliente listo. Regresando a la factura...");
-
-            // IMPORTANTE: Verifica que esta ruta sea la correcta
             window.location.href = "../caja/principal.html";
         } else {
             alert("Error: " + resultado.mensaje);

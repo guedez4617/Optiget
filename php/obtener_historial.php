@@ -1,12 +1,11 @@
 <?php
 error_reporting(E_ALL); 
-ini_set('display_errors', 0); // No mostrar errores de texto que rompan el JSON
+ini_set('display_errors', 0); 
 header('Content-Type: application/json');
 include 'db_conexion.php';
 
 try {
-    // Intento con 'c.i' que es el estándar que estabas usando
-    // Si sigue fallando, cambia `c`.`c.i` por el nombre real de la columna en la tabla clientes
+    // busca la ci para ver sus facturas
     $sql = "SELECT f.Id_factura, f.tipo_pago, f.fecha, f.hora, f.ci_cliente,
             c.NOMBRE as nombre_cliente,
             (SELECT SUM(sub_total) FROM det_factura WHERE id_factura = f.Id_factura) as total_venta 

@@ -2,17 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const idFactura = localStorage.getItem("idFacturaReciente");
     if (idFactura) cargarDatosFactura(idFactura);
 
-    // LÓGICA DEL BOTÓN DINÁMICO
+    // boton dinamico 
     const btnRegresar = document.getElementById("btnNuevaVenta");
     if (btnRegresar) {
-        // Verificamos si venimos del historial
+        // Verifica si venias del historial
         if (document.referrer.includes("his.html") || document.referrer.includes("historial")) {
             btnRegresar.textContent = "Volver al Historial";
             btnRegresar.onclick = () => {
                 window.location.href = "../historial_ventas/his.html";
             };
         } else {
-            // Comportamiento por defecto (ir a facturación)
+            // Comportamiento por defecto ir a facturación
             btnRegresar.textContent = "Nueva Venta";
             btnRegresar.onclick = () => {
                 window.location.href = "../caja/principal.html";
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-
+// busca el id de la factura para ver los detalles
 async function cargarDatosFactura(id) {
     try {
         const res = await fetch(`../../../php/obtener_detalle_venta.php?id=${id}`);
@@ -47,23 +47,25 @@ async function cargarDatosFactura(id) {
 
             let acumSub = 0;
             let acumIva = 0;
-            let acumTotalBs = 0; // Nueva variable para sumar los Bs de la base de datos
+            let acumTotalBs = 0;
 
             productos.forEach(p => {
                 const cant = parseFloat(p.cantidadFactura) || 0;
                 const subFila = parseFloat(p.subtotal_base) || 0;
+                // Calculamos el precio unitario
                 const precioU = cant > 0 ? (subFila / cant) : 0;
 
-                // Obtenemos el total_bs que guardamos en la base de datos
+                // Obtenemos el total bs guardado en la base de datos
                 const totalBsFila = parseFloat(p.total_bs) || 0;
-
+                //calcula el iva si tiene
                 const tieneIva = (p.tiene_iva == 1 || p.tiene_iva == "Si");
                 const ivaFila = tieneIva ? (subFila * 0.16) : 0;
+                //calcula el total
                 const totalFila = subFila + ivaFila;
 
                 acumSub += subFila;
                 acumIva += ivaFila;
-                acumTotalBs += totalBsFila; // Sumamos el valor real guardado
+                acumTotalBs += totalBsFila;
 
                 tablaBody.innerHTML += `
                     <tr>
@@ -85,7 +87,6 @@ async function cargarDatosFactura(id) {
             document.getElementById("iva").textContent = acumIva.toFixed(2);
             document.getElementById("totalFinal").textContent = finalUSD.toFixed(2);
 
-            // USAMOS EL ACUMULADO DE LA BASE DE DATOS, NO LA TASA ACTUAL
             document.getElementById("totalBs").textContent = acumTotalBs.toFixed(2) + " Bs";
 
         }

@@ -1,5 +1,4 @@
 <?php
-// eliminar_usuario.php
 include 'db_conexion.php';
 
 $data = json_decode(file_get_contents("php://input"), true);

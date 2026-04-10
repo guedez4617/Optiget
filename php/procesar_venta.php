@@ -1,16 +1,13 @@
 <?php
-// 1. Iniciar sesión ANTES de cualquier salida de texto
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Cabeceras
+// Cabeceras
 header('Content-Type: application/json');
-
-// 3. Conexión
 include 'db_conexion.php';
 
-// 4. Capturar entrada
+//Capturar entrada
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
 
@@ -23,12 +20,10 @@ $carrito = $data['carrito'] ?? [];
 $metodoPago = $data['metodo_pago'] ?? 'Efectivo';
 $cliente = $data['cliente'] ?? null;
 
-// 5. Nombre del empleado
+//Nombre del empleado
 $vendedor = $_SESSION['nombre_usuario'] ?? 'Empleado General';
 
-/**
- * 6. LIMPIAR CÉDULA
- */
+//limpia la cedula
 $ci_cliente = ($cliente && isset($cliente['cedula'])) ? trim($cliente['cedula']) : '999';
 
 if (empty($carrito)) {
@@ -39,7 +34,7 @@ if (empty($carrito)) {
 try {
     $pdo->beginTransaction();
 
-    // 7. INSERTAR CABECERA
+    //inserta cabesera
     $sqlFactura = "INSERT INTO factura (fecha, hora, ci_cliente, nombre_empleado, tipo_pago) 
                     VALUES (CURDATE(), CURTIME(), ?, ?, ?)";
     $stmtFact = $pdo->prepare($sqlFactura);
@@ -47,7 +42,7 @@ try {
     
     $idFacturaReal = $pdo->lastInsertId();
 
-    // 8. INSERTAR DETALLES
+    // inserta detalles
     foreach ($carrito as $item) {
         $codigoOriginal = trim((string)$item['codigo']);
         
@@ -58,10 +53,10 @@ try {
         $precio = floatval($item['precio']);
         $subtotal = $cantidad * $precio;
         
-        // Capturamos el total_bs enviado desde el JS
+        // Captura el total bs 
         $totalBs = isset($item['total_bs']) ? floatval($item['total_bs']) : 0;
 
-        // INSERTAR EN DETALLE (Incluyendo la nueva columna total_bs)
+        // inserta detalles
         $sqlDetalle = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total, total_bs) 
                         VALUES (?, ?, ?, ?, ?)";
         $stmtDet = $pdo->prepare($sqlDetalle);
@@ -70,10 +65,10 @@ try {
             $codigoFinal, 
             $cantidad,
             $subtotal,
-            $totalBs // Se guarda el monto en Bs "congelado" según la tasa del momento
+            $totalBs 
         ]);
 
-        // 9. DESCONTAR STOCK
+        //resta el stod vendido
         if ($codigoFinal !== "0" && $codigoFinal !== "999" && !$esManual) {
             $sqlStock = "UPDATE productos SET unidades = unidades - ? 
                         WHERE Codigo = ? AND unidades >= ?";

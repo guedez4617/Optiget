@@ -1,6 +1,6 @@
 let listaUsuariosGlobal = [];
 
-// 1. Cargar datos (Solo ocurre al abrir la página o eliminar)
+// Cargar todos los datos del presonal
 async function cargarUsuarios() {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando usuarios...</td></tr>';
@@ -20,7 +20,7 @@ async function cargarUsuarios() {
     }
 }
 
-// 2. Función de dibujo (Dibuja lo que haya en el array que reciba)
+// Dibuja lo que haya en el array que reciba
 function renderizarTabla(datos) {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = "";
@@ -46,14 +46,14 @@ function renderizarTabla(datos) {
     });
 }
 
-// 3. Inicialización y Eventos
+// Inicialización y Eventos
 document.addEventListener('DOMContentLoaded', () => {
     // Cargamos los datos de la DB al iniciar
     cargarUsuarios();
 
     const inputBusqueda = document.getElementById('inputBusqueda');
 
-    // Escuchamos el evento 'input' (se dispara cada vez que escribes una letra)
+    // para que filtre mientra escribo 
     inputBusqueda.addEventListener('input', (e) => {
         const texto = e.target.value.toLowerCase().trim();
 
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 4. Preparar Edición
+// Preparar Edición
 function prepararEdicion(u) {
     localStorage.setItem('usuarioAEditar', JSON.stringify({
         datos: {
@@ -96,7 +96,7 @@ function prepararEdicion(u) {
     window.location.href = "../registro_de_usuario/re.html";
 }
 
-// 5. Eliminar Usuario
+// Eliminar Usuario
 async function eliminarUsuario(cedula) {
     if (confirm(`¿Eliminar usuario con C.I: ${cedula}?`)) {
         try {

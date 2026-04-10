@@ -2,7 +2,7 @@ const form = document.getElementById('formRegistro');
 const inputPrecio = document.getElementById('precio');
 const checkIva = document.getElementById('iva');
 
-// 1. CARGA INICIAL
+// cargar para editar
 const datosEdicion = JSON.parse(localStorage.getItem("productoAEditar"));
 
 window.onload = () => {
@@ -15,7 +15,6 @@ window.onload = () => {
         document.getElementById('categoria').value = p.categoria || "";
         document.getElementById('marca').value = p.marca || "";
         document.getElementById('nombre').value = p.nombre;
-        // Mantenemos el ID Precentacion como lo tienes en el HTML
         document.getElementById('Precentacion').value = p.presentacion || "";
         document.getElementById('cantidad').value = p.cantidad;
         document.getElementById('precio').value = p.precio;
@@ -28,15 +27,12 @@ window.onload = () => {
     }
 };
 
-/**
- * 2. LÓGICA DE IVA (SIMPLIFICADA)
- * Se eliminó el cálculo del 1.16. El checkbox ahora solo sirve como etiqueta.
- */
+// pone la etiqueta del iva
 checkIva.addEventListener('change', () => {
     console.log("Estado del IVA:", checkIva.checked ? "Activado" : "Desactivado");
 });
 
-// 3. GUARDAR / ACTUALIZAR
+// guarda o actualiza 
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -47,9 +43,7 @@ form.addEventListener('submit', async function(e) {
         nombre: document.getElementById('nombre').value,
         presentacion: document.getElementById('Precentacion').value,
         cantidad: parseInt(document.getElementById('cantidad').value) || 0,
-        // Se guarda el precio exactamente como se escribió en el input
         precio: parseFloat(document.getElementById('precio').value) || 0,
-        // Solo enviamos 1 o 0 para indicar si el precio ya incluye IVA o debe marcarse con IVA
         conIva: document.getElementById('iva').checked ? 1 : 0,
         esEdicion: datosEdicion ? true : false
     };
@@ -66,7 +60,6 @@ form.addEventListener('submit', async function(e) {
         const resultado = await response.json();
 
         if (resultado.status === "success") {
-            alert(resultado.message);
             localStorage.removeItem("productoAEditar");
             window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
         } else {

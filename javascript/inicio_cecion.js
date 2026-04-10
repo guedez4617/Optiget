@@ -20,12 +20,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         if (resultado.status === "success") {
             // Guardamos los datos del usuario (Nombre, Rol, CI) para usarlos en el Inicio
             localStorage.setItem('usuarioActivo', JSON.stringify(resultado.usuario));
-
-            // Redirigir según el ROL si lo deseas, o al inicio general
             window.location.href = "pantallas/inicio/inicio.html";
 
         } else {
-            // Si el PHP dice que los datos son incorrectos
+            // datos son incorrectos
             alert(resultado.message);
         }
 

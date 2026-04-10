@@ -1,13 +1,9 @@
-// Variable global para guardar los datos originales de la base de datos
 let listaProductosGlobal = [];
 let mostrandoInactivos = false;
 
-/**
- * 1. CARGA INICIAL: Obtiene productos desde el servidor
- */
+// carga los datos al iniciar
 async function cargarProductos() {
     const tbody = document.getElementById("cuerpoTabla");
-    // Usamos colspan 11 porque agregamos la columna Presentación
     tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;">Cargando inventario...</td></tr>';
 
     try {
@@ -26,9 +22,7 @@ async function cargarProductos() {
     }
 }
 
-/**
- * 2. RENDERIZAR TABLA: Dibuja las filas basándose en el array recibido
- */
+// dibuja la tabla
 function renderizarTabla(datos) {
     const tbody = document.getElementById("cuerpoTabla");
     tbody.innerHTML = "";
@@ -43,27 +37,27 @@ function renderizarTabla(datos) {
     datos.forEach((p) => {
         const fila = document.createElement("tr");
 
-        // --- LÓGICA DE CÁLCULOS ---
+        // prcios
         const esIva = parseInt(p.tieneIva) === 1;
         const precioBase = parseFloat(p.precio) || 0;
 
-        // 1. Calculamos cuánto es el 16% (Monto del impuesto)
+        // esto calcula el iva
         const montoIva = esIva ? (precioBase * 0.16) : 0;
 
-        // 2. Calculamos el Total (Precio Base + Impuesto)
+        // tota con iva
         const precioTotal = precioBase + montoIva;
 
-        // Lógica de Stock (Poco / Bastante)
+        // stod 
         const unidades = parseInt(p.unidades) || 0;
         const stockClase = unidades > 5 ? "in-stock" : "low-stock";
         const stockTexto = unidades > 5 ? "Bastante" : "Poco";
 
-        // Botón de acción según la vista (Eliminar o Reactivar)
+        // boton para reativar y inavilitar
         const botonAccion = mostrandoInactivos ?
             `<span class="icono-reactivar" title="Reactivar" onclick="reactivarProducto('${p.Codigo}')" style="cursor:pointer; font-size:1.2rem;">🔄</span>` :
             `<span class="icono-eliminar" title="Eliminar" onclick="eliminarProducto('${p.Codigo}')" style="cursor:pointer;">🗑️</span>`;
 
-        // Construcción de la fila con las 12 columnas correspondientes
+        // contruye las filas
         fila.innerHTML = `
             <td>${p.Codigo}</td>
             <td>${p.categoria || '-'}</td>
@@ -89,9 +83,7 @@ function renderizarTabla(datos) {
     });
 }
 
-/**
- * 3. BUSCADOR DINÁMICO (Multi-Filtro)
- */
+//filtro de busquedad
 document.getElementById("buscarInput").addEventListener("input", (e) => {
     const valorBusqueda = e.target.value.toLowerCase().trim();
     const columnaSeleccionada = document.getElementById("filtroColumna").value;
@@ -115,9 +107,7 @@ document.getElementById("buscarInput").addEventListener("input", (e) => {
     renderizarTabla(resultadosFiltrados);
 });
 
-/**
- * 4. FUNCIONES DE ACCIÓN Y ESTADO
- */
+//ver activos o inativos
 function alternarVistaInactivos() {
     mostrandoInactivos = !mostrandoInactivos;
     const btnText = document.getElementById("btnFiltroInactivos");

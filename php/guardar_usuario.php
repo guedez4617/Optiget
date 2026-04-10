@@ -1,5 +1,4 @@
 <?php
-// guardar_usuario.php
 include 'db_conexion.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -16,8 +15,7 @@ $user_log = $data['usuario'];
 $rol      = $data['rango'];
 $telef    = $data['telefono'];
 
-// --- CAMBIO AQUÍ: HASHEAR LA CONTRASEÑA ---
-// password_hash crea una cadena de 60 caracteres imposible de revertir
+//cifra la contraceña
 $clave_plana = $data['clave'];
 $clave_segura = password_hash($clave_plana, PASSWORD_BCRYPT);
 
@@ -26,8 +24,8 @@ try {
     $check->execute([$ci]);
 
     if ($check->rowCount() > 0) {
-        // MODO ACTUALIZAR
-        // Si el usuario cambia la clave, se guarda el nuevo hash
+        //editar
+        // Si se cambia la clave se guarda el nuevo hash
         $sql = "UPDATE usuarios SET 
                 NOMBRE = ?, 
                 APELLIDO = ?, 
@@ -40,7 +38,7 @@ try {
         $stmt->execute([$nombre, $apellido, $user_log, $clave_segura, $rol, $telef, $ci]);
         echo json_encode(["status" => "success", "message" => "Usuario actualizado con clave segura"]);
     } else {
-        // MODO INSERTAR
+        // nuevo usuario
         $sql = "INSERT INTO usuarios (`C.I`, NOMBRE, APELLIDO, N_USUARIO, CONTRASEÑA, ROL, telefono) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);

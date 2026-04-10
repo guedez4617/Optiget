@@ -1,10 +1,7 @@
-/**
- * venta.js - Sistema Don Diego
- */
-
+// variable 
 let carrito = JSON.parse(localStorage.getItem("carritoTemporal")) || [];
 let productoSeleccionado = null;
-let indexParaRestar = null; // NUEVA VARIABLE
+let indexParaRestar = null;
 let tasaDolar = parseFloat(localStorage.getItem("tasaDolar")) || 1.00;
 let montoBsExtra = 0;
 
@@ -22,13 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
             abrirModal("miModal");
         };
     }
-
+    // para que funcione el enter
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             if (isOpen("modalCantidad")) confirmarAgregarCarrito();
             else if (isOpen("modalTasa")) guardarNuevaTasa();
             else if (isOpen("modalMontoBs")) guardarMontoBsManual();
-            else if (isOpen("modalRestar")) confirmarResta(); // NUEVA LOGICA
+            else if (isOpen("modalRestar")) confirmarResta();
         }
         if (e.key === "Escape") {
             const modales = ["miModal", "modalTasa", "modalMontoBs", "modalCantidad", "modalRestar"];
@@ -37,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// --- LOGICA DE CLIENTE ---
+// cargar cliente
 function verificarCliente() {
     const nombre = localStorage.getItem("nombreClienteSeleccionado");
     const cedula = localStorage.getItem("cedulaClienteSeleccionado");
@@ -61,7 +58,7 @@ function limpiarCliente() {
     verificarCliente();
 }
 
-// --- BUSQUEDA DE PRODUCTOS ---
+// esto busca el producto
 async function buscarProducto() {
     const query = document.getElementById("buscar").value;
     const tabla = document.getElementById("tablaBusqueda");
@@ -98,7 +95,7 @@ async function buscarProducto() {
     } catch (e) { console.error("Error en búsqueda:", e); }
 }
 
-// --- CARRITO Y MODALES DE ACCIÓN ---
+// la pantalla para agregar producto
 function abrirModalCantidad(producto) {
     productoSeleccionado = producto;
     document.getElementById("tituloModalCantidad").textContent = producto.nombre;
@@ -112,7 +109,7 @@ function abrirModalCantidad(producto) {
     }, 150);
 }
 
-// NUEVAS FUNCIONES PARA RESTAR
+// la pantalla de quitar producto
 function abrirModalRestar(idx) {
     indexParaRestar = idx;
     const producto = carrito[idx];
@@ -149,6 +146,7 @@ function confirmarResta() {
     renderizarCarrito();
 }
 
+// dolar
 function cambiarTasa() {
     const input = document.getElementById("inputNuevaTasa");
     input.value = tasaDolar;
@@ -163,6 +161,7 @@ function agregarMontoBolivares() {
     setTimeout(() => input.focus(), 150);
 }
 
+//agrega la cantidad del producto
 function confirmarAgregarCarrito() {
     const cant = parseInt(document.getElementById("inputCantidadProducto").value);
     if (isNaN(cant) || cant <= 0 || (productoSeleccionado && cant > productoSeleccionado.unidades)) {
@@ -200,6 +199,7 @@ function confirmarAgregarCarrito() {
     document.getElementById("tablaBusqueda").innerHTML = "";
 }
 
+// mostratar la tabla
 function renderizarCarrito() {
     const tabla = document.getElementById("tablaFactura");
     if (!tabla) return;
@@ -248,7 +248,7 @@ function renderizarCarrito() {
     document.getElementById("montoBolivares").textContent = totalBS.toFixed(2);
 }
 
-// --- LOGICA DE GUARDADO ---
+// actualizar la tasa del dolar
 function guardarNuevaTasa() {
     const nueva = parseFloat(document.getElementById("inputNuevaTasa").value);
     if (nueva > 0) {
@@ -261,6 +261,7 @@ function guardarNuevaTasa() {
     }
 }
 
+// agregar monto adicional
 function guardarMontoBsManual() {
     const montoBs = parseFloat(document.getElementById("inputMontoBsManual").value);
     if (isNaN(montoBs) || montoBs <= 0) {
@@ -291,12 +292,12 @@ function guardarMontoBsManual() {
     cerrarModal("modalMontoBs");
 }
 
-// --- FINALIZAR VENTA ---
+// terminar la compra
 async function procesarPago(metodo) {
     if (metodo === 'Crédito') {
         const cedula = localStorage.getItem("cedulaClienteSeleccionado");
         if (!cedula || cedula === "999") {
-            alert("⚠️ Error: Debe cargar un cliente específico para realizar ventas a Crédito.");
+            alert("Debe cargar un cliente específico para realizar ventas a Crédito.");
             return;
         }
     }
@@ -326,7 +327,7 @@ async function procesarPago(metodo) {
     } catch (e) { alert("Error de servidor"); }
 }
 
-// --- UTILIDADES ---
+// funcione especiales
 function abrirModal(id) {
     const modal = document.getElementById(id);
     if (modal) {

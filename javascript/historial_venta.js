@@ -1,11 +1,7 @@
-/**
- * historial.js - Gestión de consulta de ventas pasadas
- */
-
 document.addEventListener("DOMContentLoaded", () => {
     cargarHistorial();
 
-    // Lógica del Buscador
+    // Buscador
     const btnBuscar = document.querySelector(".btn-buscar");
     const inputBuscar = document.querySelector(".busqueda input");
 
@@ -13,13 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Buscar al hacer clic
         btnBuscar.addEventListener("click", filtrarTabla);
 
-        // Buscar al presionar Enter en el input
+        // Buscar al presionar Enter
         inputBuscar.addEventListener("keyup", (e) => {
             if (e.key === "Enter") filtrarTabla();
         });
     }
 });
 
+//filtra la tabla
 function filtrarTabla() {
     const valor = document.querySelector(".busqueda input").value.toLowerCase();
     const filas = document.querySelectorAll(".ventas-tabla tbody tr");
@@ -30,6 +27,7 @@ function filtrarTabla() {
     });
 }
 
+// cargar historial de la bd
 async function cargarHistorial() {
     try {
         const res = await fetch("../../../php/obtener_historial.php");
@@ -67,31 +65,30 @@ async function cargarHistorial() {
 
 async function verFactura(id) {
     try {
-        // 1. Consultamos el detalle al servidor
+        // Consultamos el detalle al servidor
         const res = await fetch(`../../../php/obtener_detalle_venta.php?id=${id}`);
         const data = await res.json();
 
         if (data.status === "ok") {
-            // 2. LIMPIEZA PREVIA: Borramos datos de ventas activas para no mezclar
+            // Borra los datos de ventas activas para no mezclar
             localStorage.removeItem("carritoTemporal");
             localStorage.removeItem("nombreClienteSeleccionado");
             localStorage.removeItem("cedulaClienteSeleccionado");
 
-            // 3. CARGA DE DATOS DE CONSULTA:
-            // Guardamos el ID para que el generador de factura sepa cuál buscar
+            // Guardo el ID para que el generador de factura sepa cuál buscar
             localStorage.setItem("idFacturaReciente", id);
 
-            // Guardamos el método de pago y la info del cliente recuperada de la DB
+            // Guardo el método de pago y la info del cliente recuperada de la DB
             localStorage.setItem("metodoPagoSeleccionado", data.cabecera.tipo_pago);
 
-            // Sincronizamos con las llaves que usa tu factura actual
+            // Sincroniza con las llaves que usa tu factura actual
             localStorage.setItem("nombreClienteSeleccionado", data.cabecera.nombre_cliente || "CLIENTE GENERAL");
             localStorage.setItem("cedulaClienteSeleccionado", data.cabecera.ci_cliente || "999");
 
-            // 4. MODO CONSULTA: Esta bandera sirve para que la factura sepa que NO debe procesar nada, solo mostrar
+            // Esto es para que la factura no procesar nada solo mostrar
             localStorage.setItem("modoConsulta", "true");
 
-            // 5. Redirección a la interfaz de factura
+            // Redirección a la interfaz de factura
             window.location.href = "../factra/fa.html";
         } else {
             alert("Error al recuperar detalle: " + data.mensaje);

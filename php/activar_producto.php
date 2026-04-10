@@ -11,7 +11,7 @@ if (!$codigo) {
 }
 
 try {
-    // Volvemos a poner estado en 1
+    // combierte el 0 en 1
     $sql = "UPDATE productos SET estado = 1 WHERE codigo = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$codigo]);
