@@ -40,7 +40,12 @@ async function cargarDatosFactura(id) {
             document.getElementById("nroFactura").textContent = `${String(id).padStart(6, '0')}`;
             document.getElementById("fechaFactura").textContent = `${cab.fecha} ${cab.hora}`;
             document.getElementById("metodoPago").textContent = cab.tipo_pago;
-            document.getElementById("vendedor").textContent = cab.empleado;
+
+            // --- CAMBIO SOLICITADO AQUÍ ---
+            // Recuperamos el nombre real guardado en el Login
+            const nombreVendedor = localStorage.getItem("nombreUsuarioLogueado");
+            document.getElementById("vendedor").textContent = nombreVendedor || cab.empleado;
+            // ------------------------------
 
             const tablaBody = document.getElementById("listaProductos");
             tablaBody.innerHTML = "";
