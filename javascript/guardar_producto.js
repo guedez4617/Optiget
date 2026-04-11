@@ -27,21 +27,73 @@ window.onload = () => {
     }
 };
 
-// pone la etiqueta del iva
-checkIva.addEventListener('change', () => {
-    console.log("Estado del IVA:", checkIva.checked ? "Activado" : "Desactivado");
-});
-
 // guarda o actualiza 
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    // --- CAPTURA DE VALORES ---
+    const codigo = document.getElementById('codigo_barra').value.trim();
+    const marca = document.getElementById('marca').value.trim();
+    const nombre = document.getElementById('nombre').value.trim();
+    const presentacion = document.getElementById('Precentacion').value.trim();
+
+    // --- VALIDACIONES DE REGLAS ---
+
+    // 1. Validación de Código: Min 7 caracteres, no puede ser 0000000, solo números
+    const soloNumeros = /^[0-9]+$/;
+    if (codigo.length < 7) {
+        alert("⚠️ El código debe tener al menos 7 caracteres.");
+        return;
+    }
+    if (/^0+$/.test(codigo)) {
+        alert("⚠️ El código no puede ser solo ceros.");
+        return;
+    }
+    if (!soloNumeros.test(codigo)) {
+        alert("⚠️ El código solo debe contener números.");
+        return;
+    }
+
+    // 2. Validación de Marca y Nombre: Solo letras y espacios
+    const soloLetrasEspacios = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!soloLetrasEspacios.test(marca)) {
+        alert("⚠️ En 'Marca' solo se permiten letras y espacios.");
+        return;
+    }
+    if (!soloLetrasEspacios.test(nombre)) {
+        alert("⚠️ En 'Nombre' solo se permiten letras y espacios.");
+        return;
+    }
+
+    // 3. Validación de Presentación: Solo letras y números
+    const letrasYNumeros = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!letrasYNumeros.test(presentacion)) {
+        alert("⚠️ En 'Presentación' solo se permiten letras y números.");
+        return;
+    }
+
+    // --- NUEVA VALIDACIÓN: VERIFICAR SI EL CÓDIGO YA EXISTE (Solo si es nuevo) ---
+    if (!datosEdicion) {
+        try {
+            const checkRes = await fetch(`../../../php/verificar_codigo_producto.php?codigo=${codigo}`);
+            const checkData = await checkRes.json();
+
+            if (checkData.existe) {
+                alert(`⚠️ El código ${codigo} ya está registrado con el producto: ${checkData.nombre}`);
+                return;
+            }
+        } catch (error) {
+            console.error("Error verificando código:", error);
+        }
+    }
+
+    // --- PREPARACIÓN DE DATOS ---
     const productoData = {
-        codigo: document.getElementById('codigo_barra').value.trim(),
+        codigo: codigo,
         categoria: document.getElementById('categoria').value,
-        marca: document.getElementById('marca').value,
-        nombre: document.getElementById('nombre').value,
-        presentacion: document.getElementById('Precentacion').value,
+        marca: marca,
+        nombre: nombre,
+        presentacion: presentacion,
         cantidad: parseInt(document.getElementById('cantidad').value) || 0,
         precio: parseFloat(document.getElementById('precio').value) || 0,
         conIva: document.getElementById('iva').checked ? 1 : 0,
@@ -55,8 +107,6 @@ form.addEventListener('submit', async function(e) {
             body: JSON.stringify(productoData)
         });
 
-        if (!response.ok) throw new Error("Error " + response.status);
-
         const resultado = await response.json();
 
         if (resultado.status === "success") {
@@ -67,7 +117,6 @@ form.addEventListener('submit', async function(e) {
         }
 
     } catch (error) {
-        console.error("Error:", error);
         alert("Error de conexión con el servidor.");
     }
 });

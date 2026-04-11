@@ -2,10 +2,10 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista de Deudores</title>
-    <link rel="stylesheet" href="../../../css/lis.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Créditos - Lista de Deudores</title>
+    <link rel="stylesheet" href="../../../css/lis.css">
 </head>
 
 <body>
@@ -13,60 +13,114 @@
 
     <div class="linea_azul">
         <aside class="ancho_linea">
-            <h2>Creditos</h2>
+            <h2>Créditos</h2>
             <nav>
                 <ul>
                     <li><a href="../../inicio/inicio.html">Inicio</a></li>
                     <li><a href="../panel_general/panel_general.html">Panel General</a></li>
                     <li><a href="../personal/per.html">Usuarios</a></li>
-                    <li><a href="../lista de deudore/lis.html">Créditos</a></li>
+                    <li><a href="../lista de deudore/lis.html" class="active">Créditos</a></li>
                     <li><a href="../../Cajera/caja/principal.html">Facturación</a></li>
                     <li><a href="../../Cajera/historial_ventas/his.html">Historial de ventas</a></li>
                     <li><a href="../../Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
-                    <li><a href="../../Almacen/historial_de_salida/historial_de_salida.html">Historial de salida</a></li>
                     <li><a href="../../../index.html">Salir</a></li>
                 </ul>
             </nav>
         </aside>
 
         <main class="cuadro_lista">
-            <header class="altura_lista ">
-                <h1>Deudores</h1>
+            <header class="altura_lista">
+                <h1>Control de Deudores</h1>
                 <div class="busqueda">
-                    <input type="text" placeholder="Buscar deudor..." />
+                    <input type="text" id="inputBusqueda" placeholder="Nombre o cédula...">
                     <button class="btn_busqueda">Buscar</button>
                 </div>
             </header>
 
-            <table class="deudores-table">
-                <thead>
-                    <tr>
-                        <th>Cedula</th>
-                        <th>nombre</th>
-                        <th>Telefono</th>
-                        <th>correo electronico</th>
-                        <th>domicio</th>
-                        <th>monto</th>
-                        <th>Fecha de la compra</th>
-                        <th>fecha limite</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <th></th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            <section class="contenedor-tabla">
+                <table class="deudores-table">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre Completo</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Deuda Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTablaDeudores">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Cargando deudores...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         </main>
     </div>
+
+    <div id="modalAbonos" class="modal">
+        <div class="modal-contenido">
+
+            <div class="header-modal">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h2 id="tituloModal">Detalle del Cliente</h2>
+                        <p id="subtituloModal">Cédula: <span id="cedulaDetalle"></span></p>
+                    </div>
+
+                    <div class="tasa-esquina">
+                        <label>Tasa del dia:</label>
+                        <input type="number" id="tasaDia" readonly>
+                        <span>BS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cuerpo-modal">
+                <h3 style="color: #fff; margin-bottom: 15px; font-size: 16px;">Facturas con saldo pendiente</h3>
+                <div id="contenidoDetalle" class="contenedor-facturas-cards">
+                </div>
+
+                <div id="seccionAbonar" class="contenedor-abono-moderno">
+                    <h3>Registrar Nuevo Abono</h3>
+
+                    <div class="grid-abono">
+                        <div class="tarjeta-input">
+                            <label id="labelMonto">Monto a Abonar ($)</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="number" id="montoInput" placeholder="0.00" oninput="calcularAbono()" step="0.01">
+                                <button type="button" class="btn-switch" onclick="cambiarMoneda()" title="Cambiar entre $ y BS">
+                                    ⇄
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="visor-resultado info-bs">
+                            <span id="labelVisor" class="etiqueta">Equivalente en Bolívares</span>
+                            <div class="monto-final">
+                                <span id="montoConvertido">0.00</span> <small id="unidadVisor">BS</small>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta-input">
+                            <label>Método de Pago</label>
+                            <select id="metodoPago">
+                                <option value="Efectivo $">Punto</option>
+                                <option value="Efectivo BS">Efectivo</option>
+                                <option value="Pago Movil">Pago Móvil</option>
+                                <option value="Transferencia">Biopago</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="procesarAbono()" class="btn-confirmar-moderno">Confirmar Registro de Pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../javascript/gestion_creditos.js"></script>
 </body>
 
 </html>

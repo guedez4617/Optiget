@@ -2,6 +2,7 @@ body {
     margin: 0;
     font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
+    overflow: hidden;
 }
 
 .fondo.capa1 {
@@ -19,7 +20,8 @@ body {
 
 .linea_azul {
     display: flex;
-    height: 200vh;
+    height: 100vh;
+    width: 100vw;
     overflow: hidden;
 }
 
@@ -30,7 +32,7 @@ body {
     padding: 20px;
     flex-shrink: 0;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .ancho_linea h2 {
@@ -53,17 +55,25 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-.ancho_linea a:hover {
+.ancho_linea a:hover,
+.ancho_linea a.active {
     background-color: #a24002;
 }
 
+
+/* --- CONTENEDOR PRINCIPAL --- */
+
 .cuadro_lista {
     flex: 1;
-    padding: 30px;
-    height: 100vh;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    height: calc(100vh - 40px);
     overflow-y: auto;
     box-sizing: border-box;
 }
@@ -72,61 +82,331 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #c54b00;
+    padding-bottom: 10px;
 }
 
 .altura_lista h1 {
+    color: #c54b00;
+    font-size: 24px;
     margin: 0;
 }
 
 .busqueda {
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 
 .busqueda input {
-    padding: 8px;
+    padding: 8px 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
+    width: 250px;
 }
 
 .btn_busqueda {
     background-color: #c54b00;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 8px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s;
 }
 
 .deudores-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: rgb(252, 252, 252);
+    background: white;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+
+.deudores-table th {
+    background-color: #c54b00;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 14px;
+    padding: 12px 15px;
+}
+
+.deudores-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.btn-detalle {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+
+/* --- MODAL ESTILO MODERNO --- */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-contenido {
+    background-color: #1e1e1e;
+    margin: 2% auto;
+    width: 65%;
+    max-height: 95vh;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.header-modal {
+    background-color: #252525;
+    padding: 20px 25px;
+    border-bottom: 3px solid #c54b00;
+}
+
+.header-modal h2 {
+    margin: 0;
+    color: #c54b00;
+    font-size: 22px;
+}
+
+.header-modal p {
+    color: #aaa;
+    margin: 5px 0 0 0;
+}
+
+
+/* --- ESTILO TASA EN LA ESQUINA (MODIFICADO: READONLY) --- */
+
+.tasa-esquina {
+    background: #333;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tasa-esquina label {
+    color: #c54b00;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.tasa-esquina input {
+    background: transparent !important;
+    border: none !important;
+    color: #28a745 !important;
+    /* Verde para indicar que es un valor informativo */
+    font-weight: bold;
+    width: 70px !important;
+    text-align: right;
+    font-size: 16px !important;
+    padding: 0 !important;
+    outline: none;
+    cursor: default;
+}
+
+.tasa-esquina span {
+    color: #888;
+    font-size: 12px;
+}
+
+.cuerpo-modal {
+    padding: 25px;
+    overflow-y: auto;
+}
+
+
+/* --- CUADRITOS DE FACTURAS (CARDS) --- */
+
+.contenedor-facturas-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.factura-card {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-left: 5px solid #c54b00;
+    padding: 15px;
+    border-radius: 8px;
+    width: calc(33.33% - 15px);
+    box-sizing: border-box;
+    color: #fff;
+    transition: transform 0.2s;
+}
+
+.factura-card:hover {
+    transform: translateY(-3px);
+    border-color: #666;
+}
+
+.factura-header {
+    font-weight: bold;
+    font-size: 14px;
+    color: #c54b00;
+    margin-bottom: 8px;
+}
+
+.factura-monto {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.factura-fecha {
+    font-size: 12px;
+    color: #888;
+}
+
+
+/* --- SECCIÓN DE ABONO MODERNA --- */
+
+.contenedor-abono-moderno {
+    background: #252525;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    margin-top: 10px;
+}
+
+.contenedor-abono-moderno h3 {
+    color: #c54b00;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.grid-abono {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-.deudores-table th,
-.deudores-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: left;
+.tarjeta-input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.icono-ver,
-.icono-confirmar {
+.tarjeta-input label {
+    color: #bbb;
+    font-size: 13px;
+}
+
+.tarjeta-input input,
+.tarjeta-input select {
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    color: #fff;
+    outline: none;
+}
+
+.tarjeta-input input:focus {
+    border-color: #c54b00;
+}
+
+
+/* --- BOTÓN SWITCH DE MONEDA --- */
+
+.btn-switch {
+    background: #444;
+    border: 1px solid #555;
+    color: #c54b00;
+    border-radius: 6px;
+    padding: 0 12px;
     cursor: pointer;
     font-size: 18px;
-    padding: 6px 10px;
-    border-radius: 4px;
-    color: inherit;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.icono-ver:hover,
-.icono-confirmar:hover {
+.btn-switch:hover {
+    background: #c54b00;
+    color: white;
+}
+
+
+/* VISOR DE RESULTADO */
+
+.visor-resultado.info-bs {
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #444;
+}
+
+.visor-resultado .etiqueta {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.visor-resultado .monto-final {
+    font-size: 24px;
+    font-weight: 800;
+    color: #28a745;
+    /* Verde para indicar resultado positivo */
+}
+
+.visor-resultado .monto-final small {
+    font-size: 12px;
+    color: #666;
+    margin-left: 4px;
+}
+
+
+/* BOTÓN DE CONFIRMACIÓN */
+
+.btn-confirmar-moderno {
+    width: 100%;
     background-color: #c54b00;
     color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-confirmar-moderno:hover {
+    background-color: #e65800;
+    box-shadow: 0 0 15px rgba(197, 75, 0, 0.4);
 }
