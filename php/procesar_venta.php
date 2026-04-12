@@ -1,93 +1,71 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Cabeceras
+session_start(); // Fundamental para capturar quién está logueado
 header('Content-Type: application/json');
 include 'db_conexion.php';
 
-//Capturar entrada
-$input = file_get_contents("php://input");
-$data = json_decode($input, true);
+// 1. Verificar que el usuario esté logueado
+$vendedor_ci = $_SESSION['ci_usuario'] ?? null;
 
-if (!$data) {
-    echo json_encode(["status" => "error", "mensaje" => "No se recibieron datos válidos"]);
+if (!$vendedor_ci) {
+    echo json_encode(["status" => "error", "mensaje" => "Sesión expirada. Inicie sesión nuevamente."]);
     exit;
 }
 
-$carrito = $data['carrito'] ?? [];
-$metodoPago = $data['metodo_pago'] ?? 'Efectivo';
-$cliente = $data['cliente'] ?? null;
-
-//Nombre del empleado
-$vendedor = $_SESSION['nombre_usuario'] ?? 'Empleado General';
-
-//limpia la cedula
-$ci_cliente = ($cliente && isset($cliente['cedula'])) ? trim($cliente['cedula']) : '999';
-
-if (empty($carrito)) {
-    echo json_encode(["status" => "error", "mensaje" => "El carrito está vacío"]);
+// 2. Leer los datos enviados por el JS
+$input = json_decode(file_get_contents("php://input"), true);
+if (!$input) {
+    echo json_encode(["status" => "error", "mensaje" => "No se recibieron datos"]);
     exit;
 }
+
+$carrito = $input['carrito'];
+$metodo = $input['metodo_pago'];
+$tasa = $input['tasa'];
+$cedula_cliente = $input['cliente']['cedula'];
 
 try {
     $pdo->beginTransaction();
 
-    //inserta cabesera
-    $sqlFactura = "INSERT INTO factura (fecha, hora, ci_cliente, nombre_empleado, tipo_pago) 
+    // 3. Insertar la Cabecera de la Factura
+    // Nota: Usamos 'usuario_ci' para guardar la relación con el empleado logueado
+    $sql_factura = "INSERT INTO factura (fecha, hora, ci_cliente, tipo_pago, usuario_ci) 
                     VALUES (CURDATE(), CURTIME(), ?, ?, ?)";
-    $stmtFact = $pdo->prepare($sqlFactura);
-    $stmtFact->execute([$ci_cliente, $vendedor, $metodoPago]);
+    $stmt = $pdo->prepare($sql_factura);
+    $stmt->execute([$cedula_cliente, $metodo, $vendedor_ci]);
     
-    $idFacturaReal = $pdo->lastInsertId();
+    $id_factura = $pdo->lastInsertId();
 
-    // inserta detalles
+    // 4. Insertar los productos en det_factura y actualizar stock
+    $sql_det = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total, total_bs) 
+                VALUES (?, ?, ?, ?, ?)";
+    $stmt_det = $pdo->prepare($sql_det);
+
+    $sql_stock = "UPDATE productos SET unidades = unidades - ? WHERE Codigo = ?";
+    $stmt_stock = $pdo->prepare($sql_stock);
+
     foreach ($carrito as $item) {
-        $codigoOriginal = trim((string)$item['codigo']);
+        // Cálculo de subtotal en base a lo que viene del carrito
+        $subtotal_usd = $item['precio'] * $item['cantidadFactura'];
         
-        $esManual = (strpos($codigoOriginal, 'MANUAL-') !== false || $codigoOriginal === "0" || $codigoOriginal === "999");
-        $codigoFinal = $codigoOriginal; 
-
-        $cantidad = intval($item['cantidadFactura']);
-        $precio = floatval($item['precio']);
-        $subtotal = $cantidad * $precio;
-        
-        // Captura el total bs 
-        $totalBs = isset($item['total_bs']) ? floatval($item['total_bs']) : 0;
-
-        // inserta detalles
-        $sqlDetalle = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total, total_bs) 
-                        VALUES (?, ?, ?, ?, ?)";
-        $stmtDet = $pdo->prepare($sqlDetalle);
-        $stmtDet->execute([
-            $idFacturaReal, 
-            $codigoFinal, 
-            $cantidad,
-            $subtotal,
-            $totalBs 
+        $stmt_det->execute([
+            $id_factura,
+            $item['codigo'],
+            $item['cantidadFactura'],
+            $subtotal_usd,
+            $item['total_bs']
         ]);
 
-        //resta el stod vendido
-        if ($codigoFinal !== "0" && $codigoFinal !== "999" && !$esManual) {
-            $sqlStock = "UPDATE productos SET unidades = unidades - ? 
-                        WHERE Codigo = ? AND unidades >= ?";
-            $stmtS = $pdo->prepare($sqlStock);
-            $stmtS->execute([$cantidad, $codigoFinal, $cantidad]);
-
-            $sqlAutoInactivar = "UPDATE productos SET estado = 0 
-                                WHERE Codigo = ? AND unidades <= 0";
-            $stmtAuto = $pdo->prepare($sqlAutoInactivar);
-            $stmtAuto->execute([$codigoFinal]);
+        // No restamos stock si es el "Monto Adicional" (código 0)
+        if ($item['codigo'] !== "0") {
+            $stmt_stock->execute([$item['cantidadFactura'], $item['codigo']]);
         }
     }
 
     $pdo->commit();
-    echo json_encode(["status" => "ok", "id_factura" => (int)$idFacturaReal]);
+    echo json_encode(["status" => "ok", "id_factura" => $id_factura]);
 
 } catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    echo json_encode(["status" => "error", "mensaje" => "Error en servidor: " . $e->getMessage()]);
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    echo json_encode(["status" => "error", "mensaje" => "Error DB: " . $e->getMessage()]);
 }
+?>

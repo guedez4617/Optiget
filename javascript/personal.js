@@ -96,20 +96,28 @@ function prepararEdicion(u) {
     window.location.href = "../registro_de_usuario/re.html";
 }
 
-// Eliminar Usuario
 async function eliminarUsuario(cedula) {
-    if (confirm(`¿Eliminar usuario con C.I: ${cedula}?`)) {
+    // Cambiamos el mensaje para que sea más técnico
+    if (confirm(`¿Está seguro de inhabilitar al usuario con C.I: ${cedula}? El usuario ya no podrá iniciar sesión.`)) {
         try {
             const response = await fetch('../../../php/eliminar_usuario.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cedula: cedula })
             });
+
             const res = await response.json();
+
             if (res.status === "success") {
-                alert("Eliminado");
-                cargarUsuarios();
+                // Mensaje más amigable
+                alert("Usuario inhabilitado con éxito.");
+                cargarUsuarios(); // Recarga la tabla y, como ahora el PHP filtra, ya no aparecerá
+            } else {
+                alert("Error: " + res.message);
             }
-        } catch (e) { alert("Error al eliminar"); }
+        } catch (e) {
+            console.error(e);
+            alert("Error de conexión al intentar inhabilitar.");
+        }
     }
 }

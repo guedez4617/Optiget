@@ -2,7 +2,7 @@ const form = document.getElementById('formRegistro');
 const inputPrecio = document.getElementById('precio');
 const checkIva = document.getElementById('iva');
 
-// cargar para editar
+// Recuperar información de edición si existe
 const datosEdicion = JSON.parse(localStorage.getItem("productoAEditar"));
 
 window.onload = () => {
@@ -10,15 +10,16 @@ window.onload = () => {
         document.getElementById('tituloPagina').innerText = "Editar Producto";
 
         const p = datosEdicion;
+        // Rellenar campos con los datos existentes
         document.getElementById('codigo_barra').value = p.codigo;
-        document.getElementById('codigo_barra').readOnly = true;
+        document.getElementById('codigo_barra').readOnly = true; // El código no se edita por integridad
         document.getElementById('categoria').value = p.categoria || "";
         document.getElementById('marca').value = p.marca || "";
         document.getElementById('nombre').value = p.nombre;
         document.getElementById('Precentacion').value = p.presentacion || "";
         document.getElementById('cantidad').value = p.cantidad;
         document.getElementById('precio').value = p.precio;
-        document.getElementById('iva').checked = p.conIva;
+        document.getElementById('iva').checked = (p.conIva == 1 || p.conIva === true);
 
     } else {
         form.reset();
@@ -27,7 +28,7 @@ window.onload = () => {
     }
 };
 
-// guarda o actualiza 
+// Evento principal para guardar o actualizar
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -36,67 +37,45 @@ form.addEventListener('submit', async function(e) {
     const marca = document.getElementById('marca').value.trim();
     const nombre = document.getElementById('nombre').value.trim();
     const presentacion = document.getElementById('Precentacion').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const conIva = document.getElementById('iva').checked ? 1 : 0;
 
-    // --- VALIDACIONES DE REGLAS ---
-
-    // 1. Validación de Código: Min 7 caracteres, no puede ser 0000000, solo números
+    // --- VALIDACIONES ---
     const soloNumeros = /^[0-9]+$/;
-    if (codigo.length < 7) {
-        alert("⚠️ El código debe tener al menos 7 caracteres.");
-        return;
-    }
-    if (/^0+$/.test(codigo)) {
-        alert("⚠️ El código no puede ser solo ceros.");
-        return;
-    }
-    if (!soloNumeros.test(codigo)) {
-        alert("⚠️ El código solo debe contener números.");
-        return;
+    if (codigo.length < 7 || /^0+$/.test(codigo) || !soloNumeros.test(codigo)) {
+        return alert("⚠️ El código debe ser numérico, tener al menos 7 caracteres y no ser solo ceros.");
     }
 
-    // 2. Validación de Marca y Nombre: Solo letras y espacios
     const soloLetrasEspacios = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-    if (!soloLetrasEspacios.test(marca)) {
-        alert("⚠️ En 'Marca' solo se permiten letras y espacios.");
-        return;
-    }
-    if (!soloLetrasEspacios.test(nombre)) {
-        alert("⚠️ En 'Nombre' solo se permiten letras y espacios.");
-        return;
+    if (!soloLetrasEspacios.test(marca) || !soloLetrasEspacios.test(nombre)) {
+        return alert("⚠️ 'Marca' y 'Nombre' solo permiten letras y espacios.");
     }
 
-    // 3. Validación de Presentación: Solo letras y números
-    const letrasYNumeros = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/;
-    if (!letrasYNumeros.test(presentacion)) {
-        alert("⚠️ En 'Presentación' solo se permiten letras y números.");
-        return;
-    }
-
-    // --- NUEVA VALIDACIÓN: VERIFICAR SI EL CÓDIGO YA EXISTE (Solo si es nuevo) ---
+    // --- VERIFICACIÓN DE CÓDIGO (Solo si es nuevo) ---
     if (!datosEdicion) {
         try {
             const checkRes = await fetch(`../../../php/verificar_codigo_producto.php?codigo=${codigo}`);
             const checkData = await checkRes.json();
-
             if (checkData.existe) {
-                alert(`⚠️ El código ${codigo} ya está registrado con el producto: ${checkData.nombre}`);
-                return;
+                return alert(`⚠️ El código ${codigo} ya está registrado con el producto: ${checkData.nombre}`);
             }
         } catch (error) {
-            console.error("Error verificando código:", error);
+            console.error("Error al verificar código:", error);
         }
     }
 
-    // --- PREPARACIÓN DE DATOS ---
+    // --- PREPARACIÓN DEL OBJETO PARA EL PHP ---
     const productoData = {
-        codigo: codigo,
-        categoria: document.getElementById('categoria').value,
-        marca: marca,
-        nombre: nombre,
-        presentacion: presentacion,
-        cantidad: parseInt(document.getElementById('cantidad').value) || 0,
-        precio: parseFloat(document.getElementById('precio').value) || 0,
-        conIva: document.getElementById('iva').checked ? 1 : 0,
+        codigo,
+        categoria,
+        marca,
+        nombre,
+        presentacion,
+        cantidad,
+        precio,
+        conIva,
         esEdicion: datosEdicion ? true : false
     };
 
@@ -110,17 +89,20 @@ form.addEventListener('submit', async function(e) {
         const resultado = await response.json();
 
         if (resultado.status === "success") {
+            alert(resultado.message);
             localStorage.removeItem("productoAEditar");
             window.location.href = "../Gestión de Productos/gestion_de_produtos.html";
         } else {
-            alert("Atención: " + resultado.message);
+            alert("Atención: " + (resultado.message || resultado.mensaje));
         }
 
     } catch (error) {
-        alert("Error de conexión con el servidor.");
+        console.error("Error de conexión:", error);
+        alert("🚫 Error de conexión con el servidor.");
     }
 });
 
+// Función para el botón cancelar
 function cancelar() {
     localStorage.removeItem("productoAEditar");
     window.location.href = "../Gestión de Productos/gestion_de_produtos.html";

@@ -34,17 +34,16 @@ async function cargarDatosFactura(id) {
             document.getElementById("nombreCliente").textContent = cab.nombre_cliente || "Cliente General";
             document.getElementById("rifCliente").textContent = cab.ci_cliente || "V-00000000";
             document.getElementById("telfCliente").textContent = cab.telefono || "---";
-            document.getElementById("dirCliente").textContent = cab.residencia || "---";
+            document.getElementById("dirCliente").textContent = cab.direccion || "---";
 
             // Datos Factura
             document.getElementById("nroFactura").textContent = `${String(id).padStart(6, '0')}`;
             document.getElementById("fechaFactura").textContent = `${cab.fecha} ${cab.hora}`;
             document.getElementById("metodoPago").textContent = cab.tipo_pago;
 
-            // --- CAMBIO SOLICITADO AQUÍ ---
-            // Recuperamos el nombre real guardado en el Login
-            const nombreVendedor = localStorage.getItem("nombreUsuarioLogueado");
-            document.getElementById("vendedor").textContent = nombreVendedor || cab.empleado;
+            // Mostramos el vendedor que viene de la base de datos (más seguro)
+            const vendedorReal = cab.nombre_vendedor ? `${cab.nombre_vendedor} ${cab.apellido_vendedor}` : "S/V";
+            document.getElementById("vendedor").textContent = vendedorReal;
             // ------------------------------
 
             const tablaBody = document.getElementById("listaProductos");
@@ -63,7 +62,8 @@ async function cargarDatosFactura(id) {
                 // Obtenemos el total bs guardado en la base de datos
                 const totalBsFila = parseFloat(p.total_bs) || 0;
                 //calcula el iva si tiene
-                const tieneIva = (p.tiene_iva == 1 || p.tiene_iva == "Si");
+                // En factura.js
+                const tieneIva = (p.tiene_iva == 1 || p.tiene_iva == "Si" || p.tiene_iva == "si");
                 const ivaFila = tieneIva ? (subFila * 0.16) : 0;
                 //calcula el total
                 const totalFila = subFila + ivaFila;

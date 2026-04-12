@@ -4,54 +4,35 @@ include 'db_conexion.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data) {
-    echo json_encode(["status" => "error", "message" => "No se recibieron datos"]);
-    exit;
-}
-
-$ci       = trim($data['cedula']);
-$nombre   = trim($data['nombre']);
-$apellido = trim($data['apellido']);
-$user_log = trim($data['usuario']); 
-$rol      = $data['rango'];
-$telef    = trim($data['telefono']);
+$cedula = $data['cedula'];
+$nombre = $data['nombre'];
+$apellido = $data['apellido'];
+$usuario = $data['usuario'];
+$clave = $data['clave'];
+$rango = $data['rango'];
+$telefono = $data['telefono'];
 $esEdicion = $data['esEdicion'];
-$clave_recibida = $data['clave'];
-
-// Cifrar la clave (ya sea la cédula o la nueva clave fuerte)
-$clave_segura = password_hash($clave_recibida, PASSWORD_BCRYPT);
 
 try {
-    if ($esEdicion) {
-        // MODO EDICIÓN: Actualizamos todo incluyendo la nueva clave validada
-        $sql = "UPDATE usuarios SET 
-                NOMBRE = ?, 
-                APELLIDO = ?, 
-                N_USUARIO = ?, 
-                CONTRASEÑA = ?, 
-                ROL = ?, 
-                telefono = ? 
-                WHERE `C.I` = ?";
+    if (!$esEdicion) {
+        // REGISTRO NUEVO: Forzamos estado = 1
+        $sql = "INSERT INTO usuarios (`C.I`, NOMBRE, APELLIDO, N_USUARIO, CONTRASEÑA, ROL, telefono, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nombre, $apellido, $user_log, $clave_segura, $rol, $telef, $ci]);
-        echo json_encode(["status" => "success", "message" => "Usuario actualizado con nueva clave fuerte."]);
+        $stmt->execute([$cedula, $nombre, $apellido, $usuario, $clave, $rango, $telefono]);
+        $msg = "Usuario registrado y activado con éxito";
     } else {
-        // MODO NUEVO: Verificamos que no exista
-        $check = $pdo->prepare("SELECT `C.I` FROM usuarios WHERE `C.I` = ?");
-        $check->execute([$ci]);
-
-        if ($check->rowCount() > 0) {
-            echo json_encode(["status" => "error", "message" => "Esta cédula ya está registrada."]);
-            exit;
-        }
-
-        $sql = "INSERT INTO usuarios (`C.I`, NOMBRE, APELLIDO, N_USUARIO, CONTRASEÑA, ROL, telefono) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // EDICIÓN
+        $sql = "UPDATE usuarios SET NOMBRE=?, APELLIDO=?, N_USUARIO=?, CONTRASEÑA=?, ROL=?, telefono=? 
+                WHERE `C.I`=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$ci, $nombre, $apellido, $user_log, $clave_segura, $rol, $telef]);
-        echo json_encode(["status" => "success", "message" => "Usuario creado. Su clave provisional es su C.I."]);
+        $stmt->execute([$nombre, $apellido, $usuario, $clave, $rango, $telefono, $cedula]);
+        $msg = "Datos actualizados con éxito";
     }
+
+    echo json_encode(["status" => "success", "message" => $msg]);
+
 } catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Error SQL: " . $e->getMessage()]);
+    echo json_encode(["status" => "error", "message" => "Error: " . $e->getMessage()]);
 }
 ?>
