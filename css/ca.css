@@ -13,7 +13,7 @@
         background-image: url("../imagenes/frente.png");
         background-size: cover;
         background-position: center;
-        filter: blur(6px);
+        filter: blur(6px) brightness(0.8);
         z-index: -2;
     }
     

@@ -4,8 +4,12 @@ body {
     background-color: #f4f6f9;
 }
 
-.fondo.capa1 {
-    position: absolute;
+
+/* Imagen de fondo aclarada (brightness 0.8) y desenfocada */
+
+body::before {
+    content: "";
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -13,8 +17,8 @@ body {
     background-image: url("../imagenes/frente.png");
     background-size: cover;
     background-position: center;
-    filter: blur(6px);
-    z-index: -2;
+    filter: blur(8px) brightness(1);
+    z-index: -1;
 }
 
 .linea_azul {
@@ -23,6 +27,9 @@ body {
     overflow: hidden;
 }
 
+
+/* Barra lateral naranja */
+
 .ancho_linea {
     width: 200px;
     background-color: #c54b00;
@@ -30,7 +37,9 @@ body {
     padding: 20px;
     flex-shrink: 0;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
+    /* Bloqueado según estética previa */
+    z-index: 10;
 }
 
 .ancho_linea h2 {
@@ -39,8 +48,9 @@ body {
 }
 
 .ancho_linea ul {
-    list-style: none;
-    padding: 0;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0;
 }
 
 .ancho_linea li {
@@ -53,82 +63,146 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 .ancho_linea a:hover {
     background-color: #a24002;
 }
 
+
+/* --- PANEL CENTRAL CON EFECTO CRISTAL NEGRO --- */
+
 .panel {
     flex: 1;
     padding: 30px;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
-}
-
-.altura_cuadro {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    /* Capa de cristal base */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .altura_cuadro h1 {
     margin: 0;
+    color: white;
+    font-size: 2.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
+
+
+/* --- BUSCADOR ESTILO DARK --- */
 
 .busqueda {
     display: flex;
     gap: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .busqueda input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    background-color: rgba(26, 26, 26, 0.8);
+    color: #ffffff;
+    border: 1px solid #c54b00;
+    padding: 10px;
+    border-radius: 6px;
+    outline: none;
+    flex-grow: 1;
 }
 
 .btn-buscar {
     background-color: #c54b00;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .btn-buscar:hover {
-    background-color: #a03f02;
+    background-color: #ff8c00;
+    transform: translateY(-2px);
 }
+
+
+/* --- TABLA DE VENTAS (CRISTAL NEGRO Y LETRA GRANDE) --- */
 
 .ventas-tabla {
     width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(0, 0, 0, 0.7);
+    /* Efecto cristal negro */
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
-.ventas-tabla th,
-.ventas-tabla td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: left;
+.ventas-tabla th {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ff8c00;
+    /* Naranja corporativo */
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #c54b00;
 }
+
+.ventas-tabla td {
+    padding: 15px;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 16px;
+    /* Letras de los productos/ventas más grandes */
+}
+
+.ventas-tabla tr:hover td {
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.2s;
+}
+
+
+/* Icono de lupa / ver detalles */
 
 .icono-ver {
     cursor: pointer;
-    font-size: 18px;
-    padding: 6px 10px;
-    border-radius: 4px;
-    color: inherit;
+    font-size: 1.2rem;
+    padding: 8px;
+    color: #ff8c00;
     text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: transform 0.2s;
+    display: inline-block;
 }
 
 .icono-ver:hover {
-    background-color: #c54b00;
     color: white;
+    transform: scale(1.2);
+}
+
+
+/* --- SCROLLBAR --- */
+
+.panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.panel::-webkit-scrollbar-thumb {
+    background: #c54b00;
+    border-radius: 10px;
 }

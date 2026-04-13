@@ -1,11 +1,12 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
 }
 
-.fondo.capa1 {
-    position: absolute;
+body::before {
+    content: "";
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -13,13 +14,14 @@ body {
     background-image: url("../imagenes/frente.png");
     background-size: cover;
     background-position: center;
-    filter: blur(6px);
-    z-index: -2;
+    filter: blur(8px) brightness(1);
+    z-index: -1;
 }
 
 .linea_azul {
     display: flex;
     height: 100vh;
+    overflow: hidden;
 }
 
 .ancho_linea {
@@ -27,6 +29,9 @@ body {
     background-color: #c54b00;
     color: white;
     padding: 20px;
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .ancho_linea h2 {
@@ -49,12 +54,15 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .ancho_linea a:hover {
-    background-color: #963b02;
+    background-color: #a24002;
 }
+
+
+/* --- PANEL CENTRAL (Scroll corregido) --- */
 
 .panel {
     flex: 1;
@@ -62,72 +70,108 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    height: 100vh;
+    overflow-y: auto;
+    /* Permite scroll interno */
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-sizing: border-box;
 }
 
-.altura_cuadro {
-    margin-bottom: 2px;
-}
 
-.altura_cuadro h1 {
-    margin: 0;
-    font-size: 24px;
-}
+/* --- FORMULARIO (Estilo Cristal Negro Compacto) --- */
 
 .formulario-usuario {
-    background-color: white;
-    padding: 30px;
-    border-radius: 6px;
-    max-width: 300px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 380px;
+    /* Ancho ajustado */
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: white;
+    margin: auto 0;
+    /* Centrado vertical */
 }
 
 .formulario-usuario label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
+    /* Pegado al input */
     font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
 }
 
 .formulario-usuario input,
 .formulario-usuario select {
     width: 100%;
     padding: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    /* Más compacto */
+    margin-bottom: 12px;
+    /* Espacio reducido entre campos */
+    background-color: rgba(26, 26, 26, 0.8);
+    color: white;
+    border: 1px solid #c54b00;
+    border-radius: 6px;
+    box-sizing: border-box;
+    outline: none;
 }
 
-.btn-registro,
-.btn-volver {
-    display: inline-block;
-    width: 100%;
-    padding: 10px 16px;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 14px;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+
+/* --- BOTONES --- */
 
 .btn-registro {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
     background-color: #c54b00;
     color: white;
     border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
 }
 
 .btn-registro:hover {
-    background-color: #853402;
+    background-color: #ff8c00;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(255, 140, 0, 0.3);
 }
 
 .btn-volver {
-    background-color: #555;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(108, 117, 125, 0.5);
     color: white;
     text-decoration: none;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .btn-volver:hover {
-    background-color: #333;
+    background-color: rgba(108, 117, 125, 0.8);
+}
+
+
+/* Ocultar scrollbar de la barra naranja */
+
+.ancho_linea::-webkit-scrollbar {
+    display: none;
 }

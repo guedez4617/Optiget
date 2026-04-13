@@ -1,0 +1,264 @@
+/* --- CONFIGURACIÓN BASE Y ESTRUCTURA --- */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.linea_azul {
+    display: flex;
+    height: 100vh;
+    /* Altura fija de la ventana */
+    overflow: hidden;
+    /* Evita scroll doble en el body */
+}
+
+
+/* Barra lateral naranja - BLOQUEADA */
+
+.ancho_linea {
+    width: 200px;
+    background-color: #c54b00;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: hidden;
+    position: relative;
+    z-index: 10;
+}
+
+.ancho_linea h2 {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.ancho_linea ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0;
+}
+
+.ancho_linea li {
+    margin-bottom: 15px;
+}
+
+.ancho_linea a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.ancho_linea a:hover,
+.ancho_linea a.active {
+    background-color: #a24002;
+}
+
+
+/* --- PANEL CENTRAL CON FONDO REALMENTE FIJO --- */
+
+.panel {
+    flex: 1;
+    position: relative;
+    display: block;
+    /* Cambiado de flex a block para mejor manejo de scroll */
+    padding: 40px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    height: 100vh;
+    background-image: url("../imagenes/frente.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* Esto evita que el fondo suba al bajar */
+}
+
+
+/* Capa de desenfoque y oscurecimiento (Sustituye al ::before anterior) */
+
+.panel::after {
+    content: "";
+    position: fixed;
+    /* Fijo respecto a la pantalla */
+    top: 0;
+    left: 200px;
+    /* Desplazado por la barra naranja */
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    /* Oscurece el fondo */
+    backdrop-filter: blur(6px);
+    /* Aplica el desenfoque */
+    z-index: 0;
+    pointer-events: none;
+    /* Permite hacer clic a través de la capa */
+}
+
+
+/* --- CONTENEDOR DE TARJETAS GLASS --- */
+
+.contenedor-ajustes {
+    position: relative;
+    z-index: 5;
+    /* Por encima del desenfoque */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.tarjeta-glass {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.tarjeta-glass:hover {
+    transform: translateY(-5px);
+}
+
+.tarjeta-glass h3 {
+    margin-top: 0;
+    color: #ff8c00;
+    border-bottom: 2px solid rgba(255, 140, 0, 0.3);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* --- FORMULARIOS --- */
+
+.campo-ajuste {
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    gap: 15px;
+}
+
+.campo-ajuste label {
+    font-size: 14px;
+    color: #cccccc;
+    text-align: right;
+    font-weight: 500;
+}
+
+.campo-ajuste input,
+.campo-ajuste textarea {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #c54b00;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[readonly] {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(197, 75, 0, 0.2) !important;
+    color: #888 !important;
+    cursor: not-allowed;
+}
+
+
+/* --- INPUTS ESPECIALES (FILE Y COLOR) --- */
+
+input[type="file"] {
+    padding: 8px;
+    font-size: 12px;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: #c54b00;
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+
+input[type="color"] {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: none;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 50%;
+    border: none;
+}
+
+
+/* --- BOTONES --- */
+
+.btn-guardar {
+    width: 100%;
+    padding: 14px;
+    background-color: #c54b00;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-azul {
+    background-color: #0056b3 !important;
+}
+
+.divisor {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+
+/* --- RESPONSIVIDAD --- */
+
+@media (max-width: 768px) {
+    .panel::after {
+        left: 0;
+    }
+    /* En móviles el overlay cubre todo */
+    .campo-ajuste {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    .campo-ajuste label {
+        text-align: left;
+    }
+}

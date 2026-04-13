@@ -15,7 +15,7 @@ if (edicionInfo) {
     document.getElementById('apellido').value = d.apellido || "";
     document.getElementById('usuario').value = d.usuario;
     document.getElementById('cedula').value = d.cedula;
-    document.getElementById('cedula').readOnly = true; // No se puede cambiar la C.I. en edición
+    document.getElementById('cedula').readOnly = true;
     document.getElementById('telefono').value = d.telefono;
     document.getElementById('rango').value = d.rango;
 
@@ -83,7 +83,7 @@ document.getElementById('formUsuario').addEventListener('submit', async function
         telefono,
         clave,
         rango,
-        estado: 1, // <--- ESTO ASEGURA QUE SE GUARDE COMO ACTIVO (1)
+        estado: 1,
         esEdicion: edicionInfo ? true : false
     };
 

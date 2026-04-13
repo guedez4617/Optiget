@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configuración - Bodegón Don Diego</title>
+    <link rel="stylesheet" href="../../css/ajustes.css" />
+
+</head>
+
+<body>
+    <div class="linea_azul">
+        <aside class="ancho_linea">
+            <h2>Configuración</h2>
+            <nav>
+                <ul>
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li id="opcion-panel"><a href="../Gerente/panel_general/panel_general.html">Panel General</a></li>
+                    <li id="opcion-usuarios"><a href="../Gerente/personal/per.html">Usuarios</a></li>
+                    <li id="opcion-creditos"><a href="../Gerente/lista de deudore/lis.html">Créditos</a></li>
+                    <li id="opcion-facturacion"><a href="../Cajera/caja/principal.html">Facturación</a></li>
+                    <li id="opcion-historial"><a href="../Cajera/historial_ventas/his.html">Historial de ventas</a></li>
+                    <li id="opcion-almacen"><a href="../Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
+                    <li id="opcion-configuracion"><a href="#" class="active">Configuración</a></li>
+                    <li><a href="../../index.html" id="btnSalir">Salir</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="panel">
+            <div class="contenedor-ajustes">
+
+                <section class="tarjeta-glass">
+                    <h3>👤 Mi Perfil</h3>
+                    <form id="formPerfil">
+                        <div class="campo-ajuste">
+                            <label>Nombre:</label>
+                            <input type="text" id="perNombre" placeholder="Cargando..." readonly>
+                        </div>
+                        <div class="campo-ajuste">
+                            <label>Apellido:</label>
+                            <input type="text" id="perApellido" placeholder="Cargando..." readonly>
+                        </div>
+                        <div class="campo-ajuste">
+                            <label>Cédula:</label>
+                            <input type="text" id="perCedula" placeholder="Cargando..." readonly>
+                        </div>
+                        <div class="campo-ajuste">
+                            <label>Usuario:</label>
+                            <input type="text" id="perUsuario" placeholder="Cargando..." readonly>
+                        </div>
+                        <div class="campo-ajuste">
+                            <label>Rango:</label>
+                            <input type="text" id="perRango" class="input-rango" placeholder="Cargando..." readonly>
+                        </div>
+
+                        <hr class="divisor">
+                        <div class="campo-ajuste">
+                            <label>Teléfono:</label>
+                            <input type="text" id="perTelefono" placeholder="Ej: 0412-1234567">
+                        </div>
+                        <div class="campo-ajuste">
+                            <label>Contraseña:</label>
+                            <input type="password" id="perPass" placeholder="Nueva contraseña">
+                        </div>
+                        <button type="submit" id="btnGuardarPerfil" class="btn-guardar">Actualizar Perfil</button>
+                    </form>
+                </section>
+
+                <section class="tarjeta-glass" id="seccionGerente">
+                    <h3>🏢 Datos del Negocio</h3>
+                    <div class="campo-ajuste">
+                        <label>Nombre del Negocio:</label>
+                        <input type="text" id="busNombre" value="Bodegón Don Diego 2016 C.A.">
+                    </div>
+                    <div class="campo-ajuste">
+                        <label>RIF:</label>
+                        <input type="text" id="busRif" placeholder="J-408121577">
+                    </div>
+                    <div class="campo-ajuste">
+                        <label>Dirección Fiscal:</label>
+                        <input type="text" id="busDir" placeholder="Dirección completa...">
+                    </div>
+                    <div class="campo-ajuste">
+                        <label>Teléfono Empresa:</label>
+                        <input type="text" id="busTel" placeholder="02xx-xxxxxxx">
+                    </div>
+                    <button class="btn-guardar btn-azul">Guardar Encabezado</button>
+                </section>
+
+                <section class="tarjeta-glass" id="seccionPersonalizacion">
+                    <h3>🎨 Apariencia del Sistema</h3>
+                    <form id="formDiseno">
+                        <div class="campo-ajuste">
+                            <label>Imagen de Fondo:</label>
+                            <div class="input-file-container">
+                                <input type="file" id="inputFondo" accept="image/*">
+                            </div>
+                        </div>
+
+                        <div class="campo-ajuste">
+                            <label>Logo Principal:</label>
+                            <div class="input-file-container">
+                                <input type="file" id="inputLogo" accept="image/*">
+                            </div>
+                        </div>
+
+                        <div class="campo-ajuste">
+                            <label>Color del Tema:</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorSistema" value="#c54b00">
+                                <span id="hexValor">#c54b00</span>
+                            </div>
+                        </div>
+
+                        <div class="divisor"></div>
+
+                        <p class="nota-config">Nota: Las imágenes deben ser .png o .jpg para mejor compatibilidad.</p>
+
+                        <button type="submit" id="btnGuardarDiseno" class="btn-guardar btn-verde">Aplicar Cambios</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../javascript/permisos.js"></script>
+</body>
+
+</html>

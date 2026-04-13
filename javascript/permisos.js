@@ -1,18 +1,32 @@
-const aplicarRestricciones = () => {
-    const permisosRaw = localStorage.getItem("permisos");
+const inicializarSeguridad = () => {
+    // 1. Obtener datos del almacenamiento
     const rol = localStorage.getItem("rol");
-    const permisos = permisosRaw ? JSON.parse(permisosRaw) : [];
+    const permisosRaw = localStorage.getItem("permisos");
 
-    console.group("Verificando Accesos");
-    console.log("Rol:", rol);
-    console.groupEnd();
-
-    // 1. Regla del Gerente
-    if (rol && rol.toLowerCase() === "gerente") {
+    // Si no hay datos, probablemente no ha iniciado sesión
+    if (!rol) {
+        console.warn("⚠️ No se encontró sesión activa.");
         return;
     }
 
-    // 2. Mapeo
+    // Convertir permisos a Array (si no existe, queda como array vacío)
+    const permisos = permisosRaw ? JSON.parse(permisosRaw) : [];
+
+    // Normalizamos el rol para evitar fallos por espacios o mayúsculas
+    const rolActual = rol.trim().toLowerCase();
+
+    console.group("🛡️ Verificación de Seguridad");
+    console.log("Rol detectado:", rolActual);
+    console.log("Permisos activos:", permisos);
+    console.groupEnd();
+
+    // 2. REGLA DE ORO: Gerente tiene acceso total
+    if (rolActual === "gerente") {
+        console.log("👑 Acceso total concedido por rango Gerente.");
+        return;
+    }
+
+    // 3. MAPEO: ID del HTML vs Nombre del permiso en la Base de Datos
     const mapaPermisos = {
         'opcion-panel': 'menu_panel',
         'opcion-usuarios': 'menu_usuarios',
@@ -22,25 +36,31 @@ const aplicarRestricciones = () => {
         'opcion-almacen': 'menu_almacen'
     };
 
-    // 3. Ocultación con fuerza (usando style.setProperty)
+    // 4. LÓGICA DE OCULTACIÓN AGRESIVA
     Object.keys(mapaPermisos).forEach(idHtml => {
         const elementoLi = document.getElementById(idHtml);
         const permisoNecesario = mapaPermisos[idHtml];
 
         if (elementoLi) {
+            // Si el permiso NO está en la lista guardada...
             if (!permisos.includes(permisoNecesario)) {
-                // Usamos !important para que el CSS de la página no lo sobrescriba
+                // Lo ocultamos usando !important para ganar al CSS
                 elementoLi.style.setProperty('display', 'none', 'important');
+            } else {
+                // Si lo tiene, nos aseguramos que se vea
+                elementoLi.style.setProperty('display', 'list-item', 'important');
             }
         }
     });
 };
 
-// Se ejecuta lo más pronto posible
-document.addEventListener("DOMContentLoaded", aplicarRestricciones);
+// --- MOMENTOS DE EJECUCIÓN ---
 
-// Se vuelve a ejecutar cuando todo (imágenes y otros scripts) cargó
+// Ejecutar cuando el HTML básico esté listo
+document.addEventListener("DOMContentLoaded", inicializarSeguridad);
+
+// Ejecutar cuando toda la página (incluidos otros JS) cargue
 window.addEventListener("load", () => {
-    // Un pequeño delay para ganar la carrera a otros scripts
-    setTimeout(aplicarRestricciones, 50);
+    // Retraso de 100ms para asegurar que el menú no sea modificado por otros scripts
+    setTimeout(inicializarSeguridad, 100);
 });

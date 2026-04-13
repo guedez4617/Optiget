@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Extraer los datos guardados durante el Login
+    // 1. Extraer los datos (USANDO LAS LLAVES CORRECTAS)
     const nombreReal = localStorage.getItem("nombreUsuarioLogueado");
-    const rol = localStorage.getItem("rolUsuarioLogueado");
+    const rol = localStorage.getItem("rol"); // Antes buscabas "rolUsuarioLogueado", pero el login guarda "rol"
 
     // 2. Referencias a los elementos del HTML
     const etiquetaNombre = document.getElementById('nombreUsuario');
@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 3. Insertar los datos si existen
     if (nombreReal) {
+        // Si el nombre sale como "Eliezer undefined", es porque en el Login.js 
+        // la variable datosUser.APELLIDO no existe o está mal escrita.
         etiquetaNombre.innerText = nombreReal;
     } else {
         // Si alguien intenta entrar sin loguearse, lo mandamos al login
@@ -19,15 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
         etiquetaRol.innerText = "Sesión iniciada como: " + rol;
     }
 
-    // 4. Lógica del botón Salir
+    // 4. Lógica del botón Salir (Vaciamos TODO el localStorage para seguridad)
     const btnSalir = document.getElementById('btnSalir');
     if (btnSalir) {
         btnSalir.addEventListener('click', () => {
-            // Limpiamos los datos de sesión al salir
-            localStorage.removeItem("nombreUsuarioLogueado");
-            localStorage.removeItem("rolUsuarioLogueado");
-            localStorage.removeItem("ciUsuarioLogueado");
-            // El enlace HTML hará el resto (redirigir al index)
+            localStorage.clear(); // Borra todo de un solo golpe (permisos, rol, nombre)
+            window.location.href = "../../index.html";
         });
     }
 });
