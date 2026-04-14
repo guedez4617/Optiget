@@ -4,29 +4,35 @@ include 'db_conexion.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-$cedula = $data['cedula'];
-$nombre = $data['nombre'];
-$apellido = $data['apellido'];
-$usuario = $data['usuario'];
-$clave = $data['clave'];
-$rango = $data['rango'];
-$telefono = $data['telefono'];
+$cedula    = $data['cedula'];
+$nombre    = $data['nombre'];
+$apellido  = $data['apellido'];
+$usuario   = $data['usuario'];
+$clave     = $data['clave']; // Contraseña en texto plano desde el JS
+$rol       = $data['rol']; 
+$telefono  = $data['telefono'];
 $esEdicion = $data['esEdicion'];
+
+// --- EL CAMBIO CLAVE: CIFRADO ---
+// password_hash crea una cadena de 60 caracteres que es imposible de descifrar
+$claveCifrada = password_hash($clave, PASSWORD_BCRYPT);
 
 try {
     if (!$esEdicion) {
-        // REGISTRO NUEVO: Forzamos estado = 1
-        $sql = "INSERT INTO usuarios (`C.I`, NOMBRE, APELLIDO, N_USUARIO, CONTRASEÑA, ROL, telefono, estado) 
+        // REGISTRO NUEVO
+        $sql = "INSERT INTO usuarios (`C.I`, NOMBRE, APELLIDO, N_USUARIO, CONTRASEÑA, rol, telefono, estado) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$cedula, $nombre, $apellido, $usuario, $clave, $rango, $telefono]);
-        $msg = "Usuario registrado y activado con éxito";
+        // Guardamos $claveCifrada en lugar de $clave
+        $stmt->execute([$cedula, $nombre, $apellido, $usuario, $claveCifrada, $rol, $telefono]);
+        $msg = "Usuario registrado con éxito";
     } else {
         // EDICIÓN
-        $sql = "UPDATE usuarios SET NOMBRE=?, APELLIDO=?, N_USUARIO=?, CONTRASEÑA=?, ROL=?, telefono=? 
+        $sql = "UPDATE usuarios SET NOMBRE=?, APELLIDO=?, N_USUARIO=?, CONTRASEÑA=?, rol=?, telefono=? 
                 WHERE `C.I`=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nombre, $apellido, $usuario, $clave, $rango, $telefono, $cedula]);
+        // Guardamos $claveCifrada en lugar de $clave
+        $stmt->execute([$nombre, $apellido, $usuario, $claveCifrada, $rol, $telefono, $cedula]);
         $msg = "Datos actualizados con éxito";
     }
 

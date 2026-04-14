@@ -3,6 +3,7 @@ const edicionInfo = JSON.parse(localStorage.getItem('usuarioAEditar'));
 const titulo = document.getElementById('tituloPantalla');
 const boton = document.getElementById('btnAccion');
 const inputClave = document.getElementById('clave');
+const selectRango = document.getElementById('rango');
 
 // --- CONFIGURACIÓN INICIAL DEL FORMULARIO ---
 if (edicionInfo) {
@@ -13,17 +14,20 @@ if (edicionInfo) {
     const d = edicionInfo.datos;
     document.getElementById('nombre').value = d.nombre || "";
     document.getElementById('apellido').value = d.apellido || "";
-    document.getElementById('usuario').value = d.usuario;
-    document.getElementById('cedula').value = d.cedula;
+    document.getElementById('usuario').value = d.usuario || "";
+    document.getElementById('cedula').value = d.cedula || "";
     document.getElementById('cedula').readOnly = true;
-    document.getElementById('telefono').value = d.telefono;
-    document.getElementById('rango').value = d.rango;
+    document.getElementById('telefono').value = d.telefono || "";
 
-    // En edición, el campo clave empieza vacío para pedir la nueva
+    // CORRECCIÓN AQUÍ: 
+    // En prepararEdicion usamos 'rango', así que aquí leemos 'd.rango'
+    if (selectRango) {
+        selectRango.value = d.rango || "";
+    }
+
     inputClave.value = "";
-    inputClave.placeholder = "Nueva clave (Letras, Números y Símbolos)";
+    inputClave.placeholder = "Dejar en blanco para mantener clave actual";
 } else {
-    // Al registrar nuevo usuario
     titulo.innerText = "Registrar Personal";
     boton.innerText = "Registrar Usuario";
     inputClave.placeholder = "La clave será su C.I. por defecto";
@@ -40,51 +44,48 @@ document.getElementById('formUsuario').addEventListener('submit', async function
     const cedula = document.getElementById('cedula').value.trim();
     const telefono = document.getElementById('telefono').value.trim();
     const usuario = document.getElementById('usuario').value.trim();
-    const rango = document.getElementById('rango').value;
+    const rango = selectRango.value;
     let clave = inputClave.value;
 
-    // --- VALIDACIONES DE FORMATO ---
+    // --- VALIDACIONES ---
     const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
     const regexNumeros = /^[0-9]+$/;
 
     if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
         return alert("⚠️ Nombre y Apellido solo deben contener letras.");
     }
-    if (!regexNumeros.test(cedula) || cedula.length < 6 || /^0+$/.test(cedula)) {
+    if (!regexNumeros.test(cedula) || cedula.length < 6) {
         return alert("⚠️ C.I. inválida.");
     }
-    if (telefono.length !== 11 || !telefono.startsWith("04")) {
-        return alert("⚠️ El teléfono debe empezar por 04 y tener 11 dígitos.");
+    if (rango === "") {
+        return alert("⚠️ Debe seleccionar un rango (rol).");
     }
 
     // --- LÓGICA DE CONTRASEÑA ---
+    let enviarClave = true;
     if (edicionInfo) {
-        // Validación de Clave Fuerte para cambios
-        const regexFuerte = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        if (clave !== "" && !regexFuerte.test(clave)) {
-            return alert("⚠️ La nueva clave debe tener al menos 8 caracteres, incluir letras, números y un carácter especial (@$!%*?&).");
-        }
-        // Si no escribió nada en clave durante la edición, se asume que no la cambia
+        // Si estamos editando y el campo está vacío, le avisamos al PHP que no cambie la clave
         if (clave === "") {
-            clave = edicionInfo.datos.clave;
+            enviarClave = false;
+        } else {
+            const regexFuerte = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!regexFuerte.test(clave)) {
+                return alert("⚠️ La nueva clave no cumple los requisitos de seguridad.");
+            }
         }
     } else {
-        // Si es nuevo, la clave por defecto es la cédula
-        clave = cedula;
+        clave = cedula; // Registro nuevo: Clave = Cédula
     }
 
-    // --- OBJETO DE DATOS PARA EL PHP ---
     const datosForm = {
         nombre,
         apellido,
         usuario,
         cedula,
         telefono,
-        clave,
-        rango,
-        estado: 1,
-        esEdicion: edicionInfo ? true : false
+        clave: enviarClave ? clave : null, // Si es null, el PHP sabrá que no debe actualizarla
+        rol: parseInt(rango),
+        esEdicion: !!edicionInfo
     };
 
     try {
@@ -94,19 +95,16 @@ document.getElementById('formUsuario').addEventListener('submit', async function
             body: JSON.stringify(datosForm)
         });
 
-        if (!response.ok) throw new Error("Error en servidor");
-
         const resultado = await response.json();
 
         if (resultado.status === "success") {
             localStorage.removeItem('usuarioAEditar');
             alert(resultado.message);
-            window.location.href = "../personal/per.html"; // Redirigir a la lista de personal
+            window.location.href = "../personal/per.html";
         } else {
             alert("Error: " + resultado.message);
         }
     } catch (error) {
-        console.error(error);
-        alert("🚫 Error de conexión: No se pudo guardar el usuario.");
+        alert("🚫 Error de conexión.");
     }
 });

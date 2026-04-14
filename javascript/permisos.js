@@ -1,66 +1,57 @@
+// permisos.js
+
 const inicializarSeguridad = () => {
-    // 1. Obtener datos del almacenamiento
     const rol = localStorage.getItem("rol");
     const permisosRaw = localStorage.getItem("permisos");
 
-    // Si no hay datos, probablemente no ha iniciado sesión
-    if (!rol) {
+    if (!rol && !permisosRaw) {
         console.warn("⚠️ No se encontró sesión activa.");
         return;
     }
 
-    // Convertir permisos a Array (si no existe, queda como array vacío)
     const permisos = permisosRaw ? JSON.parse(permisosRaw) : [];
 
-    // Normalizamos el rol para evitar fallos por espacios o mayúsculas
-    const rolActual = rol.trim().toLowerCase();
-
-    console.group("🛡️ Verificación de Seguridad");
-    console.log("Rol detectado:", rolActual);
-    console.log("Permisos activos:", permisos);
+    console.group("🛡️ Verificación de Seguridad Relacional");
+    console.log("Rol:", rol);
+    console.log("Permisos:", permisos);
     console.groupEnd();
 
-    // 2. REGLA DE ORO: Gerente tiene acceso total
-    if (rolActual === "gerente") {
-        console.log("👑 Acceso total concedido por rango Gerente.");
-        return;
-    }
+    /**
+     * Agregamos 'seccion-negocio' y 'seccion-apariencia' a la lista.
+     * Estos deben coincidir con los IDs en tu HTML y con los nombre_permiso en tu BD.
+     */
+    const todasLasOpciones = [
+        'opcion-panel',
+        'opcion-usuarios',
+        'opcion-creditos',
+        'opcion-facturacion',
+        'opcion-historial',
+        'opcion-almacen',
+        'opcion-configuracion',
+        'seccion-negocio',
+        'seccion-apariencia'
+    ];
 
-    // 3. MAPEO: ID del HTML vs Nombre del permiso en la Base de Datos
-    const mapaPermisos = {
-        'opcion-panel': 'menu_panel',
-        'opcion-usuarios': 'menu_usuarios',
-        'opcion-creditos': 'menu_creditos',
-        'opcion-facturacion': 'menu_facturacion',
-        'opcion-historial': 'menu_historial',
-        'opcion-almacen': 'menu_almacen'
-    };
+    todasLasOpciones.forEach(idHtml => {
+        const elemento = document.getElementById(idHtml);
 
-    // 4. LÓGICA DE OCULTACIÓN AGRESIVA
-    Object.keys(mapaPermisos).forEach(idHtml => {
-        const elementoLi = document.getElementById(idHtml);
-        const permisoNecesario = mapaPermisos[idHtml];
-
-        if (elementoLi) {
-            // Si el permiso NO está en la lista guardada...
-            if (!permisos.includes(permisoNecesario)) {
-                // Lo ocultamos usando !important para ganar al CSS
-                elementoLi.style.setProperty('display', 'none', 'important');
+        if (elemento) {
+            if (!permisos.includes(idHtml)) {
+                // OCULTAR
+                elemento.style.setProperty('display', 'none', 'important');
             } else {
-                // Si lo tiene, nos aseguramos que se vea
-                elementoLi.style.setProperty('display', 'list-item', 'important');
+                // MOSTRAR
+                // Si es una sección (cuadro), usamos 'block'. Si es del menú (li), usamos 'list-item'.
+                const displayType = elemento.tagName === 'SECTION' ? 'block' : 'list-item';
+                elemento.style.setProperty('display', displayType, 'important');
             }
         }
     });
 };
 
-// --- MOMENTOS DE EJECUCIÓN ---
-
-// Ejecutar cuando el HTML básico esté listo
+// --- EJECUCIÓN ---
 document.addEventListener("DOMContentLoaded", inicializarSeguridad);
 
-// Ejecutar cuando toda la página (incluidos otros JS) cargue
 window.addEventListener("load", () => {
-    // Retraso de 100ms para asegurar que el menú no sea modificado por otros scripts
     setTimeout(inicializarSeguridad, 100);
 });

@@ -1,15 +1,30 @@
 <?php
+ob_start();
 header('Content-Type: application/json');
 include 'db_conexion.php';
 
 try {
-    // IMPORTANTE: Verifica que la columna se llame estado y C.I en tu tabla
-    $sql = "SELECT `C.I`, NOMBRE, APELLIDO, telefono, ROL, N_USUARIO, estado FROM usuarios WHERE estado = 1";
+    // 1. Intentamos una consulta que sea tolerante a mayúsculas/minúsculas
+    // Usamos LEFT JOIN por si algún usuario tiene un rol que no existe, para que NO desaparezca de la lista
+    $sql = "SELECT u.*, r.nombre_rol 
+            FROM usuarios u 
+            LEFT JOIN roles r ON u.rol = r.id_rol 
+            WHERE u.estado = 1";
+            
     $stmt = $pdo->query($sql);
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($usuarios);
+    ob_clean();
+    
+    // Si la consulta no trae nada, enviamos un mensaje de depuración interno
+    if (!$usuarios) {
+        echo json_encode(["debug" => "No se encontraron usuarios con estado 1"]);
+    } else {
+        echo json_encode($usuarios);
+    }
+
 } catch (PDOException $e) {
-    echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+    ob_clean();
+    echo json_encode(["error" => "Error de SQL: " . $e->getMessage()]);
 }
 ?>

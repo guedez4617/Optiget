@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formLogin.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // 1. Captura de credenciales
             const usuarioInput = document.getElementById('usuario');
             const passwordInput = document.getElementById('password');
 
@@ -17,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                // 2. Petición al servidor
                 const response = await fetch('php/login.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -27,41 +25,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta del servidor");
-                }
-
                 const resultado = await response.json();
 
                 if (resultado.status === "success") {
                     const datosUser = resultado.usuario;
 
-                    // --- PROCESAMIENTO DE DATOS (Basado en tu tabla de DB) ---
-
-                    // Aseguramos que NOMBRE y APELLIDO existan para evitar el 'undefined'
+                    // 1. Procesamiento de Nombres
                     const nombre = datosUser.NOMBRE || "";
                     const apellido = datosUser.APELLIDO || "";
                     const nombreCompleto = `${nombre} ${apellido}`.trim();
 
-                    // Manejo especial para la columna 'C.I' (con punto)
-                    const cedula = datosUser['C.I'] || datosUser.CI || "0";
+                    // 2. Manejo de Cédula (CI según tu última captura)
+                    const cedula = datosUser.CI || datosUser['C.I'] || "0";
 
-                    // Captura del ROL (usamos el mismo nombre que en la tabla)
-                    const rolAsignado = datosUser.ROL || "";
+                    // 3. Captura del ROL (Nombre del rol: Gerente, Cajero, etc.)
+                    const rolNombre = datosUser.nombre_rol || "";
 
-                    // 3. GUARDADO EN LOCALSTORAGE (Llaves estandarizadas)
+                    // 4. GUARDADO EN LOCALSTORAGE
                     localStorage.setItem("nombreUsuarioLogueado", nombreCompleto);
                     localStorage.setItem("ciUsuarioLogueado", cedula);
-                    localStorage.setItem("rol", rolAsignado);
+                    localStorage.setItem("rol", rolNombre);
 
-                    // Guardamos los permisos como una lista (si no vienen, array vacío)
-                    localStorage.setItem("permisos", JSON.stringify(datosUser.permisos || []));
+                    // IMPORTANTE: Guardamos la lista de permisos que el PHP debe enviar
+                    // Esto es lo que lee tu permisos.js
+                    localStorage.setItem("permisos", JSON.stringify(resultado.permisos || []));
 
-                    // 4. REDIRECCIÓN
+                    // Redirección
                     window.location.href = "pantallas/inicio/inicio.html";
 
                 } else {
-                    // Error de credenciales
                     alert("❌ " + resultado.message);
                     passwordInput.value = "";
                     passwordInput.focus();
@@ -72,7 +64,5 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("🚫 Error de conexión: No se pudo contactar con el servidor.");
             }
         });
-    } else {
-        console.error("No se encontró el formulario con ID 'loginForm'");
     }
 });

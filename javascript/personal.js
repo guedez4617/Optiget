@@ -1,6 +1,6 @@
 let listaUsuariosGlobal = [];
 
-// Cargar todos los datos del presonal
+// 1. Cargar todos los datos del personal
 async function cargarUsuarios() {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando usuarios...</td></tr>';
@@ -16,89 +16,80 @@ async function cargarUsuarios() {
 
     } catch (error) {
         console.error("Error:", error);
-        tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error de conexión.</td></tr>';
+        tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error al cargar datos.</td></tr>';
     }
 }
 
-// Dibuja lo que haya en el array que reciba
+// 2. Dibuja la tabla
 function renderizarTabla(datos) {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = "";
 
     if (datos.length === 0) {
-        tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No se encontraron resultados.</td></tr>';
+        tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No se encontraron usuarios activos.</td></tr>';
         return;
     }
 
     datos.forEach((u) => {
+        // Manejo de la cédula por si tiene puntos o no en la BD
+        const cedula = u.CI || u['C.I'];
+
         tablaBody.innerHTML += `
             <tr>
-                <td><strong>${u['C.I']}</strong></td>
+                <td><strong>${cedula}</strong></td>
                 <td>${u.NOMBRE}</td>
                 <td>${u.APELLIDO}</td>
                 <td>${u.telefono}</td>
-                <td><span class="rango-badge">${u.ROL}</span></td>
+                <td><span class="rango-badge">${u.nombre_rol}</span></td>
                 <td style="text-align: center;">
-                    <button onclick='prepararEdicion(${JSON.stringify(u)})' class="icono-editar">✎</button>
-                    <button onclick="eliminarUsuario('${u['C.I']}')" class="icono-eliminar">🗑️</button>
+                    <button onclick='prepararEdicion(${JSON.stringify(u)})' class="icono-editar" title="Editar">✎</button>
+                    <button onclick="eliminarUsuario('${cedula}')" class="icono-eliminar" title="Inhabilitar">🗑️</button>
                 </td>
             </tr>`;
     });
 }
 
-// Inicialización y Eventos
+// 3. Buscador en tiempo real
 document.addEventListener('DOMContentLoaded', () => {
-    // Cargamos los datos de la DB al iniciar
     cargarUsuarios();
 
     const inputBusqueda = document.getElementById('inputBusqueda');
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener('input', (e) => {
+            const texto = e.target.value.toLowerCase().trim();
 
-    // para que filtre mientra escribo 
-    inputBusqueda.addEventListener('input', (e) => {
-        const texto = e.target.value.toLowerCase().trim();
+            const filtrados = listaUsuariosGlobal.filter(u => {
+                const nombre = (u.NOMBRE || "").toLowerCase();
+                const apellido = (u.APELLIDO || "").toLowerCase();
+                const cedula = (u.CI || u['C.I'] || "").toString();
 
-        // Si no hay texto, mostramos todo
-        if (texto === "") {
-            renderizarTabla(listaUsuariosGlobal);
-            return;
-        }
+                return nombre.includes(texto) || apellido.includes(texto) || cedula.includes(texto);
+            });
 
-        // Filtramos la lista global
-        const filtrados = listaUsuariosGlobal.filter(u => {
-            // Aseguramos que los campos existan antes de comparar para evitar errores
-            const nombre = u.NOMBRE ? u.NOMBRE.toLowerCase() : "";
-            const apellido = u.APELLIDO ? u.APELLIDO.toLowerCase() : "";
-            const cedula = u['C.I'] ? u['C.I'].toString() : "";
-
-            return nombre.includes(texto) ||
-                apellido.includes(texto) ||
-                cedula.includes(texto);
+            renderizarTabla(filtrados);
         });
-
-        // Mostramos solo los filtrados
-        renderizarTabla(filtrados);
-    });
+    }
 });
 
-// Preparar Edición
+// 4. Preparar Edición (Guarda en LocalStorage y redirige)
 function prepararEdicion(u) {
     localStorage.setItem('usuarioAEditar', JSON.stringify({
         datos: {
-            cedula: u['C.I'],
+            cedula: u.CI || u['C.I'],
             nombre: u.NOMBRE,
             apellido: u.APELLIDO,
             usuario: u.N_USUARIO,
             clave: u.CONTRASEÑA,
-            rango: u.ROL,
+            rango: u.rol, // Aquí enviamos el ID numérico (1, 2, 3) para el select
             telefono: u.telefono
         }
     }));
     window.location.href = "../registro_de_usuario/re.html";
 }
 
+// 5. Inhabilitar Usuario (Borrado lógico)
 async function eliminarUsuario(cedula) {
-    // Cambiamos el mensaje para que sea más técnico
-    if (confirm(`¿Está seguro de inhabilitar al usuario con C.I: ${cedula}? El usuario ya no podrá iniciar sesión.`)) {
+    if (confirm(`¿Está seguro de inhabilitar al usuario con C.I: ${cedula}?`)) {
         try {
             const response = await fetch('../../../php/eliminar_usuario.php', {
                 method: 'POST',
@@ -109,15 +100,14 @@ async function eliminarUsuario(cedula) {
             const res = await response.json();
 
             if (res.status === "success") {
-                // Mensaje más amigable
                 alert("Usuario inhabilitado con éxito.");
-                cargarUsuarios(); // Recarga la tabla y, como ahora el PHP filtra, ya no aparecerá
+                cargarUsuarios(); // Recargar la tabla
             } else {
                 alert("Error: " + res.message);
             }
         } catch (e) {
             console.error(e);
-            alert("Error de conexión al intentar inhabilitar.");
+            alert("Error de conexión al inhabilitar.");
         }
     }
 }
