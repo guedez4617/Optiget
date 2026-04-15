@@ -21,26 +21,41 @@ document.addEventListener("DOMContentLoaded", () => {
 // 2. CARGAR LISTA DE CLIENTES CON DEUDA
 async function cargarDeudores() {
     try {
+        // ASEGÚRATE: El nombre del archivo debe ser exacto al que creamos (resumen_creditos.php)
         const resp = await fetch('../../../php/obtener_resumen_creditos.php');
+
+        // Verificamos si la respuesta es exitosa antes de parsear
+        if (!resp.ok) throw new Error("Error en la red");
+
         const deudores = await resp.json();
         const tabla = document.getElementById('cuerpoTablaDeudores');
 
         if (!tabla) return;
         tabla.innerHTML = "";
 
+        // Si el PHP devuelve un error de base de datos
+        if (deudores.status === "error") {
+            console.error("Error servidor:", deudores.message);
+            tabla.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Error: ${deudores.message}</td></tr>`;
+            return;
+        }
+
+        // Si no hay deudores (el array viene vacío)
         if (!deudores || deudores.length === 0) {
             tabla.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No hay deudas pendientes</td></tr>";
             return;
         }
 
+        // Renderizar filas
         deudores.forEach(d => {
+            const saldo = parseFloat(d.saldo_pendiente || 0);
             tabla.innerHTML += `
                 <tr>
                     <td>${d.cedula}</td>
                     <td>${d.NOMBRE}</td>
                     <td>${d.telefono}</td>
                     <td>${d.direccion}</td>
-                    <td><b style="color: #c54b00;">${parseFloat(d.saldo_pendiente).toFixed(2)} $</b></td>
+                    <td><b style="color: #c54b00;">${saldo.toFixed(2)} $</b></td>
                     <td>
                         <button class="btn-detalle" onclick="abrirModal('${d.cedula}', '${d.NOMBRE}')">
                             Abonar
@@ -50,6 +65,8 @@ async function cargarDeudores() {
         });
     } catch (error) {
         console.error("Error al cargar deudores:", error);
+        const tabla = document.getElementById('cuerpoTablaDeudores');
+        if (tabla) tabla.innerHTML = "<tr><td colspan='6' style='text-align:center; color:red;'>Error de conexión con el servidor</td></tr>";
     }
 }
 
@@ -66,26 +83,31 @@ async function abrirModal(cedula, nombre) {
         let totalGeneralDeuda = 0;
         contenedor.innerHTML = "";
 
-        facturas.forEach(f => {
-            const saldoPendiente = parseFloat(f.monto_factura) - parseFloat(f.total_abonado || 0);
-            // Solo mostrar si la deuda es mayor a 0.01 
-            if (saldoPendiente > 0.01) {
-                totalGeneralDeuda += saldoPendiente;
-                contenedor.innerHTML += `
-                    <div class="factura-card">
-                        <div class="factura-header">Factura #${f.id_factura}</div>
-                        <div class="factura-monto">Faltan: <b>${saldoPendiente.toFixed(2)} $</b></div>
-                        <div class="factura-fecha">${f.fecha}</div>
-                    </div>`;
-            }
-        });
+        if (!facturas || facturas.length === 0) {
+            contenedor.innerHTML = "<p style='text-align:center;'>No se encontraron facturas pendientes.</p>";
+        } else {
+            facturas.forEach(f => {
+                const monto = parseFloat(f.monto_factura || 0);
+                const abonado = parseFloat(f.total_abonado || 0);
+                const saldoPendiente = monto - abonado;
+
+                if (saldoPendiente > 0.01) {
+                    totalGeneralDeuda += saldoPendiente;
+                    contenedor.innerHTML += `
+                        <div class="factura-card">
+                            <div class="factura-header">Factura #${f.id_factura}</div>
+                            <div class="factura-monto">Faltan: <b>${saldoPendiente.toFixed(2)} $</b></div>
+                            <div class="factura-fecha">${f.fecha}</div>
+                        </div>`;
+                }
+            });
+        }
 
         document.getElementById('tituloModal').innerHTML =
             `${nombre} <span style="color: #888; font-size: 0.8em;">(Deuda Total: ${totalGeneralDeuda.toFixed(2)} $)</span>`;
         document.getElementById('cedulaDetalle').innerText = cedula;
 
-        // Resetear campos del formulario
-        monedaActual = "USD";
+        // Resetear campos
         document.getElementById('tasaDia').value = parseFloat(localStorage.getItem("tasaDolar") || 1).toFixed(2);
         document.getElementById('montoInput').value = "";
         document.getElementById('montoConvertido').innerText = "0.00";
@@ -96,7 +118,7 @@ async function abrirModal(cedula, nombre) {
     }
 }
 
-// 4. LÓGICA DE CAMBIO DE MONEDA ($ / BS)
+// 4. LÓGICA DE MONEDA
 function cambiarMoneda() {
     monedaActual = (monedaActual === "USD") ? "BS" : "USD";
     actualizarEtiquetas();
@@ -129,15 +151,10 @@ function calcularAbono() {
         visor.innerText = "0.00";
         return;
     }
-
-    if (monedaActual === "USD") {
-        visor.innerText = (monto * tasa).toFixed(2);
-    } else {
-        visor.innerText = (monto / tasa).toFixed(2);
-    }
+    visor.innerText = (monedaActual === "USD") ? (monto * tasa).toFixed(2) : (monto / tasa).toFixed(2);
 }
 
-// 5. PROCESAR ABONO (BOTÓN CONFIRMAR)
+// 5. PROCESAR ABONO
 async function procesarAbono() {
     const cedula = document.getElementById('cedulaDetalle').innerText;
     const tasa = parseFloat(document.getElementById('tasaDia').value);
@@ -149,7 +166,6 @@ async function procesarAbono() {
         return;
     }
 
-    // Convertir a dólares para guardar en la base de datos
     let montoUSD = (monedaActual === "USD") ? montoEscrito : (montoEscrito / tasa);
 
     const datos = {
@@ -166,37 +182,24 @@ async function procesarAbono() {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        const textoRaw = await resp.text();
-
-        try {
-            const res = JSON.parse(textoRaw);
-            if (res.status === "success") {
-                alert("¡Abono registrado! Las facturas saldadas han pasado a estado 'Pagado'.");
-                cerrarModal();
-                cargarDeudores(); // Recargar tabla principal
-            } else {
-                alert("Error: " + res.message);
-            }
-        } catch (e) {
-            console.error("Respuesta no válida del servidor:", textoRaw);
-            alert("El servidor devolvió un error. Revisa la consola (F12) para más detalles.");
+        const res = await resp.json();
+        if (res.status === "success") {
+            alert("✅ Abono registrado correctamente.");
+            cerrarModal();
+            cargarDeudores();
+        } else {
+            alert("❌ Error: " + res.message);
         }
-
     } catch (e) {
-        console.error("Error en la petición fetch:", e);
-        alert("No se pudo conectar con el servidor.");
+        console.error("Error:", e);
+        alert("No se pudo procesar el abono.");
     }
 }
 
-// 6. FUNCIONES DE CIERRE
 function cerrarModal() {
     document.getElementById('modalAbonos').style.display = "none";
 }
 
-// Cerrar al hacer clic en el fondo oscuro
-window.onclick = function(event) {
-    const modal = document.getElementById('modalAbonos');
-    if (event.target == modal) {
-        cerrarModal();
-    }
+window.onclick = (event) => {
+    if (event.target == document.getElementById('modalAbonos')) cerrarModal();
 }

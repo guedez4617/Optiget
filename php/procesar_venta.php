@@ -1,9 +1,8 @@
 <?php
-session_start(); // Fundamental para capturar quién está logueado
+session_start();
 header('Content-Type: application/json');
 include 'db_conexion.php';
 
-// 1. Verificar que el usuario esté logueado
 $vendedor_ci = $_SESSION['ci_usuario'] ?? null;
 
 if (!$vendedor_ci) {
@@ -11,7 +10,6 @@ if (!$vendedor_ci) {
     exit;
 }
 
-// 2. Leer los datos enviados por el JS
 $input = json_decode(file_get_contents("php://input"), true);
 if (!$input) {
     echo json_encode(["status" => "error", "mensaje" => "No se recibieron datos"]);
@@ -26,12 +24,20 @@ $cedula_cliente = $input['cliente']['cedula'];
 try {
     $pdo->beginTransaction();
 
-    // 3. Insertar la Cabecera de la Factura
-    // Nota: Usamos 'usuario_ci' para guardar la relación con el empleado logueado
-    $sql_factura = "INSERT INTO factura (fecha, hora, ci_cliente, tipo_pago, usuario_ci) 
-                    VALUES (CURDATE(), CURTIME(), ?, ?, ?)";
+    // --- NUEVO: Obtener la configuración del negocio más reciente ---
+    $stmtNegocio = $pdo->query("SELECT id_config FROM datos_negocio ORDER BY id_config DESC LIMIT 1");
+    $config = $stmtNegocio->fetch(PDO::FETCH_ASSOC);
+
+    if (!$config) {
+        throw new Exception("No se encontraron datos del negocio. Configure el negocio en Ajustes primero.");
+    }
+    $id_negocio_actual = $config['id_config'];
+
+    // 3. Insertar la Cabecera de la Factura (Agregando id_config_negocio)
+    $sql_factura = "INSERT INTO factura (fecha, hora, ci_cliente, tipo_pago, usuario_ci, id_config_negocio) 
+                    VALUES (CURDATE(), CURTIME(), ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql_factura);
-    $stmt->execute([$cedula_cliente, $metodo, $vendedor_ci]);
+    $stmt->execute([$cedula_cliente, $metodo, $vendedor_ci, $id_negocio_actual]);
     
     $id_factura = $pdo->lastInsertId();
 
@@ -44,7 +50,6 @@ try {
     $stmt_stock = $pdo->prepare($sql_stock);
 
     foreach ($carrito as $item) {
-        // Cálculo de subtotal en base a lo que viene del carrito
         $subtotal_usd = $item['precio'] * $item['cantidadFactura'];
         
         $stmt_det->execute([
@@ -55,7 +60,6 @@ try {
             $item['total_bs']
         ]);
 
-        // No restamos stock si es el "Monto Adicional" (código 0)
         if ($item['codigo'] !== "0") {
             $stmt_stock->execute([$item['cantidadFactura'], $item['codigo']]);
         }

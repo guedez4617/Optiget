@@ -17,19 +17,19 @@ try {
     $cedula = $data['cedula_cliente'];
     $monto_total_abono = floatval($data['monto_abonado']);
     $metodo = $data['metodo_pago'];
-    // Nota: Si no tienes una columna para 'tasa' en la tabla abonos, 
-    // la omitiremos en el INSERT para evitar errores.
 
     $pdo->beginTransaction();
 
-    // 1. Obtener facturas pendientes (Tabla: factura, Columna: ci_cliente)
+    // 1. OBTENER FACTURAS PENDIENTES 
+    // Corregido: Ahora busca 'Credito' OR 'Crédito'
     $sql_f = "SELECT f.id_factura, SUM(df.sub_total) as monto_factura 
-              FROM factura f
-              JOIN det_factura df ON f.id_factura = df.id_factura
-              WHERE f.ci_cliente = :c AND f.tipo_pago = 'Credito' 
-              GROUP BY f.id_factura 
-              ORDER BY f.fecha ASC";
-              
+            FROM factura f
+            JOIN det_factura df ON f.id_factura = df.id_factura
+            WHERE f.ci_cliente = :c 
+            AND (f.tipo_pago = 'Credito' OR f.tipo_pago = 'Crédito') 
+            GROUP BY f.id_factura 
+            ORDER BY f.fecha ASC";
+            
     $stmt = $pdo->prepare($sql_f);
     $stmt->execute([':c' => $cedula]);
     $facturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,17 +51,16 @@ try {
         if ($deuda_factura > 0) {
             $pago_ahora = min($restante, $deuda_factura);
 
-            // 2. INSERT con tus nombres de columna exactos:
-            // Columnas: id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci
+            // 2. INSERT del abono
             $sql_ins = "INSERT INTO abonos (id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci) 
                         VALUES (?, ?, NOW(), ?, ?)";
             
             $ins = $pdo->prepare($sql_ins);
-            // Enviamos la cédula del cliente a usuario_ci como respaldo si no tienes sesión iniciada
             $ins->execute([$id_f, $pago_ahora, $metodo, $cedula]);
 
-            // 3. Si se liquida la factura, cambiar tipo_pago a 'Pagado'
-            if (($deuda_factura - $pago_ahora) <= 0.05) {
+            // 3. CAMBIO DE ESTADO (Solo si la deuda llega a cero)
+            // Usamos un margen de 0.01 por los decimales
+            if (($deuda_factura - $pago_ahora) <= 0.01) {
                 $upd = $pdo->prepare("UPDATE factura SET tipo_pago = 'Pagado' WHERE id_factura = ?");
                 $upd->execute([$id_f]);
             }
