@@ -32,7 +32,7 @@
             <div class="contenedor-ajustes">
 
                 <section class="tarjeta-glass">
-                    <h3>👤 Mi Perfil</h3>
+                    <h3>Mi Perfil</h3>
                     <form id="formPerfil">
                         <div class="campo-ajuste">
                             <label>Nombre:</label>
@@ -62,14 +62,14 @@
                         </div>
                         <div class="campo-ajuste">
                             <label>Contraseña:</label>
-                            <input type="password" id="perPass" placeholder="Nueva contraseña">
+                            <input type="password" id="perPass" placeholder="Nueva contraseña" autocomplete="new-password">
                         </div>
                         <button type="submit" id="btnGuardarPerfil" class="btn-guardar">Actualizar Perfil</button>
                     </form>
                 </section>
 
                 <section class="tarjeta-glass" id="seccion-negocio">
-                    <h3>🏢 Datos del Negocio</h3>
+                    <h3>Datos del Negocio</h3>
                     <div class="campo-ajuste">
                         <label>Nombre del Negocio:</label>
                         <input type="text" id="busNombre" value="">
@@ -86,11 +86,11 @@
                         <label>Teléfono Empresa:</label>
                         <input type="text" id="busTel" placeholder="04xx-xxxxxxx">
                     </div>
-                    <button class="btn-guardar btn-azul">Guardar Encabezado</button>
+                    <button type="button" id="btnGuardarNegocio" class="btn-guardar btn-azul">Guardar Encabezado</button>
                 </section>
 
                 <section class="tarjeta-glass" id="seccion-apariencia">
-                    <h3>🎨 Apariencia del Sistema</h3>
+                    <h3>Apariencia del Sistema</h3>
                     <form id="formDiseno">
                         <div class="campo-ajuste">
                             <label>Imagen de Fondo:</label>
@@ -126,6 +126,7 @@
     </div>
 
     <script src="../../javascript/permisos.js"></script>
+    <script src="../../javascript/ajustes.js"></script>
 </body>
 
 </html>

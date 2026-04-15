@@ -80,7 +80,7 @@ function prepararEdicion(u) {
             apellido: u.APELLIDO,
             usuario: u.N_USUARIO,
             clave: u.CONTRASEÑA,
-            rango: u.rol, // Aquí enviamos el ID numérico (1, 2, 3) para el select
+            rango: u.rol,
             telefono: u.telefono
         }
     }));

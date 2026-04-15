@@ -1,5 +1,5 @@
 <?php
-// Evitamos que cualquier error previo ensucie la respuesta
+// login.php
 ob_start();
 session_start();
 header('Content-Type: application/json');
@@ -21,48 +21,49 @@ try {
     $stmt->execute([':u' => $usuario_form]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // --- CAMBIO CLAVE AQUÍ ---
-    // password_verify compara el texto plano del formulario con el hash de la BD
+    // 2. Verificación de contraseña
     if ($user && password_verify($password_form, $user['CONTRASEÑA'])) {
         
-        // Extraemos el ID del rol de forma segura
         $idRolActual = $user['rol'] ?? $user['ROL'];
+        $ci_final = $user['CI'] ?? $user['C.I'];
 
-        $_SESSION['ci_usuario'] = $user['CI'] ?? $user['C.I']; 
+        // Guardar en Sesión de PHP (Servidor)
+        $_SESSION['ci_usuario'] = $ci_final; 
         $_SESSION['id_rol'] = $idRolActual;
         $_SESSION['rol'] = $user['nombre_rol'];
         $_SESSION['nombre_usuario'] = $user['NOMBRE'] . " " . $user['APELLIDO'];
 
-        // 2. Cargar Permisos
+        // 3. Cargar Permisos
         $sqlP = "SELECT p.nombre_permiso 
-                 FROM rol_permisos rp 
-                 INNER JOIN permisos p ON rp.id_permiso = p.id_permiso 
-                 WHERE rp.id_rol = ?";
+                FROM rol_permisos rp 
+                INNER JOIN permisos p ON rp.id_permiso = p.id_permiso 
+                WHERE rp.id_rol = ?";
         
         $stmtP = $pdo->prepare($sqlP);
         $stmtP->execute([$idRolActual]);
-        
         $listaPermisos = $stmtP->fetchAll(PDO::FETCH_COLUMN);
         $_SESSION['permisos'] = $listaPermisos;
 
-        // Limpiamos el buffer
         ob_clean();
 
+        // --- RESPUESTA AL NAVEGADOR ---
+        // Aquí incluimos N_USUARIO y telefono para que el JS los reciba
         echo json_encode([
             "status" => "success",
             "message" => "¡Bienvenido " . $user['nombre_rol'] . "!",
             "usuario" => [
-                "CI" => $_SESSION['ci_usuario'],
-                "NOMBRE" => $user['NOMBRE'],
-                "APELLIDO" => $user['APELLIDO'],
+                "CI"         => $ci_final,
+                "NOMBRE"     => $user['NOMBRE'],
+                "APELLIDO"   => $user['APELLIDO'],
+                "N_USUARIO"  => $user['N_USUARIO'],
+                "telefono"   => $user['telefono'],
                 "nombre_rol" => $user['nombre_rol'],
-                "rol_id" => $idRolActual
+                "rol_id"     => $idRolActual
             ],
             "permisos" => $listaPermisos
         ]);
 
     } else {
-        // Si el usuario no existe o la contraseña no coincide con el hash
         ob_clean();
         echo json_encode(["status" => "error", "message" => "Usuario o contraseña incorrectos."]);
     }

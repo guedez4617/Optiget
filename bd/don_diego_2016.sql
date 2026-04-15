@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-04-2026 a las 04:16:31
+-- Tiempo de generación: 15-04-2026 a las 03:29:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -69,6 +69,30 @@ INSERT INTO `clientes` (`c.i`, `NOMBRE`, `telefono`, `direccion`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `datos_negocio`
+--
+
+CREATE TABLE `datos_negocio` (
+  `id_config` int(255) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `rif` varchar(20) NOT NULL,
+  `direccion` text NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `id_usuario_cambio` int(20) NOT NULL,
+  `fecha_movimiento` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `datos_negocio`
+--
+
+INSERT INTO `datos_negocio` (`id_config`, `nombre`, `rif`, `direccion`, `telefono`, `id_usuario_cambio`, `fecha_movimiento`) VALUES
+(1, 'Configuración Inicial', 'J-00000000-0', 'Dirección Base', '0000-0000000', 30766666, '2026-04-15 00:09:14'),
+(2, 'Bodegon Don Diego 2016 C.A.', 'J-40812157-7', 'CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE PAYARA - PORTUGUESA. ZONA POSTAL 3301', '04125239290', 30766666, '2026-04-15 00:23:32');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `det_factura`
 --
 
@@ -106,18 +130,19 @@ CREATE TABLE `factura` (
   `hora` time NOT NULL,
   `ci_cliente` int(11) NOT NULL,
   `tipo_pago` varchar(12) NOT NULL,
-  `usuario_ci` int(20) NOT NULL
+  `usuario_ci` int(20) NOT NULL,
+  `id_config_negocio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `factura`
 --
 
-INSERT INTO `factura` (`id_factura`, `fecha`, `hora`, `ci_cliente`, `tipo_pago`, `usuario_ci`) VALUES
-(87, '2026-04-11', '19:55:45', 999, 'Efectivo', 30766666),
-(88, '2026-04-11', '20:17:19', 999, 'Punto', 30766666),
-(89, '2026-04-11', '20:23:35', 30766666, 'Crédito', 30766666),
-(90, '2026-04-13', '22:13:14', 30766666, 'Crédito', 30766666);
+INSERT INTO `factura` (`id_factura`, `fecha`, `hora`, `ci_cliente`, `tipo_pago`, `usuario_ci`, `id_config_negocio`) VALUES
+(87, '2026-04-11', '19:55:45', 999, 'Efectivo', 30766666, 2),
+(88, '2026-04-11', '20:17:19', 999, 'Punto', 30766666, 2),
+(89, '2026-04-11', '20:23:35', 30766666, 'Crédito', 30766666, 2),
+(90, '2026-04-13', '22:13:14', 30766666, 'Crédito', 30766666, 2);
 
 -- --------------------------------------------------------
 
@@ -546,6 +571,13 @@ ALTER TABLE `clientes`
   ADD PRIMARY KEY (`c.i`);
 
 --
+-- Indices de la tabla `datos_negocio`
+--
+ALTER TABLE `datos_negocio`
+  ADD PRIMARY KEY (`id_config`),
+  ADD KEY `fk_usuario_que_cambio` (`id_usuario_cambio`);
+
+--
 -- Indices de la tabla `det_factura`
 --
 ALTER TABLE `det_factura`
@@ -559,7 +591,8 @@ ALTER TABLE `det_factura`
 ALTER TABLE `factura`
   ADD PRIMARY KEY (`id_factura`),
   ADD KEY `fk_cliente` (`ci_cliente`),
-  ADD KEY `usuario_ci` (`usuario_ci`);
+  ADD KEY `usuario_ci` (`usuario_ci`),
+  ADD KEY `fk_factura_negocio_historial` (`id_config_negocio`);
 
 --
 -- Indices de la tabla `historial_productos`
@@ -615,6 +648,12 @@ ALTER TABLE `abonos`
   MODIFY `id_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT de la tabla `datos_negocio`
+--
+ALTER TABLE `datos_negocio`
+  MODIFY `id_config` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `det_factura`
 --
 ALTER TABLE `det_factura`
@@ -662,6 +701,12 @@ ALTER TABLE `abonos`
   ADD CONSTRAINT `fk_abono_factura` FOREIGN KEY (`id_factura`) REFERENCES `factura` (`id_factura`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `datos_negocio`
+--
+ALTER TABLE `datos_negocio`
+  ADD CONSTRAINT `fk_usuario_que_cambio` FOREIGN KEY (`id_usuario_cambio`) REFERENCES `usuarios` (`C.I`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `det_factura`
 --
 ALTER TABLE `det_factura`
@@ -673,7 +718,8 @@ ALTER TABLE `det_factura`
 --
 ALTER TABLE `factura`
   ADD CONSTRAINT `factura_ibfk_2` FOREIGN KEY (`ci_cliente`) REFERENCES `clientes` (`c.i`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `factura_ibfk_3` FOREIGN KEY (`usuario_ci`) REFERENCES `usuarios` (`C.I`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `factura_ibfk_3` FOREIGN KEY (`usuario_ci`) REFERENCES `usuarios` (`C.I`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_factura_negocio_historial` FOREIGN KEY (`id_config_negocio`) REFERENCES `datos_negocio` (`id_config`) ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `historial_productos`

@@ -53,7 +53,7 @@ async function cargarHistorial() {
                 <td style="text-transform: uppercase;">${nombre}</td>
                 <td>$${total}</td>
                 <td>
-                    <button class="icono-ver" onclick="verFactura(${v.Id_factura})" style="cursor:pointer; background:none; border:none; font-size:1.2rem;">🔍</button>
+                    <button class="icono-ver" onclick="verFactura(${v.Id_factura})" style="cursor:pointer; background:none; border:none; font-size:1.2rem;">⌕</button>
                 </td>
             `;
             tbody.appendChild(tr);

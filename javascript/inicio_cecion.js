@@ -5,17 +5,24 @@ document.addEventListener("DOMContentLoaded", () => {
         formLogin.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // 1. Captura de elementos e inputs
             const usuarioInput = document.getElementById('usuario');
             const passwordInput = document.getElementById('password');
+            const btnLogin = e.target.querySelector('button[type="submit"]');
 
             const usuario = usuarioInput.value.trim();
             const password = passwordInput.value;
 
+            // 2. Validación básica
             if (!usuario || !password) {
                 return alert("⚠️ Por favor, ingrese su usuario y contraseña.");
             }
 
+            // Deshabilitar botón para evitar múltiples clics
+            if (btnLogin) btnLogin.disabled = true;
+
             try {
+                // 3. Petición al servidor
                 const response = await fetch('php/login.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -25,36 +32,40 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                 });
 
+                if (!response.ok) throw new Error("Error en la respuesta del servidor");
+
                 const resultado = await response.json();
 
+                // 4. Procesamiento de la respuesta
                 if (resultado.status === "success") {
                     const datosUser = resultado.usuario;
 
-                    // 1. Procesamiento de Nombres
+                    // A. Preparación de datos para LocalStorage
                     const nombre = datosUser.NOMBRE || "";
                     const apellido = datosUser.APELLIDO || "";
                     const nombreCompleto = `${nombre} ${apellido}`.trim();
-
-                    // 2. Manejo de Cédula (CI según tu última captura)
                     const cedula = datosUser.CI || datosUser['C.I'] || "0";
-
-                    // 3. Captura del ROL (Nombre del rol: Gerente, Cajero, etc.)
                     const rolNombre = datosUser.nombre_rol || "";
 
-                    // 4. GUARDADO EN LOCALSTORAGE
+                    // B. GUARDADO EN LOCALSTORAGE (Estructura robusta)
+
+                    // Guardamos el objeto completo (CRUCIAL para la interfaz de Ajustes)
+                    localStorage.setItem("usuario", JSON.stringify(datosUser));
+
+                    // Guardamos datos individuales (Para compatibilidad con otras pantallas)
                     localStorage.setItem("nombreUsuarioLogueado", nombreCompleto);
                     localStorage.setItem("ciUsuarioLogueado", cedula);
                     localStorage.setItem("rol", rolNombre);
 
-                    // IMPORTANTE: Guardamos la lista de permisos que el PHP debe enviar
-                    // Esto es lo que lee tu permisos.js
+                    // Guardamos la lista de permisos (Para permisos.js)
                     localStorage.setItem("permisos", JSON.stringify(resultado.permisos || []));
 
-                    // Redirección
+                    // 5. Redirección exitosa
                     window.location.href = "pantallas/inicio/inicio.html";
 
                 } else {
-                    alert("❌ " + resultado.message);
+                    // Manejo de error de credenciales
+                    alert("❌ " + (resultado.message || "Credenciales incorrectas"));
                     passwordInput.value = "";
                     passwordInput.focus();
                 }
@@ -62,6 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error("Error crítico en el login:", error);
                 alert("🚫 Error de conexión: No se pudo contactar con el servidor.");
+            } finally {
+                // Rehabilitar botón si hubo error
+                if (btnLogin) btnLogin.disabled = false;
             }
         });
     }

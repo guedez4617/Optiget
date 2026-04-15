@@ -9,14 +9,21 @@ if (!$id) {
 }
 
 try {
-    // 1. Consulta Cabecera
-    // Nota: Asegúrate que en 'clientes' la columna sea 'direccion' o 'residencia'
-    $sqlC = "SELECT f.id_factura, f.fecha, f.hora, f.ci_cliente, f.tipo_pago,
-                    c.NOMBRE as nombre_cliente, c.telefono, c.direccion, 
-                    u.NOMBRE as nombre_vendedor, u.APELLIDO as apellido_vendedor
+    // 1. Consulta Cabecera con JOIN a datos_negocio
+    // Traemos los datos de la factura, el cliente, el vendedor Y el encabezado de la empresa
+    $sqlC = "SELECT 
+                f.id_factura, f.fecha, f.hora, f.ci_cliente, f.tipo_pago,
+                c.NOMBRE as nombre_cliente, c.telefono, c.direccion, 
+                u.NOMBRE as nombre_vendedor, u.APELLIDO as apellido_vendedor,
+                -- Datos históricos del negocio para esta factura
+                dn.nombre AS emp_nombre, 
+                dn.rif AS emp_rif, 
+                dn.direccion AS emp_dir, 
+                dn.telefono AS emp_tel
             FROM factura f 
             LEFT JOIN clientes c ON f.ci_cliente = c.`c.i` 
             LEFT JOIN usuarios u ON f.usuario_ci = u.`C.I` 
+            LEFT JOIN datos_negocio dn ON f.id_config_negocio = dn.id_config
             WHERE f.id_factura = ?";
     
     $stC = $pdo->prepare($sqlC);
@@ -29,8 +36,6 @@ try {
     }
 
     // 2. Consulta Productos
-    // IMPORTANTE: He cambiado p.iva por p.`i.v.a.` que es muy común en tu estructura
-    // Si tu columna se llama 'iva' sin puntos, quita los puntos de abajo.
     $sqlP = "SELECT df.codigo_producto, 
                     df.cantidad as cantidadFactura, 
                     df.sub_total as subtotal_base, 
