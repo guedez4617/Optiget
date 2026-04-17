@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-04-2026 a las 03:29:45
+-- Tiempo de generación: 17-04-2026 a las 04:51:36
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -31,7 +31,7 @@ CREATE TABLE `abonos` (
   `id_abono` int(11) NOT NULL,
   `id_factura` int(255) NOT NULL,
   `monto_abonado` decimal(10,2) NOT NULL,
-  `fecha_pago` date NOT NULL,
+  `fecha_pago` datetime NOT NULL,
   `metodo_pago` varchar(20) DEFAULT NULL,
   `usuario_ci` int(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -41,8 +41,87 @@ CREATE TABLE `abonos` (
 --
 
 INSERT INTO `abonos` (`id_abono`, `id_factura`, `monto_abonado`, `fecha_pago`, `metodo_pago`, `usuario_ci`) VALUES
-(7, 89, 6.70, '2026-04-11', 'Efectivo $', 30766666),
-(8, 89, 5.00, '2026-04-13', 'Efectivo $', 30766666);
+(7, 89, 6.70, '2026-04-11 00:00:00', 'Efectivo $', 30766666),
+(8, 89, 5.00, '2026-04-13 00:00:00', 'Efectivo $', 30766666),
+(9, 89, 5.00, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(13, 96, 9.50, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(15, 100, 8.80, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(16, 99, 9.20, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(17, 99, 6.00, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(18, 99, 1.10, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(19, 101, 11.00, '2026-04-15 00:00:00', 'Efectivo $', 30766666),
+(20, 102, 5.00, '2026-04-15 21:53:06', 'Efectivo $', 30766666),
+(21, 102, 2.50, '2026-04-15 22:27:23', 'Efectivo $', 30766666),
+(22, 103, 5.50, '2026-04-15 22:27:23', 'Efectivo $', 30766666),
+(23, 103, 5.00, '2026-04-16 21:25:50', 'Efectivo $', 30766666),
+(24, 103, 2.30, '2026-04-16 21:34:44', 'Efectivo $', 30766666),
+(25, 107, 3.70, '2026-04-16 21:34:44', 'Efectivo $', 30766666),
+(26, 107, 5.00, '2026-04-16 21:39:14', 'Efectivo $', 30766666),
+(27, 107, 4.00, '2026-04-16 21:41:14', 'Efectivo $', 30766666),
+(28, 107, 1.30, '2026-04-16 22:07:53', 'Efectivo $', NULL),
+(29, 110, 5.00, '2026-04-16 22:31:14', 'Efectivo $', 31568987);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ajustes`
+--
+
+CREATE TABLE `ajustes` (
+  `clave` varchar(50) NOT NULL,
+  `valor` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ajustes`
+--
+
+INSERT INTO `ajustes` (`clave`, `valor`) VALUES
+('tasa_dolar', '480.26');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `auditoria_sesiones`
+--
+
+CREATE TABLE `auditoria_sesiones` (
+  `id_sesion` int(11) NOT NULL,
+  `usuario_ci` int(20) NOT NULL,
+  `fecha_inicio` datetime NOT NULL,
+  `fecha_fin` datetime DEFAULT NULL,
+  `ip_direccion` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `auditoria_sesiones`
+--
+
+INSERT INTO `auditoria_sesiones` (`id_sesion`, `usuario_ci`, `fecha_inicio`, `fecha_fin`, `ip_direccion`) VALUES
+(6, 30766666, '2026-04-15 22:49:19', NULL, '::1'),
+(7, 30766666, '2026-04-15 22:53:42', NULL, '::1'),
+(8, 30766666, '2026-04-15 22:59:20', NULL, '::1'),
+(9, 30766666, '2026-04-15 22:59:42', NULL, '::1'),
+(10, 30766666, '2026-04-16 17:19:43', '2026-04-16 17:19:54', '::1'),
+(11, 30766666, '2026-04-16 17:28:51', '2026-04-16 17:30:46', '::1'),
+(12, 30766666, '2026-04-16 17:38:46', '2026-04-16 17:39:48', '::1'),
+(13, 30766666, '2026-04-16 17:49:18', '2026-04-16 19:57:48', '::1'),
+(14, 30766666, '2026-04-16 19:57:58', '2026-04-16 21:23:49', '::1'),
+(15, 30766666, '2026-04-16 21:23:52', '2026-04-16 21:25:24', '::1'),
+(16, 30766666, '2026-04-16 21:25:26', '2026-04-16 21:25:55', '::1'),
+(17, 30766666, '2026-04-16 21:25:57', '2026-04-16 21:27:21', '::1'),
+(18, 30766666, '2026-04-16 21:27:24', '2026-04-16 21:35:12', '::1'),
+(19, 30766666, '2026-04-16 21:35:15', '2026-04-16 21:38:56', '::1'),
+(20, 31568987, '2026-04-16 21:39:05', '2026-04-16 21:39:35', '::1'),
+(21, 30766666, '2026-04-16 21:39:39', '2026-04-16 21:40:50', '::1'),
+(22, 31568987, '2026-04-16 21:41:06', '2026-04-16 21:46:09', '::1'),
+(23, 30766666, '2026-04-16 21:46:12', '2026-04-16 22:07:18', '::1'),
+(24, 31568987, '2026-04-16 22:07:39', '2026-04-16 22:09:12', '::1'),
+(25, 30766666, '2026-04-16 22:09:14', '2026-04-16 22:09:32', '::1'),
+(26, 31568987, '2026-04-16 22:09:43', '2026-04-16 22:24:49', '::1'),
+(27, 31568987, '2026-04-16 22:25:08', '2026-04-16 22:31:40', '::1'),
+(28, 30766666, '2026-04-16 22:31:42', '2026-04-16 22:32:26', '::1'),
+(29, 30766666, '2026-04-16 22:32:29', NULL, '::1');
 
 -- --------------------------------------------------------
 
@@ -88,7 +167,9 @@ CREATE TABLE `datos_negocio` (
 
 INSERT INTO `datos_negocio` (`id_config`, `nombre`, `rif`, `direccion`, `telefono`, `id_usuario_cambio`, `fecha_movimiento`) VALUES
 (1, 'Configuración Inicial', 'J-00000000-0', 'Dirección Base', '0000-0000000', 30766666, '2026-04-15 00:09:14'),
-(2, 'Bodegon Don Diego 2016 C.A.', 'J-40812157-7', 'CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE PAYARA - PORTUGUESA. ZONA POSTAL 3301', '04125239290', 30766666, '2026-04-15 00:23:32');
+(2, 'Bodegon Don Diego 2016 C.A.', 'J-40812157-7', 'CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE PAYARA - PORTUGUESA. ZONA POSTAL 3301', '04125239290', 30766666, '2026-04-15 00:23:32'),
+(3, 'Bodegon Don Diego 2016 C.A.', 'J-40812157-8', 'CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE PAYARA - PORTUGUESA. ZONA POSTAL 3301', '04125239290', 30766666, '2026-04-17 01:35:54'),
+(4, 'Bodegon Don Diego 2016 C.A.', 'J-40812157-7', 'CALLE 01 E/ AV 2 Y 3 CASA NRO S/N BARRIO 29 DE NOVIEMBRE PAYARA - PORTUGUESA. ZONA POSTAL 3301', '04125239290', 30766666, '2026-04-17 01:36:11');
 
 -- --------------------------------------------------------
 
@@ -102,7 +183,7 @@ CREATE TABLE `det_factura` (
   `id_factura` int(255) NOT NULL,
   `codigo_producto` varchar(50) NOT NULL,
   `cantidad` int(255) NOT NULL,
-  `total_bs` int(255) NOT NULL
+  `total_bs` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -110,13 +191,31 @@ CREATE TABLE `det_factura` (
 --
 
 INSERT INTO `det_factura` (`id_Det_factura`, `sub_total`, `id_factura`, `codigo_producto`, `cantidad`, `total_bs`) VALUES
-(113, 12.71, 87, '0', 1, 6050),
-(114, 1.00, 88, '0000012307318', 1, 476),
-(115, 9.50, 89, '0159000000067', 5, 4522),
-(116, 4.20, 89, '0', 1, 2000),
-(117, 3.00, 89, '6820235030016', 2, 1428),
-(118, 1.00, 90, '0000012307318', 1, 480),
-(119, 5.21, 90, '0', 1, 2500);
+(113, 12.71, 87, '0', 1, 6050.00),
+(114, 1.00, 88, '0000012307318', 1, 476.00),
+(115, 9.50, 89, '0159000000067', 5, 4522.00),
+(116, 4.20, 89, '0', 1, 2000.00),
+(117, 3.00, 89, '6820235030016', 2, 1428.00),
+(122, 9.50, 96, '0159000000067', 5, 4541.00),
+(125, 16.30, 99, '5958484589533', 5, 7791.00),
+(126, 8.80, 100, '0823543360', 4, 4206.00),
+(127, 11.00, 101, '0823543360', 5, 5258.00),
+(128, 7.50, 102, '0799439302334', 5, 3585.00),
+(129, 12.80, 103, '0010621160205', 8, 6118.00),
+(131, 3.00, 104, '27500435002442', 6, 3.00),
+(132, 3.19, 105, '0', 1, 1524.00),
+(133, 4.00, 105, '0073930680109', 5, 1912.00),
+(134, 19.56, 106, '5958484589533', 6, 20.00),
+(135, 14.00, 107, '6936664327273', 4, 14.00),
+(136, 2.70, 108, '3170467310003', 18, 3.00),
+(137, 10.15, 109, '0765542343052', 5, 4771.00),
+(138, 4.26, 109, '0', 1, 2000.00),
+(139, 19.56, 110, '5958484589533', 6, 9193.00),
+(140, 1.00, 111, '0000012307318', 1, 480.00),
+(141, 1.00, 112, '0000012307318', 1, 480.00),
+(142, 2.40, 113, '0073930680109', 3, 1153.00),
+(143, 3.12, 114, '0', 1, 1500.00),
+(144, 4.80, 115, '0073930680109', 6, 2305.25);
 
 -- --------------------------------------------------------
 
@@ -141,8 +240,25 @@ CREATE TABLE `factura` (
 INSERT INTO `factura` (`id_factura`, `fecha`, `hora`, `ci_cliente`, `tipo_pago`, `usuario_ci`, `id_config_negocio`) VALUES
 (87, '2026-04-11', '19:55:45', 999, 'Efectivo', 30766666, 2),
 (88, '2026-04-11', '20:17:19', 999, 'Punto', 30766666, 2),
-(89, '2026-04-11', '20:23:35', 30766666, 'Crédito', 30766666, 2),
-(90, '2026-04-13', '22:13:14', 30766666, 'Crédito', 30766666, 2);
+(89, '2026-04-11', '20:23:35', 30766666, 'Pagado', 30766666, 2),
+(96, '2026-04-15', '17:34:39', 30766666, 'Pagado', 30766666, 2),
+(99, '2026-04-15', '17:40:27', 30766666, 'Pagado', 30766666, 2),
+(100, '2026-04-15', '17:40:46', 30766666, 'Pagado', 30766666, 2),
+(101, '2026-04-15', '21:23:50', 30766666, 'Pagado', 30766666, 2),
+(102, '2026-04-15', '21:52:58', 30766666, 'Pagado', 30766666, 2),
+(103, '2026-04-15', '22:27:08', 30766666, 'Pagado', 30766666, 2),
+(104, '2026-04-16', '18:29:05', 999, 'Efectivo', 30766666, 2),
+(105, '2026-04-16', '18:32:47', 999, 'Biopago', 30766666, 2),
+(106, '2026-04-16', '21:25:12', 999, 'Pago Móvil', 30766666, 2),
+(107, '2026-04-16', '21:34:30', 30766666, 'Pagado', 30766666, 2),
+(108, '2026-04-16', '21:39:28', 999, 'Efectivo', 31568987, 4),
+(109, '2026-04-16', '22:09:05', 999, 'Efectivo', 31568987, 4),
+(110, '2026-04-16', '22:10:15', 30766666, 'Crédito', 31568987, 4),
+(111, '2026-04-16', '22:43:41', 999, 'Punto', 30766666, 4),
+(112, '2026-04-16', '22:44:59', 999, 'Efectivo', 30766666, 4),
+(113, '2026-04-16', '22:47:11', 30766666, 'Pago Móvil', 30766666, 4),
+(114, '2026-04-16', '22:50:11', 999, 'Punto', 30766666, 4),
+(115, '2026-04-16', '22:50:30', 999, 'Punto', 30766666, 4);
 
 -- --------------------------------------------------------
 
@@ -166,7 +282,11 @@ CREATE TABLE `historial_productos` (
 INSERT INTO `historial_productos` (`id`, `codigo_producto`, `accion`, `usuario_ci`, `detalles`, `fecha`) VALUES
 (1, '0000012307318', 'EDICION', 30766666, 'Cambio realizado en: Saca punta. Cantidad: 50, Precio: 1', '2026-04-11 21:06:49'),
 (2, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-11 21:07:53'),
-(3, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-12 21:32:57');
+(3, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-12 21:32:57'),
+(4, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-16 21:25:19'),
+(5, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-16 21:34:36'),
+(6, '0824772000101', 'EDICION', 30766666, 'Cambio realizado en: Crayones de Cera. Cantidad: 50, Precio: 2.6', '2026-04-16 21:36:59'),
+(7, '0000012307318', 'INHABILITACION', 30766666, 'El usuario desactivó este producto del inventario', '2026-04-16 22:33:21');
 
 -- --------------------------------------------------------
 
@@ -219,12 +339,12 @@ CREATE TABLE `productos` (
 
 INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `precio`, `i.v.a.`, `estado`, `presentacion`) VALUES
 ('0', '', 'Monto Adicional', '', 999999, 0.00, 0, 1, ''),
-('0000012307318', 'Girafa', 'Saca punta', 'Escolar', 49, 1.00, 0, 1, '1 unidad'),
+('0000012307318', 'Girafa', 'Saca punta', 'Escolar', 41, 1.00, 0, 1, '1 unidad'),
 ('0002730', 'Color Fragancia', 'Condon', 'Cuidado Personal y Hogar', 50, 0.80, 0, 1, '3 unidades'),
-('0010621160205', 'Garbil', 'Pala de Mano', 'Cuidado Personal y Hogar', 44, 1.60, 0, 1, '1 unidad'),
+('0010621160205', 'Garbil', 'Pala de Mano', 'Cuidado Personal y Hogar', 36, 1.60, 0, 1, '1 unidad'),
 ('0012245134037', 'Venepan', 'Carne de Soya', 'Despensa', 49, 3.13, 0, 1, '250g'),
-('0073930680109', 'DUO', 'Pega de Pestaña', 'Otro', 49, 0.80, 0, 1, '9g'),
-('0159000000067', 'Las Llaves', 'Jabon en Polvo Bebe', 'Cuidado Personal y Hogar', 35, 1.90, 0, 1, '400g'),
+('0073930680109', 'DUO', 'Pega de Pestaña', 'Otro', 35, 0.80, 0, 1, '9g'),
+('0159000000067', 'Las Llaves', 'Jabon en Polvo Bebe', 'Cuidado Personal y Hogar', 30, 1.90, 0, 1, '400g'),
 ('02010010A', 'Esencia Nata ', 'Esencia Nata ', 'Despensa', 50, 2.80, 0, 1, '75g'),
 ('02010090M', 'Esencia Chicle Azul', 'Esencia Chicle Azul', 'Despensa', 45, 5.88, 0, 1, '1/2L'),
 ('02590003C', 'Caramelina', 'Caramelina', 'Despensa', 50, 1.45, 0, 1, '150g'),
@@ -235,15 +355,15 @@ INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `
 ('0737186103361', 'Gosto', 'Mayonesa ', 'Despensa', 50, 3.80, 0, 1, '445g'),
 ('0737186103378', 'Gosto', 'Mayonesa ', 'Despensa', 50, 2.00, 0, 1, '175g'),
 ('0745853822873', 'Gosto', 'Vinagre ', 'Despensa', 49, 2.30, 0, 1, '500ml'),
-('0765542343052', 'Wepa', 'Arequipe ', 'Despensa', 50, 2.03, 0, 1, '100g'),
-('0799439302334', 'Younghair', 'Champu de Color', 'Cuidado Personal y Hogar', 36, 1.50, 0, 1, '25ml'),
+('0765542343052', 'Wepa', 'Arequipe ', 'Despensa', 45, 2.03, 0, 1, '100g'),
+('0799439302334', 'Younghair', 'Champu de Color', 'Cuidado Personal y Hogar', 31, 1.50, 0, 1, '25ml'),
 ('0823543359', 'Blend Max', 'Desinfectante para Diluir citronela', 'Cuidado Personal y Hogar', 50, 2.20, 0, 1, '100ml'),
-('0823543360', 'Blend Max', 'Desinfectante para Diluir Marina', 'Cuidado Personal y Hogar', 50, 2.20, 0, 1, '100ml'),
-('0824772000101', 'La Nieve', 'Crayones de Cera', 'Otro', 50, 2.60, 0, 1, '12 colores'),
+('0823543360', 'Blend Max', 'Desinfectante para Diluir Marina', 'Cuidado Personal y Hogar', 36, 2.20, 0, 1, '100ml'),
+('0824772000101', 'La Nieve', 'Crayones de Cera', 'Escolar', 50, 2.60, 0, 1, '12 colores'),
 ('17592559000179', 'Resca', 'Papas doradas ', 'Despensa', 49, 1.50, 0, 1, '200g'),
 ('17597597004721', 'Luxus', 'Emsendedor ', 'Despensa', 50, 0.20, 0, 1, '1 unidad'),
-('27500435002442', 'Head & Shoulders', 'Shanpoo control Caspa', 'Cuidado Personal y Hogar', 50, 0.50, 0, 1, '18ml'),
-('3170467310003', 'MedAid', 'Jeringa Esteril ', 'Otro', 51, 0.15, 0, 1, '3cc/ml'),
+('27500435002442', 'Head & Shoulders', 'Shanpoo control Caspa', 'Cuidado Personal y Hogar', 44, 0.50, 0, 1, '18ml'),
+('3170467310003', 'MedAid', 'Jeringa Esteril ', 'Otro', 33, 0.15, 0, 1, '3cc/ml'),
 ('4507329840349', 'Monachos', 'Crayones de Cera', 'Otro', 50, 2.60, 0, 1, '12 colores'),
 ('4591449607586', 'Alfonzo Rivas & Cia', 'Maizina Americana ', 'Despensa', 50, 1.10, 0, 1, '90g'),
 ('5029900015209', 'Embajador colegial', 'Medias', 'Otro', 50, 1.00, 0, 1, 'talla 2-4'),
@@ -251,7 +371,7 @@ INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `
 ('5029900028599', 'Fashion', 'Medias', 'Otro', 50, 1.00, 0, 1, 'Talla 9-11'),
 ('5591597000825', 'Baby Finger', 'Petroleum', 'Otro', 50, 3.00, 0, 1, '120g'),
 ('5958484484906', 'Monper', 'Desinfectante Cherry', 'Cuidado Personal y Hogar', 50, 1.00, 0, 1, '500ml'),
-('5958484589533', 'Monper', 'Lavaplatos', 'Cuidado Personal y Hogar', 50, 3.26, 0, 1, '1.5L'),
+('5958484589533', 'Monper', 'Lavaplatos', 'Cuidado Personal y Hogar', 33, 3.26, 0, 1, '1.5L'),
 ('5958484731475', 'Monper', 'Desinfectante Lavanda', 'Cuidado Personal y Hogar', 50, 2.40, 0, 1, '1.5L'),
 ('6580901071018', 'Saca Punta Metal', 'Saca Punta Metal', 'Otro', 49, 0.20, 0, 1, '1 unidad'),
 ('6820235030016', 'Escarcha', 'Escarcha', 'Otro', 47, 1.50, 0, 1, '120g'),
@@ -266,8 +386,8 @@ INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `
 ('6936664321080', 'Boszs Orance', 'Set de Prefune y Crema', 'Cuidado Personal y Hogar', 50, 4.00, 0, 1, '90ml y 95ml'),
 ('6936664321165', 'Swisse Montane', 'Set de Prefune y Crema', 'Cuidado Personal y Hogar', 50, 4.00, 0, 1, '90ml y 95ml'),
 ('6936664327259', 'Las Bellezas', 'BVAGRLI AVQA', 'Cuidado Personal y Hogar', 50, 3.50, 0, 1, '35ml y 35ml'),
-('6936664327273', 'Las Bellezas', 'ISSE MLYAKE', 'Cuidado Personal y Hogar', 50, 3.50, 0, 1, '35ml y 35ml'),
-('6944977122126', 'Cheery', 'Cheery', 'Cuidado Personal y Hogar', 50, 0.40, 0, 1, '30g'),
+('6936664327273', 'Las Bellezas', 'ISSE MLYAKE', 'Cuidado Personal y Hogar', 46, 3.50, 0, 1, '35ml y 35ml'),
+('6944977122126', 'Cheery', 'Cheery', 'Cuidado Personal y Hogar', 45, 0.40, 0, 1, '30g'),
 ('6945745405038', 'Toys', 'Pistola de Agua', 'Otro', 50, 4.00, 0, 1, '1 unidad'),
 ('6948447510406', 'El Gran 8', 'Papel Crepe ', 'Otro', 50, 0.65, 0, 1, '50x200cm'),
 ('6951223845128', 'Hugme', 'Hojas de Examen', 'Otro', 50, 0.06, 0, 1, '21x31cm'),
@@ -565,6 +685,19 @@ ALTER TABLE `abonos`
   ADD KEY `usuario_ci` (`usuario_ci`);
 
 --
+-- Indices de la tabla `ajustes`
+--
+ALTER TABLE `ajustes`
+  ADD PRIMARY KEY (`clave`);
+
+--
+-- Indices de la tabla `auditoria_sesiones`
+--
+ALTER TABLE `auditoria_sesiones`
+  ADD PRIMARY KEY (`id_sesion`),
+  ADD KEY `usuario_ci` (`usuario_ci`);
+
+--
 -- Indices de la tabla `clientes`
 --
 ALTER TABLE `clientes`
@@ -645,31 +778,37 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `abonos`
 --
 ALTER TABLE `abonos`
-  MODIFY `id_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT de la tabla `auditoria_sesiones`
+--
+ALTER TABLE `auditoria_sesiones`
+  MODIFY `id_sesion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `datos_negocio`
 --
 ALTER TABLE `datos_negocio`
-  MODIFY `id_config` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_config` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `det_factura`
 --
 ALTER TABLE `det_factura`
-  MODIFY `id_Det_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id_Det_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `id_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_productos`
 --
 ALTER TABLE `historial_productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -699,6 +838,12 @@ ALTER TABLE `rol_permisos`
 ALTER TABLE `abonos`
   ADD CONSTRAINT `abonos_ibfk_1` FOREIGN KEY (`usuario_ci`) REFERENCES `usuarios` (`C.I`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_abono_factura` FOREIGN KEY (`id_factura`) REFERENCES `factura` (`id_factura`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `auditoria_sesiones`
+--
+ALTER TABLE `auditoria_sesiones`
+  ADD CONSTRAINT `auditoria_sesiones_ibfk_1` FOREIGN KEY (`usuario_ci`) REFERENCES `usuarios` (`C.I`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `datos_negocio`
