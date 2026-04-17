@@ -1,37 +1,48 @@
 <?php
-header('Content-Type: application/json');
-ob_start();
 
-include 'db_conexion.php'; 
+header('Content-Type: application/json');
+if (ob_get_length()) ob_clean(); 
+require_once 'db_conexion.php'; 
 
 try {
     if (!isset($pdo)) {
-        throw new Exception("No se encontró la variable de conexión \$pdo");
+        throw new Exception("Error de configuración: La variable de conexión \$pdo no existe.");
     }
+
 
     $json = file_get_contents("php://input");
     $data = json_decode($json, true);
 
-    if (!$data) throw new Exception("No se recibieron datos.");
+    if (!$data) {
+        throw new Exception("No se recibieron datos válidos.");
+    }
 
-    $cedula = $data['cedula_cliente'];
-    $monto_total_abono = floatval($data['monto_abonado']);
-    $metodo = $data['metodo_pago'];
+    $cedula_cliente = $data['cedula_cliente'] ?? '';
+    $cedula_usuario = $data['cedula_usuario'] ?? ''; // La cédula del cajero/gerente
+    $monto_total_abono = floatval($data['monto_abonado'] ?? 0);
+    $metodo = $data['metodo_pago'] ?? 'Efectivo';
+
+    if (empty($cedula_cliente) || empty($cedula_usuario)) {
+        throw new Exception("Cédula de cliente o usuario ausente.");
+    }
+
+    if ($monto_total_abono <= 0) {
+        throw new Exception("El monto debe ser mayor a cero.");
+    }
+
 
     $pdo->beginTransaction();
 
-    // 1. OBTENER FACTURAS PENDIENTES 
-    // Corregido: Ahora busca 'Credito' OR 'Crédito'
-    $sql_f = "SELECT f.id_factura, SUM(df.sub_total) as monto_factura 
-            FROM factura f
-            JOIN det_factura df ON f.id_factura = df.id_factura
-            WHERE f.ci_cliente = :c 
-            AND (f.tipo_pago = 'Credito' OR f.tipo_pago = 'Crédito') 
-            GROUP BY f.id_factura 
-            ORDER BY f.fecha ASC";
+
+    $sql_f = "SELECT f.id_factura, 
+                    (SELECT SUM(sub_total) FROM det_factura WHERE id_factura = f.id_factura) as monto_total_factura
+                FROM factura f
+                WHERE f.ci_cliente = :c 
+                AND (f.tipo_pago = 'Credito' OR f.tipo_pago = 'Crédito') 
+                ORDER BY f.fecha ASC, f.hora ASC";
             
     $stmt = $pdo->prepare($sql_f);
-    $stmt->execute([':c' => $cedula]);
+    $stmt->execute([':c' => $cedula_cliente]);
     $facturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $restante = $monto_total_abono;
@@ -40,41 +51,41 @@ try {
         if ($restante <= 0) break;
 
         $id_f = $f['id_factura'];
+        $monto_factura = floatval($f['monto_total_factura']);
         
-        // Sumar abonos previos
+
         $st_ab = $pdo->prepare("SELECT SUM(monto_abonado) as total FROM abonos WHERE id_factura = :id");
         $st_ab->execute([':id' => $id_f]);
-        $abonado_previo = floatval($st_ab->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
+        $res_abono = $st_ab->fetch(PDO::FETCH_ASSOC);
+        $abonado_previo = floatval($res_abono['total'] ?? 0);
         
-        $deuda_factura = floatval($f['monto_factura']) - $abonado_previo;
+        $deuda_actual_factura = $monto_factura - $abonado_previo;
 
-        if ($deuda_factura > 0) {
-            $pago_ahora = min($restante, $deuda_factura);
 
-            // 2. INSERT del abono
+        if ($deuda_actual_factura > 0) {
+            $pago_ahora = min($restante, $deuda_actual_factura);
+
             $sql_ins = "INSERT INTO abonos (id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci) 
                         VALUES (?, ?, NOW(), ?, ?)";
-            
             $ins = $pdo->prepare($sql_ins);
-            $ins->execute([$id_f, $pago_ahora, $metodo, $cedula]);
+            $ins->execute([$id_f, $pago_ahora, $metodo, $cedula_usuario]);
 
-            // 3. CAMBIO DE ESTADO (Solo si la deuda llega a cero)
-            // Usamos un margen de 0.01 por los decimales
-            if (($deuda_factura - $pago_ahora) <= 0.01) {
+            if (($deuda_actual_factura - $pago_ahora) <= 0.01) {
                 $upd = $pdo->prepare("UPDATE factura SET tipo_pago = 'Pagado' WHERE id_factura = ?");
                 $upd->execute([$id_f]);
             }
+
             $restante -= $pago_ahora;
         }
     }
 
     $pdo->commit();
-    ob_end_clean();
-    echo json_encode(["status" => "success"]);
+    echo json_encode(["status" => "success", "message" => "Abono procesado correctamente."]);
 
 } catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
-    ob_end_clean();
-    echo json_encode(["status" => "error", "message" => "Error: " . $e->getMessage()]);
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
 ?>

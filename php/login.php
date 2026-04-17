@@ -1,5 +1,4 @@
 <?php
-// login.php
 ob_start();
 session_start();
 header('Content-Type: application/json');
@@ -11,7 +10,6 @@ $usuario_form = $data['usuario'] ?? '';
 $password_form = $data['password'] ?? '';
 
 try {
-    // 1. Buscamos el usuario por su nombre de usuario
     $sql = "SELECT u.*, r.nombre_rol 
             FROM usuarios u 
             INNER JOIN roles r ON u.rol = r.id_rol 
@@ -21,19 +19,23 @@ try {
     $stmt->execute([':u' => $usuario_form]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // 2. Verificación de contraseña
     if ($user && password_verify($password_form, $user['CONTRASEÑA'])) {
         
         $idRolActual = $user['rol'] ?? $user['ROL'];
         $ci_final = $user['CI'] ?? $user['C.I'];
 
-        // Guardar en Sesión de PHP (Servidor)
         $_SESSION['ci_usuario'] = $ci_final; 
         $_SESSION['id_rol'] = $idRolActual;
         $_SESSION['rol'] = $user['nombre_rol'];
         $_SESSION['nombre_usuario'] = $user['NOMBRE'] . " " . $user['APELLIDO'];
 
-        // 3. Cargar Permisos
+        $ip_usuario = $_SERVER['REMOTE_ADDR'] ?? 'Desconocida';
+        $sql_aud = "INSERT INTO auditoria_sesiones (usuario_ci, fecha_inicio, ip_direccion) VALUES (?, NOW(), ?)";
+        $stmt_aud = $pdo->prepare($sql_aud);
+        $stmt_aud->execute([$ci_final, $ip_usuario]);
+        
+        $_SESSION['id_sesion_auditoria'] = $pdo->lastInsertId();
+
         $sqlP = "SELECT p.nombre_permiso 
                 FROM rol_permisos rp 
                 INNER JOIN permisos p ON rp.id_permiso = p.id_permiso 
@@ -46,8 +48,6 @@ try {
 
         ob_clean();
 
-        // --- RESPUESTA AL NAVEGADOR ---
-        // Aquí incluimos N_USUARIO y telefono para que el JS los reciba
         echo json_encode([
             "status" => "success",
             "message" => "¡Bienvenido " . $user['nombre_rol'] . "!",
@@ -68,7 +68,7 @@ try {
         echo json_encode(["status" => "error", "message" => "Usuario o contraseña incorrectos."]);
     }
 } catch (PDOException $e) {
-    ob_clean();
-    echo json_encode(["status" => "error", "message" => "Error de BD: " . $e->getMessage()]);
+        ob_clean();
+        echo json_encode(["status" => "error", "message" => "Error de BD: " . $e->getMessage()]);
 }
 ?>

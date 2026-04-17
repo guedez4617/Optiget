@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Panel del Gerente</title>
+    <title>Panel del Gerente - Don Diego 2016</title>
     <link rel="stylesheet" href="../../../css/panel_general.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -24,39 +25,80 @@
                     <li id="opcion-historial"><a href="../../Cajera/historial_ventas/his.html">Historial de ventas</a></li>
                     <li id="opcion-almacen"><a href="../../Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
                     <li id="opcion-configuracion"><a href="../../configuracion/ajustes.html">Configuración</a></li>
-                    <li><a href="../../../index.html" id="btnSalir">Salir</a></li>
+                    <li><a href="javascript:void(0)" onclick="abrirModalSalir()">Salir</a></li>
                 </ul>
-
             </nav>
         </aside>
 
         <main class="panel">
-            <header class="altura_panel">
-                <h1>Panel General</h1>
+            <header class="altura_panel" style="display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
+                <h1>Panel de Control Gerencial</h1>
+                <button id="btnAuditoria" class="btn-auditoria">Ver Auditoría de Usuarios</button>
             </header>
 
-            <section class="distancia_cuadro">
-                <div class="anchos_cuadros">
-                    <div class="grafica-placeholder">[ total de ventas ]</div>
+            <section class="filtros-dashboard">
+                <div class="filtro-grupo">
+                    <label>Periodo de Reporte:</label>
+                    <div class="segmented-control">
+                        <button class="btn-segment active" onclick="cambiarFiltro('1dia', this)">Hoy</button>
+                        <button class="btn-segment" onclick="cambiarFiltro('1semana', this)">Semana</button>
+                        <button class="btn-segment" onclick="cambiarFiltro('1mes', this)">Mes</button>
+                    </div>
                 </div>
-                <div class="anchos_cuadros">
-                    <div class="grafica-placeholder">[ total en deuda ]</div>
-                </div>
-                <div class="anchos_cuadros">
-                    <div class="grafica-placeholder">[ credito activo ]</div>
+                <div class="indicador-estado">
+                    <span class="punto-vivo"></span> Datos actualizados
                 </div>
             </section>
 
-            <section class="graficas">
-                <h2>Resumen gráfico</h2>
-                <div class="grafica-placeholder">[ Gráfica de ventas ]</div>
-                <div class="grafica-placeholder">[ Gráfica de créditos ]</div>
+            <section class="distancia_cuadro">
+                <div class="anchos_cuadros">
+                    <h3>Ventas (Efectivo/Punto)</h3>
+                    <p id="totalVentas" class="monto">$ 0.00</p>
+                </div>
+                <div class="anchos_cuadros">
+                    <h3>Ventas a Crédito</h3>
+                    <p id="totalCredito" class="monto" style="color: #d9534f;">$ 0.00</p>
+                </div>
+                <div class="anchos_cuadros">
+                    <h3>Deuda Total Global</h3>
+                    <p id="creditosActivos" class="monto" style="color: #c54b00;">$ 0.00</p>
+                </div>
+            </section>
+
+            <section class="contenedor-graficas">
+                <div class="grafica-item">
+                    <h3>Distribución de Ingresos</h3>
+                    <div style="height:300px;"><canvas id="graficaDinero"></canvas></div>
+                </div>
+                <div class="grafica-item">
+                    <h3>Top 5 Productos Más Vendidos</h3>
+                    <div style="height:300px;"><canvas id="graficaProductos"></canvas></div>
+                </div>
             </section>
         </main>
     </div>
 
-    <script src="../../../javascript/permisos.js"></script>
+    <div id="modalAuditoria" class="modal-auditoria" style="display:none;">
+        <div class="contenido-auditoria" style="width: 85%; max-width: 1200px;">
+            <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <h2 style="margin: 0; color: #333;">Seguimiento de Actividad</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="inputCI" placeholder="Investigar C.I..." style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 180px;">
+                        <button class="btn-auditoria" onclick="ejecutarAuditoriaDetallada()" style="padding: 8px 15px;">Buscar</button>
+                    </div>
+                </div>
+                <span class="cerrar-modal" id="cerrarAuditoria">&times;</span>
+            </header>
 
+            <div id="contenedorResultadosAuditoria" style="max-height: 65vh; overflow-y: auto; margin-top: 20px;">
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../javascript/permisos.js"></script>
+    <script src="../../../javascript/logout_global.js"></script>
+    <script src="../../../javascript/panel_gerente.js"></script>
 </body>
 
 </html>

@@ -24,7 +24,6 @@ $cedula_cliente = $input['cliente']['cedula'];
 try {
     $pdo->beginTransaction();
 
-    // --- NUEVO: Obtener la configuración del negocio más reciente ---
     $stmtNegocio = $pdo->query("SELECT id_config FROM datos_negocio ORDER BY id_config DESC LIMIT 1");
     $config = $stmtNegocio->fetch(PDO::FETCH_ASSOC);
 
@@ -33,7 +32,6 @@ try {
     }
     $id_negocio_actual = $config['id_config'];
 
-    // 3. Insertar la Cabecera de la Factura (Agregando id_config_negocio)
     $sql_factura = "INSERT INTO factura (fecha, hora, ci_cliente, tipo_pago, usuario_ci, id_config_negocio) 
                     VALUES (CURDATE(), CURTIME(), ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql_factura);
@@ -41,7 +39,6 @@ try {
     
     $id_factura = $pdo->lastInsertId();
 
-    // 4. Insertar los productos en det_factura y actualizar stock
     $sql_det = "INSERT INTO det_factura (id_factura, codigo_producto, cantidad, sub_total, total_bs) 
                 VALUES (?, ?, ?, ?, ?)";
     $stmt_det = $pdo->prepare($sql_det);
