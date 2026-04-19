@@ -5,7 +5,10 @@ let tasaDolar = 1.00;
 let montoBsExtra = 0;
 
 document.addEventListener("DOMContentLoaded", async() => {
-    await cargarTasaDesdeBD();
+    const tasaActualizada = await actualizarTasaDesdeBCV();
+    if (!tasaActualizada) {
+        await cargarTasaDesdeBD();
+    }
 
     if (document.getElementById("valorTasaDisplay")) {
         document.getElementById("valorTasaDisplay").textContent = tasaDolar.toFixed(2);
@@ -48,6 +51,24 @@ async function cargarTasaDesdeBD() {
         console.error("Error cargando tasa:", e);
         tasaDolar = parseFloat(localStorage.getItem("tasaDolar")) || 1.00;
     }
+}
+
+async function actualizarTasaDesdeBCV() {
+    try {
+        const res = await fetch('../../../php/actualizar_tasa_bc_nuevo.php');
+        const data = await res.json();
+
+        if (data.status === 'ok' && data.tasa) {
+            tasaDolar = parseFloat(data.tasa);
+            localStorage.setItem("tasaDolar", tasaDolar);
+            const display = document.getElementById("valorTasaDisplay");
+            if (display) display.textContent = tasaDolar.toFixed(2);
+            return true;
+        }
+    } catch (e) {
+        console.error("Error obteniendo tasa BCV:", e);
+    }
+    return false;
 }
 
 async function guardarNuevaTasa() {
