@@ -4,13 +4,13 @@ let indexParaRestar = null;
 let tasaDolar = 1.00;
 let montoBsExtra = 0;
 
-document.addEventListener("DOMContentLoaded", async() => {
+document.addEventListener("DOMContentLoaded", async () => {
     const tasaActualizada = await actualizarTasaDesdeBCV();
     if (!tasaActualizada) await cargarTasaDesdeBD();
 
     if (document.getElementById("valorTasaDisplay")) document.getElementById("valorTasaDisplay").textContent = tasaDolar.toFixed(2);
 
-    // Programar actualizaciones periódicas cada 2 horas (2 * 60 * 60 * 1000 ms)
+
     programarActualizacionTasa(2 * 60 * 60 * 1000);
     verificarCliente();
     renderizarCarrito();
@@ -379,7 +379,7 @@ function confirmarResta() {
 // Programa la actualización automática de la tasa.
 function programarActualizacionTasa(intervalMs) {
     // Llamada periódica
-    setInterval(async() => {
+    setInterval(async () => {
         const ok = await actualizarTasaDesdeBCV();
         if (!ok) await cargarTasaDesdeBD();
         // Actualizar elementos visuales y carrito si existen
