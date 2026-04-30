@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel del Gerente - Don Diego 2016</title>
     <link rel="stylesheet" href="../../../css/panel_general.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -68,11 +67,19 @@
             <section class="contenedor-graficas">
                 <div class="grafica-item">
                     <h3>Distribución de Ingresos</h3>
-                    <div style="height:300px;"><canvas id="graficaDinero"></canvas></div>
+                    <div class="grafica-canvas-wrap">
+                        <canvas id="graficaDinero"></canvas>
+                        <div class="grafica-tooltip" id="tooltipDinero" style="display:none;"></div>
+                    </div>
+                    <div id="legendDinero" class="grafica-legend" aria-hidden="true"></div>
                 </div>
                 <div class="grafica-item">
                     <h3>Top 5 Productos Más Vendidos</h3>
-                    <div style="height:300px;"><canvas id="graficaProductos"></canvas></div>
+                    <div class="grafica-canvas-wrap">
+                        <canvas id="graficaProductos"></canvas>
+                        <div class="grafica-tooltip" id="tooltipProductos" style="display:none;"></div>
+                    </div>
+                    <div id="legendProductos" class="grafica-legend" aria-hidden="true"></div>
                 </div>
             </section>
         </main>
