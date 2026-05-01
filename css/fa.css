@@ -188,7 +188,7 @@ body {
 /* --- BOTONES --- */
 
 .btn-imprimir {
-    background: #c54b00;
+    background: var(--color-tema, #c54b00);
     color: white;
     border: none;
     padding: 10px;

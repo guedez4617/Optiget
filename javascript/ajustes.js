@@ -160,3 +160,82 @@ if (btnNegocio) {
         } catch (error) { alert("Error al guardar"); }
     });
 }
+
+// --- 6. APARIENCIA DEL SISTEMA ---
+const colorInput = document.getElementById('colorSistema');
+const hexValor = document.getElementById('hexValor');
+
+// Actualizar texto HEX cuando cambia el color
+if (colorInput && hexValor) {
+    colorInput.addEventListener('input', (e) => {
+        hexValor.textContent = e.target.value;
+    });
+}
+
+// Cargar apariencia actual en los inputs
+const cargarApariencia = async () => {
+    try {
+        const res = await fetch('../../php/obtener_apariencia.php');
+        const data = await res.json();
+        if (colorInput && hexValor) {
+            colorInput.value = data.color_tema || '#c54b00';
+            hexValor.textContent = data.color_tema || '#c54b00';
+        }
+    } catch (e) { console.error('Error al cargar apariencia', e); }
+};
+cargarApariencia();
+
+// Guardar diseño
+document.getElementById('formDiseno')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('color_tema', document.getElementById('colorSistema').value);
+    
+    const inputFondo = document.getElementById('inputFondo');
+    if (inputFondo.files.length > 0) {
+        formData.append('fondo_sistema', inputFondo.files[0]);
+    }
+    
+    const inputLogo = document.getElementById('inputLogo');
+    if (inputLogo.files.length > 0) {
+        formData.append('logo_sistema', inputLogo.files[0]);
+    }
+
+    try {
+        const res = await fetch('../../php/guardar_apariencia.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (data.status === 'ok') {
+            alert('✅ Apariencia actualizada correctamente.\nLos cambios se reflejarán instantáneamente.');
+            
+            // Refrescar las variables CSS en la página actual para ver el cambio inmediato
+            const root = document.documentElement;
+            root.style.setProperty('--color-tema', data.color_tema);
+            if (inputFondo.files.length > 0) {
+                const ts = new Date().getTime();
+                // Calcular ruta base igual que apariencia.js
+                const scripts = document.getElementsByTagName('script');
+                let baseUrl = '/';
+                for (let s of scripts) {
+                    if (s.src && s.src.includes('ajustes.js')) {
+                        baseUrl = s.src.split('javascript/ajustes.js')[0];
+                        break;
+                    }
+                }
+                root.style.setProperty('--fondo-sistema', `url('${baseUrl}imagenes/${data.fondo_sistema}?v=${ts}')`);
+            }
+            
+            // Limpiar inputs de archivo
+            inputFondo.value = '';
+            inputLogo.value = '';
+        } else {
+            alert('❌ Error: ' + data.mensaje);
+        }
+    } catch (err) {
+        alert("Error de conexión al guardar diseño");
+    }
+});
