@@ -68,7 +68,7 @@ function renderizarTabla(datos) {
             
             <td>$${precioBase.toFixed(2)}</td>
             
-            <td style="color: ${esIva ? '#27ae60' : '#888'};">
+            <td style="color: ${esIva ? '#27ae60' : '#888'};">P
                 <div>${esIva ? '16%' : '0%'}</div>
                 <div style="font-size: 0.8rem; font-style: italic;">($${montoIva.toFixed(2)})</div>
             </td>

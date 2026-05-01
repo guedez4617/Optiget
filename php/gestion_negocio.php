@@ -36,10 +36,28 @@ try {
             exit;
         }
 
+        // Obtenemos la versión MÁS RECIENTE para comparar
+        $stmtAnt = $pdo->query("SELECT * FROM datos_negocio ORDER BY id_config DESC LIMIT 1");
+        $negocioAnt = $stmtAnt->fetch(PDO::FETCH_ASSOC);
+
+        $cambios = [];
+        if ($negocioAnt) {
+            if ($negocioAnt['nombre'] != $data['nombre']) $cambios[] = "Nombre: '{$negocioAnt['nombre']}' -> '{$data['nombre']}'";
+            if ($negocioAnt['rif'] != $data['rif']) $cambios[] = "RIF: '{$negocioAnt['rif']}' -> '{$data['rif']}'";
+            if ($negocioAnt['direccion'] != $data['direccion']) $cambios[] = "Dirección: '{$negocioAnt['direccion']}' -> '{$data['direccion']}'";
+            if ($negocioAnt['telefono'] != $data['telefono']) $cambios[] = "Teléfono: '{$negocioAnt['telefono']}' -> '{$data['telefono']}'";
+        }
+
+        if (empty($cambios)) {
+            $detalles_auditoria = "Actualizó información general (sin cambios detectables)";
+        } else {
+            $detalles_auditoria = "Se editó - " . implode(" | ", $cambios);
+        }
+
         // IMPORTANTE: Aquí hacemos un INSERT puro. No usamos UPDATE.
         // Cada cambio es una fila nueva para no dañar las facturas viejas.
-        $sql = "INSERT INTO datos_negocio (nombre, rif, direccion, telefono, id_usuario_cambio) 
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO datos_negocio (nombre, rif, direccion, telefono, id_usuario_cambio, detalles_auditoria) 
+                VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         $res = $stmt->execute([
@@ -47,7 +65,8 @@ try {
             $data['rif'],
             $data['direccion'],
             $data['telefono'],
-            $id_usuario
+            $id_usuario,
+            $detalles_auditoria
         ]);
 
         echo json_encode(["status" => $res ? "success" : "error"]);

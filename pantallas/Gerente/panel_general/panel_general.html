@@ -32,7 +32,6 @@
         <main class="panel">
             <header class="altura_panel" style="display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
                 <h1>Panel de Control Gerencial</h1>
-                <button id="btnAuditoria" class="btn-auditoria">Ver Auditoría de Usuarios</button>
             </header>
 
             <section class="filtros-dashboard">
@@ -83,24 +82,6 @@
                 </div>
             </section>
         </main>
-    </div>
-
-    <div id="modalAuditoria" class="modal-auditoria" style="display:none;">
-        <div class="contenido-auditoria" style="width: 85%; max-width: 1200px;">
-            <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px;">
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <h2 style="margin: 0; color: #333;">Seguimiento de Actividad</h2>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="inputCI" placeholder="Investigar C.I..." style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 180px;">
-                        <button class="btn-auditoria" onclick="ejecutarAuditoriaDetallada()" style="padding: 8px 15px;">Buscar</button>
-                    </div>
-                </div>
-                <span class="cerrar-modal" id="cerrarAuditoria">&times;</span>
-            </header>
-
-            <div id="contenedorResultadosAuditoria" style="max-height: 65vh; overflow-y: auto; margin-top: 20px;">
-            </div>
-        </div>
     </div>
 
     <script src="../../../javascript/permisos.js"></script>

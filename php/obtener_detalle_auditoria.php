@@ -44,15 +44,18 @@ try {
             UNION ALL
 
             -- 3. Historial (Crear, Editar, Habilitar, Inhabilitar productos)
-            SELECT accion, detalles, fecha as fecha_completa
-            FROM historial_productos 
-            WHERE usuario_ci = :ci AND fecha BETWEEN :inicio AND :fin
+            SELECT hp.accion, 
+                   CONCAT('[', IFNULL(p.nombre, 'Producto Desconocido'), '] ', hp.detalles) as detalles, 
+                   hp.fecha as fecha_completa
+            FROM historial_productos hp
+            LEFT JOIN productos p ON p.Codigo = hp.codigo_producto
+            WHERE hp.usuario_ci = :ci AND hp.fecha BETWEEN :inicio AND :fin
 
             UNION ALL
 
             -- 4. Cambios en datos del negocio
             SELECT 'NEGOCIO' as accion, 
-                    'Actualizó información general del establecimiento' as detalles, 
+                    IFNULL(detalles_auditoria, 'Actualizó información general del establecimiento') as detalles, 
                     fecha_movimiento as fecha_completa
             FROM datos_negocio 
             WHERE id_usuario_cambio = :ci AND fecha_movimiento BETWEEN :inicio AND :fin

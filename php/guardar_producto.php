@@ -37,6 +37,12 @@ try {
     $accionHistorial = $esEdicion ? "EDICION" : "REGISTRO";
 
     if ($esEdicion) {
+        // --- OBTENER ESTADO ANTERIOR ---
+        $sqlAnt = "SELECT * FROM productos WHERE Codigo = ?";
+        $stmtAnt = $pdo->prepare($sqlAnt);
+        $stmtAnt->execute([$codigo]);
+        $productoAnterior = $stmtAnt->fetch(PDO::FETCH_ASSOC);
+
         // --- EDITAR PRODUCTO ---
         $sql = "UPDATE productos SET 
                 categoria = ?, marca = ?, nombre = ?, presentacion = ?, 
@@ -50,6 +56,24 @@ try {
         ]);
         $mensaje = "Producto actualizado correctamente.";
         
+        // --- CONSTRUIR DETALLES DE AUDITORIA ---
+        $cambios = [];
+        if ($productoAnterior) {
+            if ($productoAnterior['categoria'] != $categoria) $cambios[] = "Categoría: '{$productoAnterior['categoria']}' -> '$categoria'";
+            if ($productoAnterior['marca'] != $marca) $cambios[] = "Marca: '{$productoAnterior['marca']}' -> '$marca'";
+            if ($productoAnterior['nombre'] != $nombre) $cambios[] = "Nombre: '{$productoAnterior['nombre']}' -> '$nombre'";
+            if ($productoAnterior['presentacion'] != $presentacion) $cambios[] = "Descripción: '{$productoAnterior['presentacion']}' -> '$presentacion'";
+            if ($productoAnterior['unidades'] != $cantidad) $cambios[] = "Cantidad: {$productoAnterior['unidades']} -> $cantidad";
+            if ($productoAnterior['precio'] != $precio) $cambios[] = "Precio: \${$productoAnterior['precio']} -> \$$precio";
+            if ($productoAnterior['i.v.a.'] != $conIva) $cambios[] = "I.V.A: " . ($productoAnterior['i.v.a.'] ? "Sí" : "No") . " -> " . ($conIva ? "Sí" : "No");
+        }
+
+        if (empty($cambios)) {
+            $detalles = "Edición sin cambios en: $nombre";
+        } else {
+            $detalles = "Se editó - " . implode(" | ", $cambios);
+        }
+        
     } else {
         // --- NUEVO PRODUCTO ---
         $sql = "INSERT INTO productos (Codigo, categoria, marca, nombre, presentacion, unidades, precio, `i.v.a.`, estado) 
@@ -61,14 +85,12 @@ try {
             $cantidad, $precio, $conIva, $nuevoEstado
         ]);
         $mensaje = "Producto registrado exitosamente.";
+        $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Precio: $$precio";
     }
 
     // --- INSERTAR EN EL HISTORIAL ---
-    // Esta parte conecta con tu nueva tabla
     $sqlLog = "INSERT INTO historial_productos (codigo_producto, accion, usuario_ci, detalles, fecha) 
                 VALUES (?, ?, ?, ?, NOW())";
-    
-    $detalles = "Cambio realizado en: $nombre. Cantidad: $cantidad, Precio: $precio";
     
     $stmtLog = $pdo->prepare($sqlLog);
     $stmtLog->execute([$codigo, $accionHistorial, $vendedor_ci, $detalles]);
