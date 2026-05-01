@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-04-2026 a las 04:51:36
+-- Tiempo de generación: 01-05-2026 a las 02:07:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -59,7 +59,8 @@ INSERT INTO `abonos` (`id_abono`, `id_factura`, `monto_abonado`, `fecha_pago`, `
 (26, 107, 5.00, '2026-04-16 21:39:14', 'Efectivo $', 30766666),
 (27, 107, 4.00, '2026-04-16 21:41:14', 'Efectivo $', 30766666),
 (28, 107, 1.30, '2026-04-16 22:07:53', 'Efectivo $', NULL),
-(29, 110, 5.00, '2026-04-16 22:31:14', 'Efectivo $', 31568987);
+(29, 110, 5.00, '2026-04-16 22:31:14', 'Efectivo $', 31568987),
+(30, 110, 4.00, '2026-04-25 21:33:53', 'Efectivo $', 31568987);
 
 -- --------------------------------------------------------
 
@@ -77,7 +78,7 @@ CREATE TABLE `ajustes` (
 --
 
 INSERT INTO `ajustes` (`clave`, `valor`) VALUES
-('tasa_dolar', '480.26');
+('tasa_dolar', '485.2251');
 
 -- --------------------------------------------------------
 
@@ -121,7 +122,25 @@ INSERT INTO `auditoria_sesiones` (`id_sesion`, `usuario_ci`, `fecha_inicio`, `fe
 (26, 31568987, '2026-04-16 22:09:43', '2026-04-16 22:24:49', '::1'),
 (27, 31568987, '2026-04-16 22:25:08', '2026-04-16 22:31:40', '::1'),
 (28, 30766666, '2026-04-16 22:31:42', '2026-04-16 22:32:26', '::1'),
-(29, 30766666, '2026-04-16 22:32:29', NULL, '::1');
+(29, 30766666, '2026-04-16 22:32:29', NULL, '::1'),
+(30, 30766666, '2026-04-18 16:52:23', NULL, '::1'),
+(31, 30766666, '2026-04-18 17:27:12', NULL, '::1'),
+(32, 30766666, '2026-04-18 19:01:31', '2026-04-18 19:11:18', '::1'),
+(33, 30766666, '2026-04-18 19:11:21', NULL, '::1'),
+(34, 30766666, '2026-04-18 19:13:24', NULL, '::1'),
+(35, 30766666, '2026-04-23 09:51:19', '2026-04-23 09:52:14', '::1'),
+(36, 30766666, '2026-04-25 21:09:42', NULL, '127.0.0.1'),
+(37, 30766666, '2026-04-25 21:12:42', '2026-04-25 21:13:18', '::1'),
+(38, 31568987, '2026-04-25 21:16:54', '2026-04-25 21:34:49', '127.0.0.1'),
+(39, 30766666, '2026-04-25 21:34:59', '2026-04-25 21:36:50', '::1'),
+(40, 31568987, '2026-04-25 21:41:04', NULL, '127.0.0.1'),
+(41, 30766666, '2026-04-25 22:00:03', '2026-04-25 22:01:21', '::1'),
+(42, 30766666, '2026-04-26 19:21:51', '2026-04-26 19:21:57', '::1'),
+(43, 30766666, '2026-04-27 09:51:29', '2026-04-27 09:53:40', '::1'),
+(44, 31568987, '2026-04-27 09:53:50', '2026-04-27 09:53:59', '::1'),
+(45, 30766666, '2026-04-28 14:09:18', '2026-04-28 14:12:07', '::1'),
+(46, 30766666, '2026-04-28 14:12:56', NULL, '::1'),
+(47, 30766666, '2026-04-30 20:05:53', '2026-04-30 20:07:17', '::1');
 
 -- --------------------------------------------------------
 
@@ -215,7 +234,8 @@ INSERT INTO `det_factura` (`id_Det_factura`, `sub_total`, `id_factura`, `codigo_
 (141, 1.00, 112, '0000012307318', 1, 480.00),
 (142, 2.40, 113, '0073930680109', 3, 1153.00),
 (143, 3.12, 114, '0', 1, 1500.00),
-(144, 4.80, 115, '0073930680109', 6, 2305.25);
+(144, 4.80, 115, '0073930680109', 6, 2305.25),
+(145, 11.00, 116, '0823543359', 5, 5322.56);
 
 -- --------------------------------------------------------
 
@@ -258,7 +278,8 @@ INSERT INTO `factura` (`id_factura`, `fecha`, `hora`, `ci_cliente`, `tipo_pago`,
 (112, '2026-04-16', '22:44:59', 999, 'Efectivo', 30766666, 4),
 (113, '2026-04-16', '22:47:11', 30766666, 'Pago Móvil', 30766666, 4),
 (114, '2026-04-16', '22:50:11', 999, 'Punto', 30766666, 4),
-(115, '2026-04-16', '22:50:30', 999, 'Punto', 30766666, 4);
+(115, '2026-04-16', '22:50:30', 999, 'Punto', 30766666, 4),
+(116, '2026-04-25', '21:36:34', 999, 'Efectivo', 30766666, 4);
 
 -- --------------------------------------------------------
 
@@ -357,7 +378,7 @@ INSERT INTO `productos` (`Codigo`, `marca`, `nombre`, `categoria`, `unidades`, `
 ('0745853822873', 'Gosto', 'Vinagre ', 'Despensa', 49, 2.30, 0, 1, '500ml'),
 ('0765542343052', 'Wepa', 'Arequipe ', 'Despensa', 45, 2.03, 0, 1, '100g'),
 ('0799439302334', 'Younghair', 'Champu de Color', 'Cuidado Personal y Hogar', 31, 1.50, 0, 1, '25ml'),
-('0823543359', 'Blend Max', 'Desinfectante para Diluir citronela', 'Cuidado Personal y Hogar', 50, 2.20, 0, 1, '100ml'),
+('0823543359', 'Blend Max', 'Desinfectante para Diluir citronela', 'Cuidado Personal y Hogar', 45, 2.20, 0, 1, '100ml'),
 ('0823543360', 'Blend Max', 'Desinfectante para Diluir Marina', 'Cuidado Personal y Hogar', 36, 2.20, 0, 1, '100ml'),
 ('0824772000101', 'La Nieve', 'Crayones de Cera', 'Escolar', 50, 2.60, 0, 1, '12 colores'),
 ('17592559000179', 'Resca', 'Papas doradas ', 'Despensa', 49, 1.50, 0, 1, '200g'),
@@ -778,13 +799,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `abonos`
 --
 ALTER TABLE `abonos`
-  MODIFY `id_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `auditoria_sesiones`
 --
 ALTER TABLE `auditoria_sesiones`
-  MODIFY `id_sesion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_sesion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT de la tabla `datos_negocio`
@@ -796,13 +817,13 @@ ALTER TABLE `datos_negocio`
 -- AUTO_INCREMENT de la tabla `det_factura`
 --
 ALTER TABLE `det_factura`
-  MODIFY `id_Det_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+  MODIFY `id_Det_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `id_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
+  MODIFY `id_factura` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_productos`
