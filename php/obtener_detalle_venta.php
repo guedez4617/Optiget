@@ -51,6 +51,29 @@ try {
     $stP->execute([$id]);
     $prods = $stP->fetchAll(PDO::FETCH_ASSOC);
 
+    // 3. Consulta de Métodos de Pago Reales
+    $sqlA = "SELECT metodo_pago, monto_abonado FROM abonos WHERE id_factura = ?";
+    $stA = $pdo->prepare($sqlA);
+    $stA->execute([$id]);
+    $abonos = $stA->fetchAll(PDO::FETCH_ASSOC);
+
+    if (count($abonos) > 0) {
+        $metodos_con_monto = [];
+        $metodos_solos = [];
+        foreach ($abonos as $a) {
+            $metodos_con_monto[] = $a['metodo_pago'] . " ($" . number_format($a['monto_abonado'], 2) . ")";
+            $metodos_solos[] = $a['metodo_pago'];
+        }
+        
+        $metodos_solos = array_unique($metodos_solos); // Evitar que diga "Punto | Punto" si pagaron dos veces con punto
+
+        if ($cab['tipo_pago'] === 'Crédito') {
+            $cab['tipo_pago'] = "Crédito (Abonos: " . implode(", ", $metodos_con_monto) . ")";
+        } else {
+            $cab['tipo_pago'] = implode(" | ", $metodos_solos);
+        }
+    }
+
     echo json_encode([
         "status" => "ok", 
         "cabecera" => $cab, 

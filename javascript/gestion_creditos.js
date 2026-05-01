@@ -186,11 +186,15 @@ async function procesarAbono() {
         return;
     }
 
+    // Si paga en Efectivo USD, calcular IGTF 3%
+    const igtf = (metodo === 'Efectivo USD') ? parseFloat((montoUSD * 0.03).toFixed(2)) : 0;
+
     const datos = {
         cedula_cliente: cedulaCliente,
         cedula_usuario: cedulaUser,
         monto_abonado: montoUSD.toFixed(2),
         metodo_pago: metodo,
+        igtf: igtf,
         tasa: tasa
     };
 

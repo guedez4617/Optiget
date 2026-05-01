@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (btnFinalizar) {
         btnFinalizar.onclick = () => {
             if (carrito.length === 0) return alert("Carrito vacío");
-            abrirModal("miModal");
+            abrirModalPagos();
         };
     }
 
@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             else if (isOpen("modalTasa")) guardarNuevaTasa();
             else if (isOpen("modalMontoBs")) guardarMontoBsManual();
             else if (isOpen("modalRestar")) confirmarResta();
+            else if (isOpen("miModal") && document.activeElement.id === "inputMontoPago") agregarPagoMixto();
         }
         if (e.key === "Escape") {
             const modales = ["miModal", "modalTasa", "modalMontoBs", "modalCantidad", "modalRestar"];
@@ -293,18 +294,150 @@ function limpiarCliente() {
     verificarCliente();
 }
 
-async function procesarPago(metodo) {
-    if (metodo === 'Crédito') {
+let pagosAñadidos = [];
+
+function abrirModalPagos() {
+    if (carrito.length === 0) return alert("Carrito vacío");
+    pagosAñadidos = [];
+    actualizarModalPagos();
+    abrirModal("miModal");
+}
+
+function actualizarModalPagos() {
+    let subtotalUSD = 0;
+    let totalIvaUSD = 0;
+    carrito.forEach(p => {
+        const sub = p.cantidadFactura * p.precio;
+        const iva = p.tieneIva ? (sub * 0.16) : 0;
+        subtotalUSD += sub;
+        totalIvaUSD += iva;
+    });
+    const totalUSD = subtotalUSD + totalIvaUSD;
+
+    let totalPagado = 0;
+    pagosAñadidos.forEach(p => totalPagado += p.monto);
+
+    const restante = totalUSD - totalPagado;
+
+    document.getElementById("modalTotalPagar").textContent = "$" + totalUSD.toFixed(2);
+    document.getElementById("modalTotalPagado").textContent = "$" + totalPagado.toFixed(2);
+    document.getElementById("modalRestante").textContent = "$" + Math.max(0, restante).toFixed(2);
+
+    const lista = document.getElementById("listaPagosAgregados");
+    lista.innerHTML = "";
+    pagosAñadidos.forEach((p, idx) => {
+        const esIGTF = p.esIGTF === true;
+        const colorFondo = esIGTF ? '#fff8e1' : '';
+        const colorTexto = esIGTF ? '#e67e22' : '#2c3e50';
+        const icono = esIGTF ? '⚠️ ' : '';
+        lista.innerHTML += `
+            <li style="display:flex; justify-content:space-between; padding: 5px 10px; border-bottom: 1px solid #eee; background:${colorFondo};">
+                <span style="color:${colorTexto};">${icono}${p.metodo}</span>
+                <span style="color:${colorTexto};">$${p.monto.toFixed(2)} 
+                    ${!esIGTF ? `<button onclick="eliminarPagoMixto(${idx})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold; margin-left:10px;">X</button>` : ''}
+                </span>
+            </li>
+        `;
+    });
+
+    const inputMonto = document.getElementById("inputMontoPago");
+    if (restante > 0) {
+        inputMonto.value = restante.toFixed(2);
+    } else {
+        inputMonto.value = "";
+    }
+}
+
+function onMetodoCambio() {
+    const metodo = document.getElementById('selectMetodoPago').value;
+    const alerta = document.getElementById('alertaIGTF');
+    if (metodo === 'Efectivo USD') {
+        alerta.style.display = 'block';
+        onMontoIGTFChange();
+    } else {
+        alerta.style.display = 'none';
+    }
+}
+
+function onMontoIGTFChange() {
+    const metodo = document.getElementById('selectMetodoPago').value;
+    if (metodo !== 'Efectivo USD') return;
+    const monto = parseFloat(document.getElementById('inputMontoPago').value) || 0;
+    const igtf = monto * 0.03;
+    const total = monto + igtf;
+    document.getElementById('montoIGTFPreview').textContent = '$' + igtf.toFixed(2);
+    document.getElementById('totalConIGTFPreview').textContent = '$' + total.toFixed(2);
+}
+
+function agregarPagoMixto() {
+    const metodo = document.getElementById('selectMetodoPago').value;
+    const monto = parseFloat(document.getElementById('inputMontoPago').value);
+
+    if (isNaN(monto) || monto <= 0) {
+        alert('Ingrese un monto válido');
+        return;
+    }
+
+    if (metodo === 'Efectivo USD') {
+        // Opción A: el IGTF se cobra encima al cliente
+        const igtf = parseFloat((monto * 0.03).toFixed(2));
+        pagosAñadidos.push({ metodo: 'Efectivo USD', monto });
+        pagosAñadidos.push({ metodo: 'IGTF (3%)', monto: igtf, esIGTF: true });
+    } else {
+        pagosAñadidos.push({ metodo, monto });
+    }
+
+    // Ocultar alerta y limpiar
+    document.getElementById('alertaIGTF').style.display = 'none';
+    actualizarModalPagos();
+}
+
+function eliminarPagoMixto(index) {
+    // Si el pago que se borra es Efectivo USD, también borrar el IGTF que sigue
+    if (pagosAñadidos[index] && pagosAñadidos[index].metodo === 'Efectivo USD') {
+        const siguiente = pagosAñadidos[index + 1];
+        if (siguiente && siguiente.esIGTF) {
+            pagosAñadidos.splice(index, 2); // borra el USD y el IGTF juntos
+        } else {
+            pagosAñadidos.splice(index, 1);
+        }
+    } else {
+        pagosAñadidos.splice(index, 1);
+    }
+    actualizarModalPagos();
+}
+
+function cerrarModalPagos() {
+    cerrarModal("miModal");
+}
+
+async function enviarFactura() {
+    let subtotalUSD = 0;
+    let totalIvaUSD = 0;
+    carrito.forEach(p => {
+        const sub = p.cantidadFactura * p.precio;
+        const iva = p.tieneIva ? (sub * 0.16) : 0;
+        subtotalUSD += sub;
+        totalIvaUSD += iva;
+    });
+    const totalUSD = subtotalUSD + totalIvaUSD;
+
+    let totalPagado = 0;
+    pagosAñadidos.forEach(p => totalPagado += p.monto);
+
+    const restante = totalUSD - totalPagado;
+
+    if (restante > 0.01) {
         const cedula = localStorage.getItem("cedulaClienteSeleccionado");
         if (!cedula || cedula === "999") {
-            alert("Debe cargar un cliente específico para realizar ventas a Crédito.");
+            alert("Como no se cubrió el total, la factura quedará a Crédito. Debe cargar un cliente específico para ventas a Crédito.");
             return;
         }
     }
 
     const datos = {
         carrito,
-        metodo_pago: metodo,
+        pagos: pagosAñadidos,
         tasa: tasaDolar,
         monto_bs_extra: 0,
         cliente: { cedula: localStorage.getItem("cedulaClienteSeleccionado") || "999" }

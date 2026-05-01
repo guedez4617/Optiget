@@ -41,12 +41,57 @@
                         <button class="btn-segment active" onclick="cambiarFiltro('1dia', this)">Hoy</button>
                         <button class="btn-segment" onclick="cambiarFiltro('1semana', this)">Semana</button>
                         <button class="btn-segment" onclick="cambiarFiltro('1mes', this)">Mes</button>
+                        <button class="btn-segment" onclick="cambiarFiltro('1ano', this)">Año</button>
                     </div>
                 </div>
-                <div class="indicador-estado">
-                    <span class="punto-vivo"></span> Datos actualizados
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <div class="indicador-estado">
+                        <span class="punto-vivo"></span> Datos actualizados
+                    </div>
+                    <button id="btnImprimirPanel" onclick="abrirModalImprimir()" style="background: #2980b9; color: white; border: none; border-radius: 8px; padding: 8px 18px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display:flex; align-items:center; gap: 6px;">
+                        🖨️ Imprimir
+                    </button>
                 </div>
             </section>
+
+            <!-- Modal para selección de período de impresión -->
+            <div id="modalImprimir" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; justify-content:center; align-items:center;">
+                <div style="background:#fff; border-radius:14px; padding:30px; width:370px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                    <h3 style="margin-top:0; color:#2c3e50;">🖨️ Seleccionar Período</h3>
+                    <p style="color:#7f8c8d; font-size:0.9rem;">Elige qué información quieres imprimir:</p>
+
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="radio" name="tipoPrint" value="actual" checked onchange="actualizarOpcionesPrint(this.value)"> Período actual seleccionado
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="radio" name="tipoPrint" value="mes" onchange="actualizarOpcionesPrint(this.value)"> Mes específico
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="radio" name="tipoPrint" value="ano" onchange="actualizarOpcionesPrint(this.value)"> Año específico
+                        </label>
+                    </div>
+
+                    <div id="opcionesMes" style="display:none; gap:10px; margin-bottom:20px;">
+                        <select id="selectMesImprimir" class="input-modal" style="width:48%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                            <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                        </select>
+                        <select id="selectAnoMes" class="input-modal" style="width:48%; padding:8px; border-radius:6px; border:1px solid #ccc;"></select>
+                    </div>
+
+                    <div id="opcionesAno" style="display:none; margin-bottom:20px;">
+                        <select id="selectAnoImprimir" class="input-modal" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;"></select>
+                    </div>
+
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="ejecutarImpresion()" style="flex:1; background:#27ae60; color:white; border:none; border-radius:8px; padding:10px; cursor:pointer; font-weight:bold;">Imprimir</button>
+                        <button onclick="document.getElementById('modalImprimir').style.display='none'" style="flex:1; background:#95a5a6; color:white; border:none; border-radius:8px; padding:10px; cursor:pointer;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
 
             <section class="distancia_cuadro">
                 <div class="anchos_cuadros">
@@ -60,6 +105,10 @@
                 <div class="anchos_cuadros">
                     <h3>Deuda Total Global</h3>
                     <p id="creditosActivos" class="monto" style="color: #c54b00;">$ 0.00</p>
+                </div>
+                <div class="anchos_cuadros">
+                    <h3>IGTF Recaudado</h3>
+                    <p id="totalIGTF" class="monto" style="color: #8e44ad;">$ 0.00</p>
                 </div>
             </section>
 

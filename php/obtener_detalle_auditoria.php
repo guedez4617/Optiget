@@ -27,16 +27,16 @@ try {
         $sqlAcciones = "
             -- 1. Ventas realizadas
             SELECT 'VENTA' as accion, 
-                    CONCAT('Factura #', id_factura, ' - Tipo: ', tipo_pago) as detalles, 
-                    CONCAT(fecha, ' ', hora) as fecha_completa
-            FROM factura 
-            WHERE usuario_ci = :ci AND CONCAT(fecha, ' ', hora) BETWEEN :inicio AND :fin
+                    CONCAT('Factura #', f.id_factura, ' - Tipo: ', f.tipo_pago, ' - Total: $', IFNULL((SELECT SUM(df.sub_total) FROM det_factura df WHERE df.id_factura = f.id_factura), 0)) as detalles, 
+                    CONCAT(f.fecha, ' ', f.hora) as fecha_completa
+            FROM factura f
+            WHERE f.usuario_ci = :ci AND CONCAT(f.fecha, ' ', f.hora) BETWEEN :inicio AND :fin
 
             UNION ALL
 
             -- 2. Abonos registrados
             SELECT 'ABONO' as accion, 
-                    CONCAT('Abono a Factura #', id_factura, ' por $', monto_abonado) as detalles, 
+                    CONCAT('Abono a Factura #', id_factura, ' por $', monto_abonado, ' (', metodo_pago, ')') as detalles, 
                     fecha_pago as fecha_completa
             FROM abonos 
             WHERE usuario_ci = :ci AND fecha_pago BETWEEN :inicio AND :fin

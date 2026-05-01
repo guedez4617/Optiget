@@ -17,9 +17,25 @@ if (!$input) {
 }
 
 $carrito = $input['carrito'];
-$metodo = $input['metodo_pago'];
+$pagos = $input['pagos'] ?? [];
 $tasa = $input['tasa'];
 $cedula_cliente = $input['cliente']['cedula'];
+
+// Calcular el total de la factura incluyendo IVA
+$total_factura_usd = 0;
+foreach ($carrito as $item) {
+    $sub = $item['precio'] * $item['cantidadFactura'];
+    $iva = (isset($item['tieneIva']) && $item['tieneIva']) ? ($sub * 0.16) : 0;
+    $total_factura_usd += ($sub + $iva);
+}
+
+$total_pagado_usd = 0;
+foreach ($pagos as $p) {
+    $total_pagado_usd += floatval($p['monto']);
+}
+
+// Si cubrió todo, es Pagado. Si falta, es Crédito.
+$tipo_pago = ($total_pagado_usd >= ($total_factura_usd - 0.05)) ? 'Pagado' : 'Crédito';
 
 try {
     $pdo->beginTransaction();
@@ -35,7 +51,7 @@ try {
     $sql_factura = "INSERT INTO factura (fecha, hora, ci_cliente, tipo_pago, usuario_ci, id_config_negocio) 
                     VALUES (CURDATE(), CURTIME(), ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql_factura);
-    $stmt->execute([$cedula_cliente, $metodo, $vendedor_ci, $id_negocio_actual]);
+    $stmt->execute([$cedula_cliente, $tipo_pago, $vendedor_ci, $id_negocio_actual]);
     
     $id_factura = $pdo->lastInsertId();
 
@@ -48,17 +64,36 @@ try {
 
     foreach ($carrito as $item) {
         $subtotal_usd = $item['precio'] * $item['cantidadFactura'];
+        // Si el IVA no está siendo guardado en otra columna, lo sumamos al sub_total para que cuadre en reportes.
+        $iva = (isset($item['tieneIva']) && $item['tieneIva']) ? ($subtotal_usd * 0.16) : 0;
+        $total_item_usd = $subtotal_usd + $iva;
         
         $stmt_det->execute([
             $id_factura,
             $item['codigo'],
             $item['cantidadFactura'],
-            $subtotal_usd,
+            $total_item_usd,
             $item['total_bs']
         ]);
 
         if ($item['codigo'] !== "0") {
             $stmt_stock->execute([$item['cantidadFactura'], $item['codigo']]);
+        }
+    }
+
+    // Insertar cada pago en la tabla abonos
+    if (count($pagos) > 0) {
+        $sql_abono = "INSERT INTO abonos (id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci) 
+                      VALUES (?, ?, NOW(), ?, ?)";
+        $stmt_abono = $pdo->prepare($sql_abono);
+        
+        foreach ($pagos as $p) {
+            $stmt_abono->execute([
+                $id_factura,
+                $p['monto'],
+                $p['metodo'],
+                $vendedor_ci
+            ]);
         }
     }
 

@@ -80,6 +80,17 @@ try {
     }
 
     $pdo->commit();
+
+    // Si había IGTF, registrarlo como abono adicional en la primera factura del cliente
+    $igtf = floatval($data['igtf'] ?? 0);
+    if ($igtf > 0 && count($facturas) > 0) {
+        $primera_factura = $facturas[0]['id_factura'];
+        $sql_igtf = "INSERT INTO abonos (id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci) 
+                     VALUES (?, ?, NOW(), 'IGTF (3%)', ?)";
+        $ins_igtf = $pdo->prepare($sql_igtf);
+        $ins_igtf->execute([$primera_factura, $igtf, $cedula_usuario]);
+    }
+
     echo json_encode(["status" => "success", "message" => "Abono procesado correctamente."]);
 
 } catch (Exception $e) {

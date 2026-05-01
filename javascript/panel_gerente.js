@@ -5,11 +5,138 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarDatosPanel('1dia');
 });
 
+let periodoActual = '1dia';
+
 window.cambiarFiltro = function(periodo, btn) {
     document.querySelectorAll('.btn-segment').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    periodoActual = periodo;
     cargarDatosPanel(periodo);
 };
+
+window.abrirModalImprimir = function() {
+    // Rellenar selectores de años (últimos 5 años)
+    const anioActual = new Date().getFullYear();
+    const selectAnoMes = document.getElementById('selectAnoMes');
+    const selectAno = document.getElementById('selectAnoImprimir');
+    selectAnoMes.innerHTML = '';
+    selectAno.innerHTML = '';
+    for (let a = anioActual; a >= anioActual - 5; a--) {
+        selectAnoMes.innerHTML += `<option value="${a}">${a}</option>`;
+        selectAno.innerHTML += `<option value="${a}">${a}</option>`;
+    }
+    // Preseleccionar el mes actual
+    const mesActual = new Date().getMonth() + 1;
+    document.getElementById('selectMesImprimir').value = mesActual;
+
+    // Resetear a "período actual"
+    document.querySelector('input[name="tipoPrint"][value="actual"]').checked = true;
+    actualizarOpcionesPrint('actual');
+
+    const modal = document.getElementById('modalImprimir');
+    modal.style.display = 'flex';
+};
+
+window.actualizarOpcionesPrint = function(tipo) {
+    document.getElementById('opcionesMes').style.display = (tipo === 'mes') ? 'flex' : 'none';
+    document.getElementById('opcionesAno').style.display = (tipo === 'ano') ? 'block' : 'none';
+};
+
+window.ejecutarImpresion = async function() {
+    const tipo = document.querySelector('input[name="tipoPrint"]:checked').value;
+    let params = '';
+    let tituloReporte = '';
+
+    const meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    if (tipo === 'actual') {
+        params = `periodo=${periodoActual}`;
+        const labels = { '1dia': 'Hoy', '1semana': 'Esta Semana', '1mes': 'Este Mes', '1ano': 'Este Año' };
+        tituloReporte = labels[periodoActual] || periodoActual;
+    } else if (tipo === 'mes') {
+        const mes = document.getElementById('selectMesImprimir').value;
+        const ano = document.getElementById('selectAnoMes').value;
+        params = `periodo=mes_especifico&mes=${mes}&ano=${ano}`;
+        tituloReporte = `${meses[mes]} ${ano}`;
+    } else if (tipo === 'ano') {
+        const ano = document.getElementById('selectAnoImprimir').value;
+        params = `periodo=ano_especifico&ano=${ano}`;
+        tituloReporte = `Año ${ano}`;
+    }
+
+    document.getElementById('modalImprimir').style.display = 'none';
+
+    try {
+        const res = await fetch(`../../../php/obtener_datos_panel.php?${params}`);
+        const data = await res.json();
+        imprimirReporte(data, tituloReporte);
+    } catch(e) { alert('Error al cargar los datos para imprimir.'); }
+};
+
+function imprimirReporte(data, titulo) {
+    const ventana = window.open('', '_blank', 'width=900,height=700');
+    const metodos = (data.labelsMetodos || []).map((l, i) => {
+        const nombreMetodo = l.replace(/\s*\(.*\)$/, ''); // Quita " ($50.00)" del label
+        return `<tr><td>${nombreMetodo}</td><td style="text-align:right;"><strong>$ ${Number(data.valoresMetodos[i] || 0).toFixed(2)}</strong></td></tr>`;
+    }).join('');
+    const productos = (data.productosNombres || []).map((n, i) =>
+        `<tr><td>${n}</td><td style="text-align:right;">${data.productosCantidades[i]} uds.</td></tr>`
+    ).join('');
+
+    ventana.document.write(`
+        <!DOCTYPE html><html lang="es"><head>
+        <meta charset="UTF-8"><title>Reporte: ${titulo}</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 30px; color: #2c3e50; }
+            h1 { text-align: center; color: #2980b9; border-bottom: 2px solid #2980b9; padding-bottom: 10px; }
+            h2 { color: #34495e; margin-top: 25px; font-size: 1rem; }
+            .resumen { display: flex; gap: 20px; margin: 20px 0; }
+            .tarjeta { flex:1; background: #f0f4f8; border-radius: 8px; padding: 15px; text-align: center; }
+            .tarjeta .valor { font-size: 1.6rem; font-weight: bold; color: #27ae60; margin-top: 5px; }
+            .tarjeta.rojo .valor { color: #e74c3c; }
+            table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+            th { background: #2980b9; color: white; padding: 8px; text-align: left; }
+            td { padding: 7px 8px; border-bottom: 1px solid #ecf0f1; }
+            tr:nth-child(even) td { background: #f9f9f9; }
+            .pie { text-align:center; margin-top:30px; font-size:0.8rem; color:#999; }
+            @media print { body { margin: 10px; } }
+        </style></head><body>
+        <h1>📊 Reporte Gerencial: ${titulo}</h1>
+        <p style="text-align:center; color:#7f8c8d;">Generado el ${new Date().toLocaleString('es-VE')}</p>
+
+        <div class="resumen">
+            <div class="tarjeta">
+                <div>Ventas Cobradas</div>
+                <div class="valor">$ ${data.totalVentas}</div>
+            </div>
+            <div class="tarjeta rojo">
+                <div>Créditos del Período</div>
+                <div class="valor">$ ${data.totalCreditoPeriodo}</div>
+            </div>
+            <div class="tarjeta rojo">
+                <div>Deuda Total Global</div>
+                <div class="valor">$ ${data.totalGlobalCredito}</div>
+            </div>
+            <div class="tarjeta" style="border-top: 3px solid #8e44ad;">
+                <div>IGTF Recaudado</div>
+                <div class="valor" style="color:#8e44ad;">$ ${data.totalIGTF ?? '0.00'}</div>
+            </div>
+        </div>
+
+        <h2>Distribución de Ingresos por Método de Pago</h2>
+        <table><thead><tr><th>Método</th><th style="text-align:right;">Monto</th></tr></thead>
+        <tbody>${metodos || '<tr><td colspan="2">Sin datos</td></tr>'}</tbody></table>
+
+        <h2>Top 5 Productos Más Vendidos</h2>
+        <table><thead><tr><th>Producto</th><th style="text-align:right;">Cantidad</th></tr></thead>
+        <tbody>${productos || '<tr><td colspan="2">Sin datos</td></tr>'}</tbody></table>
+
+        <div class="pie">Optiget - Sistema de Gestión</div>
+        <script>window.onload = () => { window.print(); }<\/script>
+        </body></html>
+    `);
+    ventana.document.close();
+}
 
 async function cargarDatosPanel(periodo) {
     try {
@@ -19,6 +146,7 @@ async function cargarDatosPanel(periodo) {
         document.getElementById('totalVentas').innerText = `$ ${data.totalVentas}`;
         document.getElementById('totalCredito').innerText = `$ ${data.totalCreditoPeriodo}`;
         document.getElementById('creditosActivos').innerText = `$ ${data.totalGlobalCredito}`;
+        document.getElementById('totalIGTF').innerText = `$ ${data.totalIGTF ?? '0.00'}`;
 
         actualizarGraficas(data);
     } catch (e) { console.error("Error en dashboard", e); }
