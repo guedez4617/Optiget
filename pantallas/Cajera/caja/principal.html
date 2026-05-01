@@ -127,7 +127,7 @@
                 <span>Resta:</span>
                 <span id="modalRestante" style="font-weight:bold; color: #e74c3c;">$0.00</span>
             </div>
-            
+
             <div style="margin-bottom: 10px; display:flex; gap:10px;">
                 <select id="selectMetodoPago" class="input-modal" style="width: 50%; padding: 10px;" onchange="onMetodoCambio()">
                     <option value="Punto">Punto</option>
@@ -139,16 +139,13 @@
                 <input type="number" id="inputMontoPago" class="input-modal" style="width: 50%; padding: 10px;" placeholder="Monto ($)" step="0.01" oninput="onMontoIGTFChange()">
             </div>
 
-            <!-- Alerta IGTF dinámica -->
             <div id="alertaIGTF" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:0.88rem; color:#856404;">
-                ⚠️ <strong>IGTF (3%)</strong> se aplicará sobre este pago: 
-                <span id="montoIGTFPreview" style="font-weight:bold;">$0.00</span> adicionales.
-                El cliente pagará en total: <span id="totalConIGTFPreview" style="font-weight:bold; color:#c0392b;">$0.00</span>
+                ⚠️ <strong>IGTF (3%)</strong> se aplicará sobre este pago:
+                <span id="montoIGTFPreview" style="font-weight:bold;">$0.00</span> adicionales. El cliente pagará en total: <span id="totalConIGTFPreview" style="font-weight:bold; color:#c0392b;">$0.00</span>
             </div>
             <button class="btn-opcion" style="background-color: #f39c12; width: 100%; margin-bottom: 15px; padding: 10px; border-radius: 5px; font-weight: bold;" onclick="agregarPagoMixto()">+ Añadir Pago</button>
 
             <ul id="listaPagosAgregados" style="list-style:none; padding:0; margin-bottom:15px; max-height: 120px; overflow-y:auto; border: 1px solid #eee; border-radius: 5px; background: #fafafa;">
-                <!-- Aquí van los pagos agregados -->
             </ul>
 
             <div style="display: flex; gap: 10px;">
@@ -209,7 +206,7 @@
     <script src="../../../javascript/venta.js"></script>
     <script src="../../../javascript/logout_global.js"></script>
 
-<script src="../../../javascript/apariencia.js"></script>
+    <script src="../../../javascript/apariencia.js"></script>
 </body>
 
 </html>

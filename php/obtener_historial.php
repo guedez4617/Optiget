@@ -5,7 +5,6 @@ header('Content-Type: application/json');
 include 'db_conexion.php';
 
 try {
-    // busca la ci para ver sus facturas
     $sql = "SELECT f.Id_factura, f.tipo_pago, f.fecha, f.hora, f.ci_cliente,
             c.NOMBRE as nombre_cliente,
             (SELECT SUM(sub_total) FROM det_factura WHERE id_factura = f.Id_factura) as total_venta 

@@ -1,12 +1,6 @@
-/**
- * Variables para rastrear el estado original del cliente
- */
 let clienteExistente = false;
 let datosOriginales = { nombre: "", telefono: "", direccion: "" };
 
-/**
- * Función central de validaciones
- */
 function validarDatosCliente(cedula, nombre, telefono) {
     const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
     const regexNumeros = /^[0-9]+$/;
@@ -28,9 +22,6 @@ function validarDatosCliente(cedula, nombre, telefono) {
     return true;
 }
 
-/**
- * BUSCAR CLIENTE AUTOMÁTICAMENTE
- */
 document.getElementById('cedula').addEventListener('blur', async() => {
     const cedulaInput = document.getElementById('cedula').value.trim();
     if (cedulaInput.length < 6) return;
@@ -40,7 +31,6 @@ document.getElementById('cedula').addEventListener('blur', async() => {
         const datos = await response.json();
 
         if (!datos.nuevo) {
-            // Guardamos los datos originales para comparar después
             datosOriginales = {
                 nombre: datos.nombre || "",
                 telefono: datos.telefono || "",
@@ -61,9 +51,6 @@ document.getElementById('cedula').addEventListener('blur', async() => {
     }
 });
 
-/**
- * GUARDAR Y CONTINUAR (Confirmación solo si hubo cambios)
- */
 document.getElementById('formCliente').addEventListener('submit', async(e) => {
     e.preventDefault();
 
@@ -75,7 +62,6 @@ document.getElementById('formCliente').addEventListener('submit', async(e) => {
     if (!cedula || !nombre) return alert("Cédula y Nombre son obligatorios.");
     if (!validarDatosCliente(cedula, nombre, telefono)) return;
 
-    // --- LÓGICA DE DETECCIÓN DE CAMBIOS ---
     if (clienteExistente) {
         const huboCambios =
             nombre !== datosOriginales.nombre ||
@@ -86,12 +72,11 @@ document.getElementById('formCliente').addEventListener('submit', async(e) => {
             const confirmar = confirm("📝 Has modificado los datos del cliente. ¿Deseas actualizar su información en la base de datos?");
             if (!confirmar) {
                 alert("Operación cancelada. Se mantendrán los datos anteriores.");
-                return; // Detiene el envío
+                return;
             }
         }
     }
 
-    // --- ENVÍO AL SERVIDOR ---
     const clienteParaEnviar = { cedula, nombre, telefono, direccion };
 
     try {

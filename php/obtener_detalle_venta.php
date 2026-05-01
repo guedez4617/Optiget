@@ -9,13 +9,11 @@ if (!$id) {
 }
 
 try {
-    // 1. Consulta Cabecera con JOIN a datos_negocio
-    // Traemos los datos de la factura, el cliente, el vendedor Y el encabezado de la empresa
+    
     $sqlC = "SELECT 
                 f.id_factura, f.fecha, f.hora, f.ci_cliente, f.tipo_pago,
                 c.NOMBRE as nombre_cliente, c.telefono, c.direccion, 
                 u.NOMBRE as nombre_vendedor, u.APELLIDO as apellido_vendedor,
-                -- Datos históricos del negocio para esta factura
                 dn.nombre AS emp_nombre, 
                 dn.rif AS emp_rif, 
                 dn.direccion AS emp_dir, 
@@ -35,7 +33,6 @@ try {
         exit;
     }
 
-    // 2. Consulta Productos
     $sqlP = "SELECT df.codigo_producto, 
                     df.cantidad as cantidadFactura, 
                     df.sub_total as subtotal_base, 
@@ -51,7 +48,6 @@ try {
     $stP->execute([$id]);
     $prods = $stP->fetchAll(PDO::FETCH_ASSOC);
 
-    // 3. Consulta de Métodos de Pago Reales
     $sqlA = "SELECT metodo_pago, monto_abonado FROM abonos WHERE id_factura = ?";
     $stA = $pdo->prepare($sqlA);
     $stA->execute([$id]);
@@ -65,7 +61,7 @@ try {
             $metodos_solos[] = $a['metodo_pago'];
         }
         
-        $metodos_solos = array_unique($metodos_solos); // Evitar que diga "Punto | Punto" si pagaron dos veces con punto
+        $metodos_solos = array_unique($metodos_solos); 
 
         if ($cab['tipo_pago'] === 'Crédito') {
             $cab['tipo_pago'] = "Crédito (Abonos: " . implode(", ", $metodos_con_monto) . ")";

@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Obtenemos el ID de la factura a mostrar
     const idFactura = localStorage.getItem("idFacturaReciente");
     if (idFactura) {
         cargarDatosFactura(idFactura);
     }
 
-    // 2. Lógica del botón de retorno
     const btnRegresar = document.getElementById("btnNuevaVenta");
     if (btnRegresar) {
         if (document.referrer.includes("his.html") || document.referrer.includes("historial")) {
@@ -22,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Busca el id de la factura y carga TODO (incluyendo el encabezado histórico)
 async function cargarDatosFactura(id) {
     try {
         const res = await fetch(`../../../php/obtener_detalle_venta.php?id=${id}`);
@@ -32,20 +29,16 @@ async function cargarDatosFactura(id) {
             const cab = data.cabecera;
             const productos = data.productos;
 
-            // --- A. DATOS DEL NEGOCIO (HISTÓRICOS) ---
-            // Estos vienen del JOIN con la tabla datos_negocio en el PHP
             document.getElementById('negocioNombre').textContent = cab.emp_nombre || "Bodegón Don Diego";
             document.getElementById('negocioDireccion').textContent = cab.emp_dir || "";
             document.getElementById('negocioRif').textContent = cab.emp_rif || "";
             document.getElementById('negocioTel').textContent = cab.emp_tel || "";
 
-            // --- B. DATOS DEL CLIENTE ---
             document.getElementById("nombreCliente").textContent = cab.nombre_cliente || "Cliente General";
             document.getElementById("rifCliente").textContent = cab.ci_cliente || "V-00000000";
             document.getElementById("telfCliente").textContent = cab.telefono || "---";
             document.getElementById("dirCliente").textContent = cab.direccion || "---";
 
-            // --- C. DATOS DE LA FACTURA ---
             document.getElementById("nroFactura").textContent = `${String(id).padStart(6, '0')}`;
             document.getElementById("fechaFactura").textContent = `${cab.fecha} ${cab.hora}`;
             document.getElementById("metodoPago").textContent = cab.tipo_pago;
@@ -53,7 +46,6 @@ async function cargarDatosFactura(id) {
             const vendedorReal = cab.nombre_vendedor ? `${cab.nombre_vendedor} ${cab.apellido_vendedor}` : "S/V";
             document.getElementById("vendedor").textContent = vendedorReal;
 
-            // --- D. DETALLE DE PRODUCTOS ---
             const tablaBody = document.getElementById("listaProductos");
             tablaBody.innerHTML = "";
 
@@ -89,7 +81,6 @@ async function cargarDatosFactura(id) {
                 `;
             });
 
-            // --- E. TOTALES ---
             const finalUSD = acumSub + acumIva;
             document.getElementById("subtotal").textContent = acumSub.toFixed(2);
             document.getElementById("iva").textContent = acumIva.toFixed(2);

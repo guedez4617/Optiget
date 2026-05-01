@@ -2,7 +2,6 @@ const form = document.getElementById('formRegistro');
 const inputPrecio = document.getElementById('precio');
 const checkIva = document.getElementById('iva');
 
-// Recuperar información de edición si existe
 const datosEdicion = JSON.parse(localStorage.getItem("productoAEditar"));
 
 window.onload = () => {
@@ -10,9 +9,8 @@ window.onload = () => {
         document.getElementById('tituloPagina').innerText = "Editar Producto";
 
         const p = datosEdicion;
-        // Rellenar campos con los datos existentes
         document.getElementById('codigo_barra').value = p.codigo;
-        document.getElementById('codigo_barra').readOnly = true; // El código no se edita por integridad
+        document.getElementById('codigo_barra').readOnly = true;
         document.getElementById('categoria').value = p.categoria || "";
         document.getElementById('marca').value = p.marca || "";
         document.getElementById('nombre').value = p.nombre;
@@ -28,11 +26,9 @@ window.onload = () => {
     }
 };
 
-// Evento principal para guardar o actualizar
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    // --- CAPTURA DE VALORES ---
     const codigo = document.getElementById('codigo_barra').value.trim();
     const marca = document.getElementById('marca').value.trim();
     const nombre = document.getElementById('nombre').value.trim();
@@ -42,7 +38,6 @@ form.addEventListener('submit', async function(e) {
     const precio = parseFloat(document.getElementById('precio').value) || 0;
     const conIva = document.getElementById('iva').checked ? 1 : 0;
 
-    // --- VALIDACIONES ---
     const soloNumeros = /^[0-9]+$/;
     if (codigo.length < 7 || /^0+$/.test(codigo) || !soloNumeros.test(codigo)) {
         return alert("⚠️ El código debe ser numérico, tener al menos 7 caracteres y no ser solo ceros.");
@@ -53,7 +48,6 @@ form.addEventListener('submit', async function(e) {
         return alert("⚠️ 'Marca' y 'Nombre' solo permiten letras y espacios.");
     }
 
-    // --- VERIFICACIÓN DE CÓDIGO (Solo si es nuevo) ---
     if (!datosEdicion) {
         try {
             const checkRes = await fetch(`../../../php/verificar_codigo_producto.php?codigo=${codigo}`);
@@ -66,7 +60,6 @@ form.addEventListener('submit', async function(e) {
         }
     }
 
-    // --- PREPARACIÓN DEL OBJETO PARA EL PHP ---
     const productoData = {
         codigo,
         categoria,
@@ -102,7 +95,6 @@ form.addEventListener('submit', async function(e) {
     }
 });
 
-// Función para el botón cancelar
 function cancelar() {
     localStorage.removeItem("productoAEditar");
     window.location.href = "../Gestión de Productos/gestion_de_produtos.html";

@@ -32,7 +32,6 @@ function abrirModalSalir() {
     </style>`;
     document.head.insertAdjacentHTML('beforeend', estilos);
 
-    // 3. Crear el HTML de la modal
     const htmlModal = `
     <div id="modalLogoutContenedor">
         <div class="modal-emergente">

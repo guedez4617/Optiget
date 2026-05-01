@@ -18,7 +18,7 @@ try {
     }
 
     $cedula_cliente = $data['cedula_cliente'] ?? '';
-    $cedula_usuario = $data['cedula_usuario'] ?? ''; // La cédula del cajero/gerente
+    $cedula_usuario = $data['cedula_usuario'] ?? '';
     $monto_total_abono = floatval($data['monto_abonado'] ?? 0);
     $metodo = $data['metodo_pago'] ?? 'Efectivo';
 
@@ -81,7 +81,6 @@ try {
 
     $pdo->commit();
 
-    // Si había IGTF, registrarlo como abono adicional en la primera factura del cliente
     $igtf = floatval($data['igtf'] ?? 0);
     if ($igtf > 0 && count($facturas) > 0) {
         $primera_factura = $facturas[0]['id_factura'];

@@ -1,5 +1,3 @@
-/* --- CONFIGURACIÓN BASE Y ESTRUCTURA --- */
-
 body {
     margin: 0;
     font-family: "Segoe UI", Roboto, sans-serif;
@@ -9,13 +7,8 @@ body {
 .linea_azul {
     display: flex;
     height: 100vh;
-    /* Altura fija de la ventana */
     overflow: hidden;
-    /* Evita scroll doble en el body */
 }
-
-
-/* Barra lateral naranja - BLOQUEADA */
 
 .ancho_linea {
     width: 200px;
@@ -58,14 +51,10 @@ body {
     background-color: #a24002;
 }
 
-
-/* --- PANEL CENTRAL CON FONDO REALMENTE FIJO --- */
-
 .panel {
     flex: 1;
     position: relative;
     display: block;
-    /* Cambiado de flex a block para mejor manejo de scroll */
     padding: 40px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -74,37 +63,24 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    /* Esto evita que el fondo suba al bajar */
 }
-
-
-/* Capa de desenfoque y oscurecimiento (Sustituye al ::before anterior) */
 
 .panel::after {
     content: "";
     position: fixed;
-    /* Fijo respecto a la pantalla */
     top: 0;
     left: 200px;
-    /* Desplazado por la barra naranja */
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.4);
-    /* Oscurece el fondo */
     backdrop-filter: blur(6px);
-    /* Aplica el desenfoque */
     z-index: 0;
     pointer-events: none;
-    /* Permite hacer clic a través de la capa */
 }
-
-
-/* --- CONTENEDOR DE TARJETAS GLASS --- */
 
 .contenedor-ajustes {
     position: relative;
     z-index: 5;
-    /* Por encima del desenfoque */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 30px;
@@ -140,9 +116,6 @@ body {
     align-items: center;
     gap: 10px;
 }
-
-
-/* --- FORMULARIOS --- */
 
 .campo-ajuste {
     margin-bottom: 18px;
@@ -180,9 +153,6 @@ input[readonly] {
     cursor: not-allowed;
 }
 
-
-/* --- INPUTS ESPECIALES (FILE Y COLOR) --- */
-
 input[type="file"] {
     padding: 8px;
     font-size: 12px;
@@ -218,9 +188,6 @@ input[type="color"]::-webkit-color-swatch {
     border: none;
 }
 
-
-/* --- BOTONES --- */
-
 .btn-guardar {
     width: 100%;
     padding: 14px;
@@ -246,14 +213,10 @@ input[type="color"]::-webkit-color-swatch {
     margin: 20px 0;
 }
 
-
-/* --- RESPONSIVIDAD --- */
-
 @media (max-width: 768px) {
     .panel::after {
         left: 0;
     }
-    /* En móviles el overlay cubre todo */
     .campo-ajuste {
         grid-template-columns: 1fr;
         gap: 5px;

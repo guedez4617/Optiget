@@ -1,5 +1,4 @@
 <?php
-// Script para reemplazar valores hardcoded en los archivos CSS
 $cssDir = __DIR__ . '/../css/';
 $files = glob($cssDir . '*.css');
 

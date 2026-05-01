@@ -1,5 +1,4 @@
 <?php
-// php/migrar_apariencia.php - Ejecutar UNA sola vez para agregar las columnas
 include 'db_conexion.php';
 try {
     $pdo->exec("ALTER TABLE datos_negocio 

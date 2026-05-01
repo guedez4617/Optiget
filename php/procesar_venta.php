@@ -21,7 +21,6 @@ $pagos = $input['pagos'] ?? [];
 $tasa = $input['tasa'];
 $cedula_cliente = $input['cliente']['cedula'];
 
-// Calcular el total de la factura incluyendo IVA
 $total_factura_usd = 0;
 foreach ($carrito as $item) {
     $sub = $item['precio'] * $item['cantidadFactura'];
@@ -34,7 +33,6 @@ foreach ($pagos as $p) {
     $total_pagado_usd += floatval($p['monto']);
 }
 
-// Si cubrió todo, es Pagado. Si falta, es Crédito.
 $tipo_pago = ($total_pagado_usd >= ($total_factura_usd - 0.05)) ? 'Pagado' : 'Crédito';
 
 try {
@@ -64,7 +62,6 @@ try {
 
     foreach ($carrito as $item) {
         $subtotal_usd = $item['precio'] * $item['cantidadFactura'];
-        // Si el IVA no está siendo guardado en otra columna, lo sumamos al sub_total para que cuadre en reportes.
         $iva = (isset($item['tieneIva']) && $item['tieneIva']) ? ($subtotal_usd * 0.16) : 0;
         $total_item_usd = $subtotal_usd + $iva;
         
@@ -81,7 +78,6 @@ try {
         }
     }
 
-    // Insertar cada pago en la tabla abonos
     if (count($pagos) > 0) {
         $sql_abono = "INSERT INTO abonos (id_factura, monto_abonado, fecha_pago, metodo_pago, usuario_ci) 
                       VALUES (?, ?, NOW(), ?, ?)";

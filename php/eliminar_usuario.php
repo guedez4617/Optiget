@@ -11,7 +11,6 @@ if (empty($cedula)) {
 }
 
 try {
-    // CAMBIO: Ahora actualizamos el estado en lugar de borrar la fila
     $sql = "UPDATE usuarios SET estado = 0 WHERE `C.I` = :cedula";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':cedula' => $cedula]);

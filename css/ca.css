@@ -67,7 +67,6 @@
         overflow-y: auto;
         box-sizing: border-box;
     }
-    /* Títulos h1 y h3 */
     
     h1 {
         margin-top: 0;
@@ -77,13 +76,11 @@
     
     h3 {
         border-bottom: 2px solid #e67e22;
-        /* Subrayado naranja */
         display: inline-block;
         padding-bottom: 5px;
         color: #ffffff;
         margin-top: 30px;
     }
-    /* --- TASA DEL DÓLAR (STICKY) --- */
     
     .contenedor-tasa {
         position: sticky;
@@ -93,7 +90,6 @@
         align-items: center;
         gap: 10px;
         background: #1a1a1a;
-        /* Fondo oscuro */
         padding: 10px 15px;
         border-radius: 8px;
         border: 1px solid #333;
@@ -108,7 +104,6 @@
     
     .btn-tasa {
         background-color: #27ae60;
-        /* Verde éxito */
         color: white;
         border: none;
         padding: 8px 15px;
@@ -121,7 +116,6 @@
     .btn-tasa:hover {
         background-color: #219150;
     }
-    /* --- BARRA DE BÚSQUEDA UNIFICADA (Estilo Original) --- */
     
     .busqueda {
         display: flex;
@@ -147,35 +141,27 @@
         font-weight: 800;
         font-size: 18px;
         border: none;
-        /* Quitamos bordes individuales */
         border-right: 1px solid #444;
-        /* Solo línea divisoria */
         padding: 0 20px;
         height: 100%;
         cursor: pointer;
         outline: none;
         appearance: none;
-        /* Quita la flecha fea por defecto */
     }
-    /* El Buscador del medio */
     
     #buscar {
         background-color: #1e1e1e;
         color: white;
         font-size: 18px;
         border: none;
-        /* Quitamos bordes para que parezca una pieza */
         padding: 0 20px;
         height: 100%;
         flex: 1;
-        /* Se estira todo lo que puede */
         outline: none;
     }
-    /* El Botón Monto Bs (Naranja) */
     
     .btn-monto-bs {
         background-color: #e67e22 !important;
-        /* Forzamos el naranja */
         color: white !important;
         font-weight: 800;
         font-size: 18px;
@@ -195,7 +181,6 @@
         justify-content: space-between;
         align-items: center;
         background-color: #1a1a1a;
-        /* Fondo oscuro */
         padding: 20px;
         border-radius: 8px;
         border: 1px solid #333;
@@ -208,11 +193,9 @@
         align-items: flex-start;
         gap: 8px;
     }
-    /* Botón Cliente (NARANJA) */
     
     .btn-cliente {
         background-color: #e67e22;
-        /* Naranja */
         color: white;
         border: none;
         padding: 10px 20px;
@@ -225,22 +208,18 @@
     .btn-cliente:hover {
         background-color: #d35400;
     }
-    /* Status del Cliente */
     
     .status-cliente-container {
         font-size: 0.9rem;
         font-weight: bold;
         color: #27ae60;
-        /* Verde cuando está cargado */
         padding: 5px 0;
     }
     
     .no-cliente {
         color: #7f8c8d;
-        /* Gris cuando no hay cliente */
         font-style: italic;
     }
-    /* Botón para quitar cliente (X roja) */
     
     .btn-quitar-cliente {
         color: #e74c3c;
@@ -250,7 +229,6 @@
         border: none;
         background: none;
     }
-    /* --- SECCIÓN DERECHA DE TOTALES --- */
     
     .acciones-derecha {
         display: flex;
@@ -263,20 +241,16 @@
         font-size: 2rem;
         font-weight: bold;
         color: #ffffff;
-        /* Texto blanco por defecto */
         text-align: right;
         margin-bottom: 10px;
     }
     
     .bs-color {
         color: #e74c3c;
-        /* Rojo para resaltar los bolívares */
     }
-    /* Botón Finalizar Venta (NARANJA grande) */
     
     .acciones-derecha .btn-finalizar {
         background-color: #e67e22;
-        /* Naranja */
         color: white;
         border: none;
         padding: 15px 30px;
@@ -292,13 +266,11 @@
         background-color: #d35400;
         transform: translateY(-2px);
     }
-    /* --- TABLAS DE VENTA (Estilo Oscuro) --- */
     
     .venta-tabla {
         width: 100%;
         border-collapse: collapse;
         background-color: #1e1e1e;
-        /* Fondo de tabla oscuro */
         margin-top: 15px;
         border-radius: 8px;
         overflow: hidden;
@@ -309,31 +281,26 @@
     .venta-tabla td {
         padding: 15px;
         border-bottom: 1px solid #333;
-        /* Borde oscuro */
         text-align: center;
         color: #e0e0e0;
     }
     
     .venta-tabla th {
         background-color: #2c2c2c;
-        /* Cabecera más clara */
         color: #ffffff;
         font-weight: 600;
         text-transform: uppercase;
         font-size: 13px;
         letter-spacing: 0.5px;
     }
-    /* Filas alternas para legibilidad */
     
     .venta-tabla tbody tr:nth-child(even) {
         background-color: #1a1a1a;
     }
-    /* Hover en las filas */
     
     .venta-tabla tbody tr:hover {
         background-color: #252525;
     }
-    /* Iconos de acción (➕ y 🗑️) - Manteniendo el estilo circular */
     
     .icono-agregar,
     .icono-eliminar {
@@ -353,7 +320,6 @@
         color: #27ae60;
         border-color: #27ae60;
         background: rgba(39, 174, 96, 0.1);
-        /* Fondo verde tenue */
     }
     
     .icono-agregar:hover {
@@ -365,14 +331,12 @@
         color: #e74c3c;
         border-color: #e74c3c;
         background: rgba(231, 76, 60, 0.1);
-        /* Fondo rojo tenue */
     }
     
     .icono-eliminar:hover {
         background: #e74c3c;
         color: white;
     }
-    /* --- MODALES --- */
     
     .modal {
         display: none;
@@ -382,22 +346,18 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.9) !important;
-        /* Más oscuro para notar si abre */
         justify-content: center;
         align-items: center;
         z-index: 99999 !important;
-        /* El valor más alto posible */
         pointer-events: all;
     }
     
     .modal-contenido {
         background: #1a1a1a;
-        /* Fondo oscuro del modal */
         padding: 30px;
         border-radius: 12px;
         width: 90%;
         max-width: 450px;
-        /* Un poco más ancho para la cuadrícula */
         text-align: center;
         border: 1px solid #333;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
@@ -408,10 +368,8 @@
     .modal-contenido h2 {
         margin-top: 0;
         color: #e67e22;
-        /* Título naranja */
         font-size: 1.8rem;
     }
-    /* Inputs dentro del modal (Oscuros) */
     
     .input-modal {
         width: 100%;
@@ -430,7 +388,6 @@
     .input-modal:focus {
         border-color: #e67e22;
     }
-    /* Botones genéricos de los modales (Guardar/Cancelar) */
     
     .botones {
         display: flex;
@@ -448,25 +405,20 @@
         font-weight: bold;
         transition: background 0.3s;
     }
-    /* Cuadrícula de métodos de pago */
     
     .grid-pagos {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        /* Dos columnas */
         gap: 15px;
         margin-top: 20px;
     }
-    /* Último botón (Crédito) ocupa dos columnas */
     
     .grid-pagos button:last-child {
         grid-column: span 2;
     }
-    /* Botones de método de pago (Estilo azul oscuro de la imagen 1) */
     
     .btn-metodo {
         background-color: #34495e;
-        /* Azul oscuro grisáceo */
         color: white;
         border: none;
         padding: 18px;
@@ -496,7 +448,6 @@
     .modal[style*="display: flex"] {
         display: flex !important;
     }
-    /* Asegurar que el contenido no sea transparente */
     
     .modal-contenido {
         position: relative;
@@ -504,12 +455,10 @@
         opacity: 1 !important;
         visibility: visible !important;
     }
-    /* Evitar que otros elementos tapen el modal */
     
     body.modal-abierto {
         overflow: hidden;
     }
-    /* Estilos para los botones de acción en la tabla de factura */
     
     .venta-tabla td button {
         transition: transform 0.2s ease, opacity 0.2s ease;
@@ -519,22 +468,18 @@
         transform: scale(1.2);
         opacity: 0.8;
     }
-    /* Color específico para el botón de restar unidades */
     
     button[onclick^="abrirModalRestar"] {
         color: #f39c12 !important;
-        /* Color naranja/amarillo para diferenciarlo de la X roja */
         font-size: 1.1rem;
         padding: 0 5px;
     }
-    /* Estilo para la X de eliminar todo el item */
     
     button[onclick^="eliminar"] {
         color: #e74c3c !important;
         font-size: 1.1rem;
         padding: 0 5px;
     }
-    /* Ajustes para el input dentro del modal de restar */
     
     #inputCantidadRestar {
         width: 80%;
@@ -545,13 +490,10 @@
         text-align: center;
         font-size: 1.2rem;
     }
-    /* Asegurar que el modal se vea bien sobre otros elementos */
     
     #modalRestar {
         z-index: 2000;
-        /* Asegura que esté por encima de la tabla */
     }
-    /* Estilo para el texto que indica la cantidad actual en el modal */
     
     #cantActual {
         font-weight: bold;

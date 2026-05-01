@@ -10,7 +10,6 @@ if (empty($codigo)) {
 }
 
 try {
-    // Usamos Codigo (con mayúscula o como esté en tu tabla)
     $stmt = $pdo->prepare("SELECT nombre FROM productos WHERE Codigo = ? LIMIT 1");
     $stmt->execute([$codigo]);
     $producto = $stmt->fetch(PDO::FETCH_ASSOC);

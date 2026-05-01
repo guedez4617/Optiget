@@ -10,13 +10,11 @@ $password = !empty($data['password']) ? $data['password'] : null;
 
 try {
     if ($password) {
-        // El usuario quiere cambiar su contraseña
         $passwordHash = password_hash($password, PASSWORD_BCRYPT);
         $sql = "UPDATE usuarios SET telefono = ?, CONTRASEÑA = ? WHERE `C.I` = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$telefono, $passwordHash, $cedula]);
     } else {
-        // El usuario NO escribió nada en contraseña, solo actualizamos el teléfono
         $sql = "UPDATE usuarios SET telefono = ? WHERE `C.I` = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$telefono, $cedula]);

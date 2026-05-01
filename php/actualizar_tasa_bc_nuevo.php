@@ -2,7 +2,6 @@
 include 'db_conexion.php';
 
 function obtenerTasaDesdeBCV() {
-    // Usar API oficial de DolarAPI para Venezuela (tasa BCV)
     $url = 'https://ve.dolarapi.com/v1/dolares/oficial';
     if (function_exists('curl_version')) {
         $ch = curl_init($url);

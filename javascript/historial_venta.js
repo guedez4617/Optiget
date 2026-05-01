@@ -1,22 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     cargarHistorial();
 
-    // Buscador
     const btnBuscar = document.querySelector(".btn-buscar");
     const inputBuscar = document.querySelector(".busqueda input");
 
     if (btnBuscar && inputBuscar) {
-        // Buscar al hacer clic
         btnBuscar.addEventListener("click", filtrarTabla);
 
-        // Buscar al presionar Enter
         inputBuscar.addEventListener("keyup", (e) => {
             if (e.key === "Enter") filtrarTabla();
         });
     }
 });
 
-//filtra la tabla
 function filtrarTabla() {
     const valor = document.querySelector(".busqueda input").value.toLowerCase();
     const filas = document.querySelectorAll(".ventas-tabla tbody tr");
@@ -27,7 +23,6 @@ function filtrarTabla() {
     });
 }
 
-// cargar historial de la bd
 async function cargarHistorial() {
     try {
         const res = await fetch("../../../php/obtener_historial.php");
@@ -65,30 +60,18 @@ async function cargarHistorial() {
 
 async function verFactura(id) {
     try {
-        // Consultamos el detalle al servidor
         const res = await fetch(`../../../php/obtener_detalle_venta.php?id=${id}`);
         const data = await res.json();
 
         if (data.status === "ok") {
-            // Borra los datos de ventas activas para no mezclar
             localStorage.removeItem("carritoTemporal");
             localStorage.removeItem("nombreClienteSeleccionado");
             localStorage.removeItem("cedulaClienteSeleccionado");
-
-            // Guardo el ID para que el generador de factura sepa cuál buscar
             localStorage.setItem("idFacturaReciente", id);
-
-            // Guardo el método de pago y la info del cliente recuperada de la DB
             localStorage.setItem("metodoPagoSeleccionado", data.cabecera.tipo_pago);
-
-            // Sincroniza con las llaves que usa tu factura actual
             localStorage.setItem("nombreClienteSeleccionado", data.cabecera.nombre_cliente || "CLIENTE GENERAL");
             localStorage.setItem("cedulaClienteSeleccionado", data.cabecera.ci_cliente || "999");
-
-            // Esto es para que la factura no procesar nada solo mostrar
             localStorage.setItem("modoConsulta", "true");
-
-            // Redirección a la interfaz de factura
             window.location.href = "../factra/fa.html";
         } else {
             alert("Error al recuperar detalle: " + data.mensaje);

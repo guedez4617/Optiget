@@ -1,13 +1,8 @@
-/* --- CONFIGURACIÓN BASE Y ESTRUCTURA --- */
-
 body {
     margin: 0;
     font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
 }
-
-
-/* Fondo aclarado (brightness 0.8) para que no sea tan oscuro */
 
 body::before {
     content: "";
@@ -28,9 +23,6 @@ body::before {
     height: 100vh;
     overflow: hidden;
 }
-
-
-/* Barra lateral naranja BLOQUEADA */
 
 .ancho_linea {
     width: 200px;
@@ -71,16 +63,12 @@ body::before {
     background-color: #a24002;
 }
 
-
-/* --- PANEL CENTRAL CON EFECTO CRISTAL NEGRO --- */
-
 .cuadro_personal {
     flex: 1;
     padding: 30px;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    /* Evita scroll lateral */
     box-sizing: border-box;
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
@@ -93,9 +81,6 @@ body::before {
     font-size: 2.2rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
-
-
-/* --- BUSCADOR Y BOTÓN AÑADIR (Estilo Cristal Naranja) --- */
 
 .busqueda {
     display: flex;
@@ -115,9 +100,6 @@ body::before {
     width: 280px;
     outline: none;
 }
-
-
-/* Botón Añadir Nuevo con estilo de cristal naranja */
 
 .btn-busqueda {
     background-color: var(--color-tema, #c54b00);
@@ -139,16 +121,12 @@ body::before {
     box-shadow: 0 6px 12px rgba(255, 140, 0, 0.3);
 }
 
-
-/* --- TABLA DE PERSONAL (CRISTAL NEGRO Y LETRA GRANDE) --- */
-
 .personal-table {
     width: 100%;
     margin-top: 20px;
     border-collapse: separate;
     border-spacing: 0;
     background: rgba(0, 0, 0, 0.7);
-    /* Cristal Negro */
     backdrop-filter: blur(15px);
     border-radius: 12px;
     overflow: hidden;
@@ -173,16 +151,12 @@ body::before {
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 16px;
-    /* Letra más grande para los datos */
 }
 
 .personal-table tr:hover td {
     background: rgba(255, 255, 255, 0.1);
     transition: 0.2s;
 }
-
-
-/* --- ICONOS DE ACCIÓN --- */
 
 .icono-editar,
 .icono-eliminar,
@@ -214,9 +188,6 @@ body::before {
     background: rgba(255, 255, 255, 0.05);
 }
 
-
-/* --- BADGE DE RANGO --- */
-
 .rango-badge {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -227,9 +198,6 @@ body::before {
     text-transform: uppercase;
     color: #ff8c00;
 }
-
-
-/* --- SCROLLBAR --- */
 
 .cuadro_personal::-webkit-scrollbar {
     width: 8px;
@@ -244,7 +212,6 @@ body::before {
     border-radius: 10px;
 }
 
-/* Modal Auditoría */
 .modal-auditoria {
     position: fixed;
     top: 0;
@@ -275,7 +242,6 @@ body::before {
     color: #333;
 }
 
-/* Mejoras a la tabla de la modal */
 .contenido-auditoria table {
     width: 100%;
     border-collapse: collapse;
@@ -306,11 +272,21 @@ body::before {
     font-weight: bold;
 }
 
-/* Colores por tipo de acción en la auditoría */
-.tag-venta { background: #28a745 !important; }
-.tag-abono { background: #17a2b8 !important; }
-.tag-historial { background: #007bff !important; }
-.tag-negocio { background: #6f42c1 !important; }
+.tag-venta {
+    background: #28a745 !important;
+}
+
+.tag-abono {
+    background: #17a2b8 !important;
+}
+
+.tag-historial {
+    background: #007bff !important;
+}
+
+.tag-negocio {
+    background: #6f42c1 !important;
+}
 
 .accion-tag {
     color: white;
@@ -322,4 +298,4 @@ body::before {
     display: inline-block;
     min-width: 60px;
     text-align: center;
-}
+}

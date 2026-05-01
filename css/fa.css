@@ -24,17 +24,11 @@ body {
     flex-direction: column;
 }
 
-
-/* --- MEMBRETE DINÁMICO --- */
-
 .header-aurora {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
-
-
-/* Estilo para el nombre cargado desde la BD */
 
 .nombre-empresa-aurora {
     font-family: Arial, sans-serif;
@@ -42,11 +36,7 @@ body {
     margin: 0;
     font-weight: bold;
     text-transform: uppercase;
-    /* Asegura que siempre se vea formal */
 }
-
-
-/* Estilo para dirección, RIF y Teléfono del negocio */
 
 .empresa-datos p {
     margin: 2px 0;
@@ -79,9 +69,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-
-/* --- BLOQUES DE DATOS --- */
-
 .seccion-datos {
     display: flex;
     gap: 10px;
@@ -105,9 +92,6 @@ body {
     margin: 3px 0;
     font-size: 11px;
 }
-
-
-/* --- TABLA COMPACTA --- */
 
 .tabla-aurora {
     width: 100%;
@@ -135,9 +119,6 @@ body {
 .tabla-aurora td:nth-child(3) {
     text-align: left;
 }
-
-
-/* --- PIE Y TOTALES --- */
 
 .pie-factura {
     display: flex;
@@ -184,9 +165,6 @@ body {
     color: #333;
 }
 
-
-/* --- BOTONES --- */
-
 .btn-imprimir {
     background: var(--color-tema, #c54b00);
     color: white;
@@ -205,9 +183,6 @@ body {
     border-radius: 4px;
 }
 
-
-/* --- PRINT --- */
-
 @media print {
     body {
         background: white;
@@ -221,6 +196,5 @@ body {
         box-shadow: none;
         width: 100%;
         padding: 10mm;
-        /* Un poco menos de padding para la hoja física */
     }
 }

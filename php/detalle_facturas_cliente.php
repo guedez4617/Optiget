@@ -5,10 +5,6 @@ header('Content-Type: application/json');
 $cedula = $_GET['cedula'] ?? '';
 
 try {
-    // Esta consulta trae:
-    // 1. El ID y Fecha
-    // 2. La suma de los productos de esa factura (Total Factura)
-    // 3. La suma de los pagos hechos en la tabla 'abonos' (Total Abonado)
     $sql = "SELECT 
                 f.id_factura, 
                 f.fecha, 

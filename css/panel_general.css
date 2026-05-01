@@ -122,9 +122,6 @@ body {
     font-size: 14px;
 }
 
-
-/* Botón Auditoría */
-
 .btn-auditoria {
     background: #007bff;
     color: white;
@@ -135,18 +132,12 @@ body {
     font-weight: bold;
 }
 
-
-/* Tarjetas de Monto */
-
 .monto {
     font-size: 24px;
     font-weight: bold;
     color: #28a745;
     margin-top: 10px;
 }
-
-
-/* Contenedor Gráficas */
 
 .contenedor-graficas {
     display: flex;
@@ -163,9 +154,6 @@ body {
     min-width: 300px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-
-/* Modal Auditoría */
 
 .modal-auditoria {
     position: fixed;
@@ -212,9 +200,6 @@ th {
     background-color: #f4f4f4;
 }
 
-
-/* Contenedor principal de filtros */
-
 .filtros-dashboard {
     display: flex;
     justify-content: space-between;
@@ -237,9 +222,6 @@ th {
     color: #555;
     font-size: 0.9rem;
 }
-
-
-/* Estilo Segmented Control (Botones unidos) */
 
 .segmented-control {
     display: flex;
@@ -271,9 +253,6 @@ th {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-/* Indicador de estado (El puntito verde que parpadea) */
-
 .indicador-estado {
     font-size: 0.8rem;
     color: #888;
@@ -303,15 +282,6 @@ th {
     }
 }
 
-
-/* --- TU CSS ORIGINAL --- */
-
-
-/* (Manten todo lo que me pasaste y añade lo siguiente al final) */
-
-
-/* Estilos extra para la Auditoría Detallada */
-
 .sesion-item {
     transition: transform 0.2s ease;
 }
@@ -323,9 +293,6 @@ th {
 .acciones-lista {
     padding-left: 10px;
 }
-
-
-/* Mejoras a la tabla de la modal */
 
 .contenido-auditoria table {
     width: 100%;
@@ -340,17 +307,11 @@ th {
     z-index: 10;
 }
 
-
-/* Ajuste del botón buscar dentro de la modal */
-
 .buscador-auditoria input:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
-
-
-/* Responsividad simple */
 
 @media (max-width: 768px) {
     .distancia_cuadro {
@@ -366,36 +327,21 @@ th {
     }
 }
 
-
-/* Colores por tipo de acción en la auditoría */
-
 .tag-venta {
     background: #28a745 !important;
 }
-
-
-/* Verde */
 
 .tag-abono {
     background: #17a2b8 !important;
 }
 
-
-/* Cian */
-
 .tag-historial {
     background: #007bff !important;
 }
 
-
-/* Azul */
-
 .tag-negocio {
     background: #6f42c1 !important;
 }
-
-
-/* Morado */
 
 .accion-tag {
     color: white;
@@ -408,9 +354,6 @@ th {
     min-width: 60px;
     text-align: center;
 }
-
-
-/* Estilos para canvas de gráficas (offline) */
 
 .grafica-item {
     display: flex;
@@ -464,9 +407,6 @@ th {
     border-radius: 3px;
     display: inline-block;
 }
-
-
-/* Tooltip for interactive charts */
 
 .grafica-tooltip {
     position: absolute;

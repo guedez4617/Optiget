@@ -61,9 +61,6 @@ body::before {
     background-color: #a24002;
 }
 
-
-/* --- PANEL CENTRAL (Scroll corregido) --- */
-
 .panel {
     flex: 1;
     padding: 30px;
@@ -72,15 +69,11 @@ body::before {
     align-items: center;
     height: 100vh;
     overflow-y: auto;
-    /* Permite scroll interno */
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-sizing: border-box;
 }
-
-
-/* --- FORMULARIO (Estilo Cristal Negro Compacto) --- */
 
 .formulario-usuario {
     background: rgba(0, 0, 0, 0.8);
@@ -88,20 +81,17 @@ body::before {
     padding: 25px;
     border-radius: 20px;
     max-width: 380px;
-    /* Ancho ajustado */
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     text-align: center;
     color: white;
     margin: auto 0;
-    /* Centrado vertical */
 }
 
 .formulario-usuario label {
     display: block;
     margin-bottom: 2px;
-    /* Pegado al input */
     font-weight: bold;
     color: white;
     text-transform: uppercase;
@@ -113,9 +103,7 @@ body::before {
 .formulario-usuario select {
     width: 100%;
     padding: 8px;
-    /* Más compacto */
     margin-bottom: 12px;
-    /* Espacio reducido entre campos */
     background-color: rgba(26, 26, 26, 0.8);
     color: white;
     border: 1px solid var(--color-tema, #c54b00);
@@ -123,9 +111,6 @@ body::before {
     box-sizing: border-box;
     outline: none;
 }
-
-
-/* --- BOTONES --- */
 
 .btn-registro {
     display: inline-block;
@@ -168,9 +153,6 @@ body::before {
 .btn-volver:hover {
     background-color: rgba(108, 117, 125, 0.8);
 }
-
-
-/* Ocultar scrollbar de la barra naranja */
 
 .ancho_linea::-webkit-scrollbar {
     display: none;

@@ -1,6 +1,4 @@
 let listaUsuariosGlobal = [];
-
-// 1. Cargar todos los datos del personal
 async function cargarUsuarios() {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando usuarios...</td></tr>';
@@ -20,7 +18,6 @@ async function cargarUsuarios() {
     }
 }
 
-// 2. Dibuja la tabla
 function renderizarTabla(datos) {
     const tablaBody = document.getElementById('tablaUsuariosBody');
     tablaBody.innerHTML = "";
@@ -31,7 +28,6 @@ function renderizarTabla(datos) {
     }
 
     datos.forEach((u) => {
-        // Manejo de la cédula por si tiene puntos o no en la BD
         const cedula = u.CI || u['C.I'];
 
         tablaBody.innerHTML += `
@@ -50,7 +46,6 @@ function renderizarTabla(datos) {
     });
 }
 
-// 3. Buscador en tiempo real
 document.addEventListener('DOMContentLoaded', () => {
     cargarUsuarios();
 
@@ -72,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 4. Preparar Edición (Guarda en LocalStorage y redirige)
 function prepararEdicion(u) {
     localStorage.setItem('usuarioAEditar', JSON.stringify({
         datos: {
@@ -88,7 +82,6 @@ function prepararEdicion(u) {
     window.location.href = "../registro_de_usuario/re.html";
 }
 
-// 5. Inhabilitar Usuario (Borrado lógico)
 async function eliminarUsuario(cedula) {
     if (confirm(`¿Está seguro de inhabilitar al usuario con C.I: ${cedula}?`)) {
         try {
@@ -102,7 +95,7 @@ async function eliminarUsuario(cedula) {
 
             if (res.status === "success") {
                 alert("Usuario inhabilitado con éxito.");
-                cargarUsuarios(); // Recargar la tabla
+                cargarUsuarios();
             } else {
                 alert("Error: " + res.message);
             }
@@ -113,7 +106,6 @@ async function eliminarUsuario(cedula) {
     }
 }
 
-// 6. Auditoria Detallada de Usuario
 let currentAuditoriaCI = '';
 
 function abrirAuditoria(ci) {

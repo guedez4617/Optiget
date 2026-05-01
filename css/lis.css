@@ -63,9 +63,6 @@ body {
     background-color: #a24002;
 }
 
-
-/* --- CONTENEDOR PRINCIPAL --- */
-
 .cuadro_lista {
     flex: 1;
     padding: 20px;
@@ -148,9 +145,6 @@ body {
     font-weight: bold;
 }
 
-
-/* --- MODAL ESTILO MODERNO --- */
-
 .modal {
     display: none;
     position: fixed;
@@ -193,9 +187,6 @@ body {
     margin: 5px 0 0 0;
 }
 
-
-/* --- ESTILO TASA EN LA ESQUINA (MODIFICADO: READONLY) --- */
-
 .tasa-esquina {
     background: #333;
     padding: 8px 12px;
@@ -217,7 +208,6 @@ body {
     background: transparent !important;
     border: none !important;
     color: #28a745 !important;
-    /* Verde para indicar que es un valor informativo */
     font-weight: bold;
     width: 70px !important;
     text-align: right;
@@ -236,9 +226,6 @@ body {
     padding: 25px;
     overflow-y: auto;
 }
-
-
-/* --- CUADRITOS DE FACTURAS (CARDS) --- */
 
 .contenedor-facturas-cards {
     display: flex;
@@ -281,9 +268,6 @@ body {
     font-size: 12px;
     color: #888;
 }
-
-
-/* --- SECCIÓN DE ABONO MODERNA --- */
 
 .contenedor-abono-moderno {
     background: #252525;
@@ -332,9 +316,6 @@ body {
     border-color: var(--color-tema, #c54b00);
 }
 
-
-/* --- BOTÓN SWITCH DE MONEDA --- */
-
 .btn-switch {
     background: #444;
     border: 1px solid #555;
@@ -353,9 +334,6 @@ body {
     background: var(--color-tema, #c54b00);
     color: white;
 }
-
-
-/* VISOR DE RESULTADO */
 
 .visor-resultado.info-bs {
     background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
@@ -381,7 +359,6 @@ body {
     font-size: 24px;
     font-weight: 800;
     color: #28a745;
-    /* Verde para indicar resultado positivo */
 }
 
 .visor-resultado .monto-final small {
@@ -389,9 +366,6 @@ body {
     color: #666;
     margin-left: 4px;
 }
-
-
-/* BOTÓN DE CONFIRMACIÓN */
 
 .btn-confirmar-moderno {
     width: 100%;

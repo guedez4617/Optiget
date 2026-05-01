@@ -1,5 +1,4 @@
 <?php
-// php/gestion_negocio.php
 header('Content-Type: application/json');
 include 'db_conexion.php';
 
@@ -7,8 +6,6 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 try {
     if ($metodo === 'GET') {
-        // --- LÓGICA DE PRECARGA ---
-        // Obtenemos la versión MÁS RECIENTE (la última insertada)
         $stmt = $pdo->query("SELECT * FROM datos_negocio ORDER BY id_config DESC LIMIT 1");
         $negocio = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,10 +22,7 @@ try {
     } 
     
     else if ($metodo === 'POST') {
-        // --- LÓGICA DE GUARDADO (VERSIONAMIENTO) ---
         $data = json_decode(file_get_contents("php://input"), true);
-        
-        // El id_usuario_cambio lo recibimos del JS (que lo saca del localStorage)
         $id_usuario = $data['id_usuario_cambio'] ?? null;
 
         if (!$id_usuario) {
@@ -36,7 +30,6 @@ try {
             exit;
         }
 
-        // Obtenemos la versión MÁS RECIENTE para comparar
         $stmtAnt = $pdo->query("SELECT * FROM datos_negocio ORDER BY id_config DESC LIMIT 1");
         $negocioAnt = $stmtAnt->fetch(PDO::FETCH_ASSOC);
 
@@ -54,8 +47,6 @@ try {
             $detalles_auditoria = "Se editó - " . implode(" | ", $cambios);
         }
 
-        // IMPORTANTE: Aquí hacemos un INSERT puro. No usamos UPDATE.
-        // Cada cambio es una fila nueva para no dañar las facturas viejas.
         $sql = "INSERT INTO datos_negocio (nombre, rif, direccion, telefono, id_usuario_cambio, detalles_auditoria) 
                 VALUES (?, ?, ?, ?, ?, ?)";
         

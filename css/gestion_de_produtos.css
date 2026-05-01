@@ -1,13 +1,8 @@
-/* --- CONFIGURACIÓN BASE Y ESTRUCTURA --- */
-
 body {
     margin: 0;
     font-family: "Segoe UI", Roboto, sans-serif;
     background-color: #f4f6f9;
 }
-
-
-/* Fondo con brillo total (brightness 1) */
 
 body::before {
     content: "";
@@ -28,9 +23,6 @@ body::before {
     height: 100vh;
     overflow: hidden;
 }
-
-
-/* Barra lateral naranja BLOQUEADA */
 
 .ancho_linea {
     width: 200px;
@@ -71,9 +63,6 @@ body::before {
     background-color: #a24002;
 }
 
-
-/* --- PANEL CENTRAL CON EFECTO CRISTAL NEGRO --- */
-
 .panel {
     flex: 1;
     padding: 30px;
@@ -92,9 +81,6 @@ body::before {
     font-size: 2.2rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
-
-
-/* --- BUSCADOR Y BOTONES SUPERIORES --- */
 
 .ancho_boton {
     display: flex;
@@ -142,9 +128,6 @@ body::before {
     box-shadow: 0 6px 12px rgba(255, 140, 0, 0.3);
 }
 
-
-/* --- TABLA --- */
-
 .producto-tabla {
     width: 100%;
     margin-top: 20px;
@@ -181,21 +164,15 @@ body::before {
     transition: 0.2s;
 }
 
-
-/* --- ICONOS DE ACCIÓN (Animación de elevación sin cuadro) --- */
-
 .icono-editar,
 .icono-eliminar {
     display: inline-block;
-    /* Permite que el transform funcione correctamente */
     cursor: pointer;
     font-size: 1.2rem;
     padding: 8px;
     background: transparent;
-    /* Fondo siempre transparente */
     border: none;
     transition: all 0.3s ease;
-    /* Transición suave de 0.3s como los botones principales */
 }
 
 .icono-editar {
@@ -206,21 +183,12 @@ body::before {
     color: #ff4444;
 }
 
-
-/* Animación: Elevación, escala y sombra, pero SIN cambiar el fondo */
-
 .icono-editar:hover,
 .icono-eliminar:hover {
     transform: translateY(-3px) scale(1.2);
-    /* Sube y se agranda */
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    /* Sombra al icono para darle profundidad */
     background: transparent !important;
-    /* Asegura que no aparezca el cuadro */
 }
-
-
-/* Efecto opcional: un poco más de brillo al pasar el mouse */
 
 .icono-editar:hover {
     color: #ffb366;
@@ -229,9 +197,6 @@ body::before {
 .icono-eliminar:hover {
     color: #ff7070;
 }
-
-
-/* --- SCROLLBAR --- */
 
 .panel::-webkit-scrollbar {
     width: 8px;

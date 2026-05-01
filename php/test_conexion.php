@@ -1,5 +1,4 @@
 <?php
-// Prueba de conectividad a las APIs específicas
 $urls = [
     'https://ve.dolarapi.com/v1/dolares/oficial',
     'https://api.exchangerate.host/latest?base=USD&symbols=VES',

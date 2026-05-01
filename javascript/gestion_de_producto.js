@@ -1,7 +1,6 @@
 let listaProductosGlobal = [];
 let mostrandoInactivos = false;
 
-// carga los datos al iniciar
 async function cargarProductos() {
     const tbody = document.getElementById("cuerpoTabla");
     tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;">Cargando inventario...</td></tr>';
@@ -22,7 +21,6 @@ async function cargarProductos() {
     }
 }
 
-// dibuja la tabla
 function renderizarTabla(datos) {
     const tbody = document.getElementById("cuerpoTabla");
     tbody.innerHTML = "";
@@ -37,27 +35,17 @@ function renderizarTabla(datos) {
     datos.forEach((p) => {
         const fila = document.createElement("tr");
 
-        // prcios
         const esIva = parseInt(p.tieneIva) === 1;
         const precioBase = parseFloat(p.precio) || 0;
-
-        // esto calcula el iva
         const montoIva = esIva ? (precioBase * 0.16) : 0;
-
-        // tota con iva
         const precioTotal = precioBase + montoIva;
-
-        // stod 
         const unidades = parseInt(p.unidades) || 0;
         const stockClase = unidades > 5 ? "in-stock" : "low-stock";
         const stockTexto = unidades > 5 ? "Bastante" : "Poco";
-
-        // boton para reativar y inavilitar
         const botonAccion = mostrandoInactivos ?
             `<span class="icono-reactivar" title="Reactivar" onclick="reactivarProducto('${p.Codigo}')" style="cursor:pointer; font-size:1.2rem;">🔄</span>` :
             `<span class="icono-eliminar" title="Eliminar" onclick="eliminarProducto('${p.Codigo}')" style="cursor:pointer;">🗑️</span>`;
 
-        // contruye las filas
         fila.innerHTML = `
             <td>${p.Codigo}</td>
             <td>${p.categoria || '-'}</td>
@@ -83,7 +71,6 @@ function renderizarTabla(datos) {
     });
 }
 
-//filtro de busquedad
 document.getElementById("buscarInput").addEventListener("input", (e) => {
     const valorBusqueda = e.target.value.toLowerCase().trim();
     const columnaSeleccionada = document.getElementById("filtroColumna").value;
@@ -107,7 +94,6 @@ document.getElementById("buscarInput").addEventListener("input", (e) => {
     renderizarTabla(resultadosFiltrados);
 });
 
-//ver activos o inativos
 function alternarVistaInactivos() {
     mostrandoInactivos = !mostrandoInactivos;
     const btnText = document.getElementById("btnFiltroInactivos");

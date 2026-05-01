@@ -28,7 +28,6 @@ switch ($filtro) {
 }
 
 try {
-    // 1. Total de ventas reales (dinero ingresado por abonos/pagos en ese periodo) y deuda nueva (créditos)
     $sqlPeriodo = "
         SELECT 
             (SELECT SUM(a.monto_abonado) FROM abonos a JOIN factura f ON a.id_factura = f.id_factura WHERE $whereFecha) as ventas,
@@ -44,7 +43,6 @@ try {
     ";
     $resPeriodo = $pdo->query($sqlPeriodo)->fetch(PDO::FETCH_ASSOC);
 
-    // 2. Deuda global (todas las facturas a crédito menos lo que se ha abonado a ellas)
     $sqlGlobal = "
         SELECT SUM(deuda) as total_deuda FROM (
             SELECT 
@@ -56,7 +54,6 @@ try {
     ";
     $resGlobal = $pdo->query($sqlGlobal)->fetch(PDO::FETCH_ASSOC);
 
-    // 3. Montos por método de pago basados en la tabla abonos (precisión exacta)
     $sqlMetodos = "SELECT a.metodo_pago as tipo_pago, SUM(a.monto_abonado) as monto 
                    FROM abonos a JOIN factura f ON a.id_factura = f.id_factura
                    WHERE $whereFecha
@@ -76,7 +73,6 @@ try {
                 GROUP BY p.nombre ORDER BY total DESC LIMIT 5";
     $top = $pdo->query($sqlTop)->fetchAll(PDO::FETCH_ASSOC);
 
-    // 4. Total IGTF recaudado en el período
     $sqlIGTF = "SELECT SUM(a.monto_abonado) as total_igtf 
                 FROM abonos a JOIN factura f ON a.id_factura = f.id_factura
                 WHERE $whereFecha AND a.metodo_pago = 'IGTF (3%)'";

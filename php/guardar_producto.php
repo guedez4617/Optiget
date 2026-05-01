@@ -1,9 +1,8 @@
 <?php
-session_start(); // Fundamental para capturar la CI del usuario logueado
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 include 'db_conexion.php';
 
-// 1. Obtener el usuario responsable de la sesión
 $vendedor_ci = $_SESSION['ci_usuario'] ?? null;
 
 if (!$vendedor_ci) {
@@ -30,24 +29,21 @@ $conIva       = intval($data['conIva'] ?? 0);
 $esEdicion    = isset($data['esEdicion']) && $data['esEdicion'] === true;
 
 try {
-    // Iniciamos transacción para que si falla el historial, no se guarde el producto (o viceversa)
     $pdo->beginTransaction();
 
     $nuevoEstado = ($cantidad > 0) ? 1 : 0;
     $accionHistorial = $esEdicion ? "EDICION" : "REGISTRO";
 
     if ($esEdicion) {
-        // --- OBTENER ESTADO ANTERIOR ---
         $sqlAnt = "SELECT * FROM productos WHERE Codigo = ?";
         $stmtAnt = $pdo->prepare($sqlAnt);
         $stmtAnt->execute([$codigo]);
         $productoAnterior = $stmtAnt->fetch(PDO::FETCH_ASSOC);
 
-        // --- EDITAR PRODUCTO ---
         $sql = "UPDATE productos SET 
                 categoria = ?, marca = ?, nombre = ?, presentacion = ?, 
                 unidades = ?, precio = ?, `i.v.a.` = ?, estado = ? 
-                WHERE Codigo = ?"; // Asegúrate de que en tu BD sea 'Codigo' con C mayúscula
+                WHERE Codigo = ?";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -56,7 +52,6 @@ try {
         ]);
         $mensaje = "Producto actualizado correctamente.";
         
-        // --- CONSTRUIR DETALLES DE AUDITORIA ---
         $cambios = [];
         if ($productoAnterior) {
             if ($productoAnterior['categoria'] != $categoria) $cambios[] = "Categoría: '{$productoAnterior['categoria']}' -> '$categoria'";
@@ -75,7 +70,6 @@ try {
         }
         
     } else {
-        // --- NUEVO PRODUCTO ---
         $sql = "INSERT INTO productos (Codigo, categoria, marca, nombre, presentacion, unidades, precio, `i.v.a.`, estado) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -88,20 +82,17 @@ try {
         $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Precio: $$precio";
     }
 
-    // --- INSERTAR EN EL HISTORIAL ---
     $sqlLog = "INSERT INTO historial_productos (codigo_producto, accion, usuario_ci, detalles, fecha) 
                 VALUES (?, ?, ?, ?, NOW())";
     
     $stmtLog = $pdo->prepare($sqlLog);
     $stmtLog->execute([$codigo, $accionHistorial, $vendedor_ci, $detalles]);
 
-    // Confirmamos todos los cambios
     $pdo->commit();
 
     echo json_encode(["status" => "success", "message" => $mensaje]);
 
 } catch (PDOException $e) {
-    // Si algo falla, deshacemos todo lo anterior
     if ($pdo->inTransaction()) $pdo->rollBack();
 
     $errorInfo = $e->errorInfo;

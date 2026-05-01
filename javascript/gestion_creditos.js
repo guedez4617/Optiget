@@ -47,7 +47,6 @@ async function cargarDeudores() {
             return;
         }
 
-        // Renderizar filas
         deudores.forEach(d => {
             const saldo = parseFloat(d.saldo_pendiente) || 0;
             granTotalCartera += saldo;
@@ -186,7 +185,6 @@ async function procesarAbono() {
         return;
     }
 
-    // Si paga en Efectivo USD, calcular IGTF 3%
     const igtf = (metodo === 'Efectivo USD') ? parseFloat((montoUSD * 0.03).toFixed(2)) : 0;
 
     const datos = {
@@ -210,7 +208,7 @@ async function procesarAbono() {
         if (res.status === "success") {
             alert("✅ Abono registrado correctamente.");
             cerrarModal();
-            cargarDeudores(); // Recarga la lista para actualizar los saldos
+            cargarDeudores();
         } else {
             alert("❌ Error del servidor: " + res.message);
         }

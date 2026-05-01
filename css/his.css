@@ -4,9 +4,6 @@ body {
     background-color: #f4f6f9;
 }
 
-
-/* Imagen de fondo aclarada (brightness 0.8) y desenfocada */
-
 body::before {
     content: "";
     position: fixed;
@@ -27,9 +24,6 @@ body::before {
     overflow: hidden;
 }
 
-
-/* Barra lateral naranja */
-
 .ancho_linea {
     width: 200px;
     background-color: var(--color-tema, #c54b00);
@@ -38,7 +32,6 @@ body::before {
     flex-shrink: 0;
     height: 100vh;
     overflow-y: hidden;
-    /* Bloqueado según estética previa */
     z-index: 10;
 }
 
@@ -70,9 +63,6 @@ body::before {
     background-color: #a24002;
 }
 
-
-/* --- PANEL CENTRAL CON EFECTO CRISTAL NEGRO --- */
-
 .panel {
     flex: 1;
     padding: 30px;
@@ -81,7 +71,6 @@ body::before {
     overflow-x: hidden;
     box-sizing: border-box;
     background: rgba(0, 0, 0, 0.3);
-    /* Capa de cristal base */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
@@ -92,9 +81,6 @@ body::before {
     font-size: 2.2rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
-
-
-/* --- BUSCADOR ESTILO DARK --- */
 
 .busqueda {
     display: flex;
@@ -132,16 +118,12 @@ body::before {
     transform: translateY(-2px);
 }
 
-
-/* --- TABLA DE VENTAS (CRISTAL NEGRO Y LETRA GRANDE) --- */
-
 .ventas-tabla {
     width: 100%;
     margin-top: 20px;
     border-collapse: separate;
     border-spacing: 0;
     background: rgba(0, 0, 0, 0.7);
-    /* Efecto cristal negro */
     backdrop-filter: blur(15px);
     border-radius: 12px;
     overflow: hidden;
@@ -152,7 +134,6 @@ body::before {
 .ventas-tabla th {
     background-color: rgba(0, 0, 0, 0.5);
     color: #ff8c00;
-    /* Naranja corporativo */
     padding: 15px;
     text-transform: uppercase;
     font-size: 13px;
@@ -165,16 +146,12 @@ body::before {
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 16px;
-    /* Letras de los productos/ventas más grandes */
 }
 
 .ventas-tabla tr:hover td {
     background: rgba(255, 255, 255, 0.1);
     transition: 0.2s;
 }
-
-
-/* Icono de lupa / ver detalles */
 
 .icono-ver {
     cursor: pointer;
@@ -190,9 +167,6 @@ body::before {
     color: white;
     transform: scale(1.2);
 }
-
-
-/* --- SCROLLBAR --- */
 
 .panel::-webkit-scrollbar {
     width: 8px;

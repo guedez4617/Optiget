@@ -1,7 +1,4 @@
-// ajustes.js
-
 document.addEventListener("DOMContentLoaded", async() => {
-    // --- 1. CARGA DE PERFIL DESDE LOCALSTORAGE ---
     const usuarioRaw = localStorage.getItem("usuario");
     if (usuarioRaw) {
         const u = JSON.parse(usuarioRaw);
@@ -23,7 +20,6 @@ document.addEventListener("DOMContentLoaded", async() => {
         }
     }
 
-    // --- 2. MÁSCARAS Y RESTRICCIONES EN TIEMPO REAL ---
     const inputRif = document.getElementById('busRif');
     const telPerfil = document.getElementById('perTelefono');
     const telNegocio = document.getElementById('busTel');
@@ -41,7 +37,6 @@ document.addEventListener("DOMContentLoaded", async() => {
         });
     });
 
-    // --- 3. PRECARGA DE NEGOCIO ---
     const cargarNegocio = async() => {
         try {
             const res = await fetch('../../php/gestion_negocio.php');
@@ -58,7 +53,6 @@ document.addEventListener("DOMContentLoaded", async() => {
     cargarNegocio();
 });
 
-// --- FUNCIONES DE VALIDACIÓN ---
 
 function validarTelefono(telefono) {
     if (!telefono.startsWith("04")) {
@@ -73,9 +67,8 @@ function validarTelefono(telefono) {
 }
 
 function validarPassword(pass) {
-    if (pass === "") return true; // Si está vacío no se actualiza la clave
+    if (pass === "") return true;
 
-    // Regex: Mínimo 8 caracteres, al menos una letra, un número y un carácter especial
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
     if (!regex.test(pass)) {
@@ -85,7 +78,6 @@ function validarPassword(pass) {
     return true;
 }
 
-// --- 4. EVENTO: GUARDAR PERFIL ---
 document.getElementById('formPerfil').addEventListener('submit', async(e) => {
     e.preventDefault();
     const tel = document.getElementById('perTelefono').value.trim();
@@ -117,7 +109,6 @@ document.getElementById('formPerfil').addEventListener('submit', async(e) => {
     } catch (err) { alert("Error de conexión"); }
 });
 
-// --- 5. EVENTO: GUARDAR NEGOCIO ---
 const btnNegocio = document.querySelector('#seccion-negocio .btn-azul');
 if (btnNegocio) {
     btnNegocio.addEventListener('click', async(e) => {
@@ -161,19 +152,16 @@ if (btnNegocio) {
     });
 }
 
-// --- 6. APARIENCIA DEL SISTEMA ---
 const colorInput = document.getElementById('colorSistema');
 const hexValor = document.getElementById('hexValor');
 
-// Actualizar texto HEX cuando cambia el color
 if (colorInput && hexValor) {
     colorInput.addEventListener('input', (e) => {
         hexValor.textContent = e.target.value;
     });
 }
 
-// Cargar apariencia actual en los inputs
-const cargarApariencia = async () => {
+const cargarApariencia = async() => {
     try {
         const res = await fetch('../../php/obtener_apariencia.php');
         const data = await res.json();
@@ -185,18 +173,17 @@ const cargarApariencia = async () => {
 };
 cargarApariencia();
 
-// Guardar diseño
-document.getElementById('formDiseno')?.addEventListener('submit', async (e) => {
+document.getElementById('formDiseno') ? .addEventListener('submit', async(e) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append('color_tema', document.getElementById('colorSistema').value);
-    
+
     const inputFondo = document.getElementById('inputFondo');
     if (inputFondo.files.length > 0) {
         formData.append('fondo_sistema', inputFondo.files[0]);
     }
-    
+
     const inputLogo = document.getElementById('inputLogo');
     if (inputLogo.files.length > 0) {
         formData.append('logo_sistema', inputLogo.files[0]);
@@ -208,16 +195,14 @@ document.getElementById('formDiseno')?.addEventListener('submit', async (e) => {
             body: formData
         });
         const data = await res.json();
-        
+
         if (data.status === 'ok') {
             alert('✅ Apariencia actualizada correctamente.\nLos cambios se reflejarán instantáneamente.');
-            
-            // Refrescar las variables CSS en la página actual para ver el cambio inmediato
+
             const root = document.documentElement;
             root.style.setProperty('--color-tema', data.color_tema);
             if (inputFondo.files.length > 0) {
                 const ts = new Date().getTime();
-                // Calcular ruta base igual que apariencia.js
                 const scripts = document.getElementsByTagName('script');
                 let baseUrl = '/';
                 for (let s of scripts) {
@@ -228,8 +213,7 @@ document.getElementById('formDiseno')?.addEventListener('submit', async (e) => {
                 }
                 root.style.setProperty('--fondo-sistema', `url('${baseUrl}imagenes/${data.fondo_sistema}?v=${ts}')`);
             }
-            
-            // Limpiar inputs de archivo
+
             inputFondo.value = '';
             inputLogo.value = '';
         } else {
@@ -238,4 +222,4 @@ document.getElementById('formDiseno')?.addEventListener('submit', async (e) => {
     } catch (err) {
         alert("Error de conexión al guardar diseño");
     }
-});
+});

@@ -69,7 +69,6 @@ function obtenerTasaDesdeBCV() {
     if ($tasa !== false && $tasa > 0) {
         return $tasa;
     }
-    // Intentar con API alternativa para Venezuela
     $url = 'https://pydolarvenezuela-api.vercel.app/api/v1/dollar?page=bcv';
     if (function_exists('curl_version')) {
         $ch = curl_init($url);
