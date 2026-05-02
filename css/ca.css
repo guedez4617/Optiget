@@ -503,3 +503,81 @@
         color: #2c3e50;
         font-size: 1.1rem;
     }
+    /* Estilos del modal de pagos extraídos de estilos en línea */
+    
+    .modal-resumen-fila {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    .modal-resumen-fila.border-bottom {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+    }
+    
+    .modal-resumen-valores {
+        text-align: right;
+    }
+    
+    .modal-resumen-bs {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+    }
+    
+    .modal-input-row {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .modal-input-group {
+        display: flex;
+        width: 50%;
+        gap: 5px;
+        align-items: stretch;
+    }
+    
+    .modal-input-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+    }
+    
+    .modal-currency-label {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: bold;
+        color: #7f8c8d;
+        font-size: 1.1rem;
+    }
+    
+    .modal-currency-input {
+        width: 100%;
+        height: 100%;
+        padding: 5px 8px 8px 25px;
+        box-sizing: border-box;
+        margin: 0;
+    }
+    
+    .btn-toggle-moneda {
+        background-color: #34495e;
+        padding: 0 15px;
+        margin: 0;
+        border-radius: 5px;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        box-sizing: border-box;
+    }

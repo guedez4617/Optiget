@@ -99,7 +99,7 @@ function imprimirReporte(data, titulo) {
             @media print { body { margin: 10px; } }
         </style></head><body>
         <h1>📊 Reporte Gerencial: ${titulo}</h1>
-        <p style="text-align:center; color:#7f8c8d;">Generado el ${new Date().toLocaleString('es-VE')}</p>
+        <p style="text-align:center; color:#7f8c8d;">Generado el ${new Date().toLocaleString('es-VE', { hour12: true })}</p>
 
         <div class="resumen">
             <div class="tarjeta">

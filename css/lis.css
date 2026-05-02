@@ -6,7 +6,7 @@ body {
 }
 
 .fondo.capa1 {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -14,8 +14,8 @@ body {
     background-image: var(--fondo-sistema, url("../imagenes/frente.png"));
     background-size: cover;
     background-position: center;
-    filter: blur(6px);
-    z-index: -2;
+    filter: blur(8px) brightness(0.8);
+    z-index: -1;
 }
 
 .linea_azul {
@@ -68,14 +68,14 @@ body {
 
 .cuadro_lista {
     flex: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    margin: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    height: calc(100vh - 40px);
+    padding: 30px;
+    height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .altura_lista {
@@ -88,64 +88,105 @@ body {
 }
 
 .altura_lista h1 {
-    color: var(--color-tema, #c54b00);
-    font-size: 24px;
     margin: 0;
+    color: white;
+    font-size: 2.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .busqueda {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .busqueda input {
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 250px;
+    background-color: rgba(26, 26, 26, 0.8);
+    color: #ffffff;
+    border: 1px solid var(--color-tema, #c54b00);
+    padding: 10px 15px;
+    border-radius: 6px;
+    width: 280px;
+    outline: none;
 }
 
 .btn_busqueda {
     background-color: var(--color-tema, #c54b00);
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn_busqueda:hover {
+    background-color: #ff8c00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 140, 0, 0.3);
 }
 
 .deudores-table {
     width: 100%;
-    border-collapse: collapse;
-    background: white;
-    margin-top: 10px;
-    table-layout: fixed;
+    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    table-layout: auto;
 }
 
 .deudores-table th {
-    background-color: var(--color-tema, #c54b00);
-    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ff8c00;
+    padding: 15px;
     text-transform: uppercase;
-    text-align: center;
-    font-size: 14px;
-    padding: 12px 15px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--color-tema, #c54b00);
+    text-align: left;
 }
 
 .deudores-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
+    padding: 15px;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 16px;
+    text-align: left;
+}
+
+.deudores-table tr:hover td {
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.2s;
 }
 
 .btn-detalle {
-    background-color: #28a745;
+    background-color: var(--color-tema, #c54b00);
     color: white;
     border: none;
     padding: 8px 15px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-detalle:hover {
+    background-color: #ff8c00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
 }
 
 .modal {

@@ -159,7 +159,7 @@ async function ejecutarAuditoriaDetallada(ci) {
                 return `
                     <div style="padding:8px; border-bottom:1px solid #eee; font-size:13px; color:#333;">
                         <span class="accion-tag ${claseColor}" style="padding: 3px 7px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; margin-right: 8px; display: inline-block; min-width: 65px; text-align: center;">${m.accion}</span>
-                        <b>[${new Date(m.fecha_completa).toLocaleTimeString()}]</b> ${m.detalles}
+                        <b>[${new Date(m.fecha_completa).toLocaleTimeString('es-VE', { hour12: true })}]</b> ${m.detalles}
                     </div>`;
             }).join('');
 
@@ -168,7 +168,7 @@ async function ejecutarAuditoriaDetallada(ci) {
             return `
                 <div id="${idSesion}" class="card-sesion-print" style="border:1px solid #ccc; margin-bottom:20px; border-radius:8px; background:white; overflow:hidden;">
                     <div style="background:#343a40; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:13px;">Inicio: ${new Date(sesion.inicio).toLocaleString()} | Fin: ${sesion.fin}</span>
+                        <span style="font-size:13px;">Inicio: ${new Date(sesion.inicio).toLocaleString('es-VE', { hour12: true })} | Fin: ${sesion.fin}</span>
                         <button class="no-print" onclick="imprimirSeccion('${idSesion}')" style="cursor:pointer; background:#6c757d; border:none; color:white; padding:4px 8px; border-radius:4px; font-size:11px;">Imprimir esta sesión</button>
                     </div>
                     <div style="padding:10px;">${movimientosHtml || '<i style="color:gray;">No hubo movimientos en esta sesión.</i>'}</div>

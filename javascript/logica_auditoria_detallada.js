@@ -27,7 +27,7 @@ async function buscarHistorial() {
                     accionesHtml += `
                         <div class="accion-item">
                             <span><span class="tag-accion">${acc.accion}:</span> ${acc.detalles}</span>
-                            <span class="hora-accion">${new Date(acc.fecha).toLocaleTimeString()}</span>
+                            <span class="hora-accion">${new Date(acc.fecha).toLocaleTimeString('es-VE', { hour12: true })}</span>
                         </div>
                     `;
                 });
@@ -36,7 +36,7 @@ async function buscarHistorial() {
             const card = `
                 <div class="sesion-card">
                     <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                        <span>🚪 Inicio: ${new Date(sesion.inicio).toLocaleString()}</span>
+                        <span>🚪 Inicio: ${new Date(sesion.inicio).toLocaleString('es-VE', { hour12: true })}</span>
                         <span>🏁 Fin: ${sesion.fin}</span>
                     </div>
                     <div class="lista-acciones">

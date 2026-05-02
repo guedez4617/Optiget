@@ -303,12 +303,40 @@ function limpiarCliente() {
 }
 
 let pagosAñadidos = [];
+let monedaModalPago = "USD";
 
 function abrirModalPagos() {
     if (carrito.length === 0) return alert("Carrito vacío");
     pagosAñadidos = [];
+    monedaModalPago = "USD";
+    const label = document.getElementById("labelMonedaModal");
+    if (label) label.textContent = "$";
+    const input = document.getElementById("inputMontoPago");
+    if (input) input.value = "";
     actualizarModalPagos();
     abrirModal("miModal");
+}
+
+function toggleMonedaPagoModal() {
+    monedaModalPago = (monedaModalPago === "USD") ? "BS" : "USD";
+    const label = document.getElementById("labelMonedaModal");
+    if (label) {
+        label.textContent = (monedaModalPago === "USD") ? "$" : "Bs";
+    }
+    
+    const input = document.getElementById("inputMontoPago");
+    if (input && input.value !== "") {
+        let currentVal = parseFloat(input.value);
+        if (!isNaN(currentVal)) {
+            if (monedaModalPago === "BS") {
+                input.value = (currentVal * tasaDolar).toFixed(2);
+            } else {
+                input.value = (currentVal / tasaDolar).toFixed(2);
+            }
+        }
+    }
+
+    onMontoIGTFChange();
 }
 
 function actualizarModalPagos() {
@@ -328,8 +356,13 @@ function actualizarModalPagos() {
     const restante = totalUSD - totalPagado;
 
     document.getElementById("modalTotalPagar").textContent = "$" + totalUSD.toFixed(2);
+    if(document.getElementById("modalTotalPagarBs")) document.getElementById("modalTotalPagarBs").textContent = (totalUSD * tasaDolar).toFixed(2);
+
     document.getElementById("modalTotalPagado").textContent = "$" + totalPagado.toFixed(2);
+    if(document.getElementById("modalTotalPagadoBs")) document.getElementById("modalTotalPagadoBs").textContent = (totalPagado * tasaDolar).toFixed(2);
+
     document.getElementById("modalRestante").textContent = "$" + Math.max(0, restante).toFixed(2);
+    if(document.getElementById("modalRestanteBs")) document.getElementById("modalRestanteBs").textContent = (Math.max(0, restante) * tasaDolar).toFixed(2);
 
     const lista = document.getElementById("listaPagosAgregados");
     lista.innerHTML = "";
@@ -350,7 +383,11 @@ function actualizarModalPagos() {
 
     const inputMonto = document.getElementById("inputMontoPago");
     if (restante > 0) {
-        inputMonto.value = restante.toFixed(2);
+        if (monedaModalPago === "USD") {
+            inputMonto.value = restante.toFixed(2);
+        } else {
+            inputMonto.value = (restante * tasaDolar).toFixed(2);
+        }
     } else {
         inputMonto.value = "";
     }
@@ -370,33 +407,37 @@ function onMetodoCambio() {
 function onMontoIGTFChange() {
     const metodo = document.getElementById('selectMetodoPago').value;
     if (metodo !== 'Efectivo USD') return;
-    const monto = parseFloat(document.getElementById('inputMontoPago').value) || 0;
-    const igtf = monto * 0.03;
-    const total = monto + igtf;
+    let montoEscrito = parseFloat(document.getElementById('inputMontoPago').value) || 0;
+    
+    let montoUSD = (monedaModalPago === "USD") ? montoEscrito : (montoEscrito / tasaDolar);
+    
+    const igtf = montoUSD * 0.03;
+    const total = montoUSD + igtf;
     document.getElementById('montoIGTFPreview').textContent = '$' + igtf.toFixed(2);
     document.getElementById('totalConIGTFPreview').textContent = '$' + total.toFixed(2);
 }
 
 function agregarPagoMixto() {
     const metodo = document.getElementById('selectMetodoPago').value;
-    const monto = parseFloat(document.getElementById('inputMontoPago').value);
+    let montoEscrito = parseFloat(document.getElementById('inputMontoPago').value);
 
-    if (isNaN(monto) || monto <= 0) {
+    if (isNaN(montoEscrito) || montoEscrito <= 0) {
         alert('Ingrese un monto válido');
         return;
     }
 
+    let montoUSD = (monedaModalPago === "USD") ? montoEscrito : (montoEscrito / tasaDolar);
+
     if (metodo === 'Efectivo USD') {
-        // Opción A: el IGTF se cobra encima al cliente
-        const igtf = parseFloat((monto * 0.03).toFixed(2));
-        pagosAñadidos.push({ metodo: 'Efectivo USD', monto });
+        const igtf = parseFloat((montoUSD * 0.03).toFixed(2));
+        pagosAñadidos.push({ metodo: 'Efectivo USD', monto: montoUSD });
         pagosAñadidos.push({ metodo: 'IGTF (3%)', monto: igtf, esIGTF: true });
     } else {
-        pagosAñadidos.push({ metodo, monto });
+        pagosAñadidos.push({ metodo, monto: montoUSD });
     }
 
-    // Ocultar alerta y limpiar
     document.getElementById('alertaIGTF').style.display = 'none';
+    document.getElementById('inputMontoPago').value = "";
     actualizarModalPagos();
 }
 

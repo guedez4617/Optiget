@@ -115,28 +115,43 @@
             <h2 style="margin-bottom: 5px;">Finalizar Venta</h2>
             <p style="text-align: center; color: #7f8c8d; margin-top: 0; font-size: 0.9rem;">(Añada sus pagos. Lo que falte quedará a Crédito)</p>
 
-            <div style="display:flex; justify-content: space-between; font-size: 1.1rem; margin-bottom: 10px;">
+            <div class="modal-resumen-fila">
                 <span>Total a Pagar:</span>
-                <span id="modalTotalPagar" style="font-weight:bold; color: #27ae60;">$0.00</span>
+                <div class="modal-resumen-valores">
+                    <span id="modalTotalPagar" style="font-weight:bold; color: #27ae60;">$0.00</span>
+                    <div class="modal-resumen-bs">Bs. <span id="modalTotalPagarBs">0.00</span></div>
+                </div>
             </div>
-            <div style="display:flex; justify-content: space-between; font-size: 1.1rem; margin-bottom: 10px;">
+            <div class="modal-resumen-fila">
                 <span>Total Pagado:</span>
-                <span id="modalTotalPagado" style="font-weight:bold; color: #2980b9;">$0.00</span>
+                <div class="modal-resumen-valores">
+                    <span id="modalTotalPagado" style="font-weight:bold; color: #2980b9;">$0.00</span>
+                    <div class="modal-resumen-bs">Bs. <span id="modalTotalPagadoBs">0.00</span></div>
+                </div>
             </div>
-            <div style="display:flex; justify-content: space-between; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+            <div class="modal-resumen-fila border-bottom">
                 <span>Resta:</span>
-                <span id="modalRestante" style="font-weight:bold; color: #e74c3c;">$0.00</span>
+                <div class="modal-resumen-valores">
+                    <span id="modalRestante" style="font-weight:bold; color: #e74c3c;">$0.00</span>
+                    <div class="modal-resumen-bs">Bs. <span id="modalRestanteBs">0.00</span></div>
+                </div>
             </div>
 
-            <div style="margin-bottom: 10px; display:flex; gap:10px;">
-                <select id="selectMetodoPago" class="input-modal" style="width: 50%; padding: 10px;" onchange="onMetodoCambio()">
+            <div class="modal-input-row">
+                <select id="selectMetodoPago" class="input-modal" style="width: 50%; padding: 10px; height: auto; margin: 0; box-sizing: border-box;" onchange="onMetodoCambio()">
                     <option value="Punto">Punto</option>
                     <option value="Efectivo USD">Efectivo USD</option>
                     <option value="Efectivo BS">Efectivo BS</option>
                     <option value="Pago Móvil">Pago Móvil</option>
                     <option value="Biopago">Biopago</option>
                 </select>
-                <input type="number" id="inputMontoPago" class="input-modal" style="width: 50%; padding: 10px;" placeholder="Monto ($)" step="0.01" oninput="onMontoIGTFChange()">
+                <div class="modal-input-group">
+                    <div class="modal-input-wrapper">
+                        <span id="labelMonedaModal" class="modal-currency-label">$</span>
+                        <input type="number" id="inputMontoPago" class="input-modal modal-currency-input" placeholder="Monto" step="0.01" oninput="onMontoIGTFChange()">
+                    </div>
+                    <button type="button" class="btn-toggle-moneda" onclick="toggleMonedaPagoModal()" title="Cambiar entre $ y BS">⇄</button>
+                </div>
             </div>
 
             <div id="alertaIGTF" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:0.88rem; color:#856404;">
