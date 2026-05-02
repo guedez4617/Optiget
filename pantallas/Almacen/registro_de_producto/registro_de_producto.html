@@ -58,11 +58,14 @@
             <input type="text" id="Precentacion" required>
 
             <div id="contenedor_lote">
-                <label for="numero_lote">Número de Lote</label>
-                <input type="text" id="numero_lote">
 
                 <label for="fecha_caducidad">Fecha de Caducidad</label>
-                <input type="date" id="fecha_caducidad">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <input type="date" id="fecha_caducidad" style="flex: 1;">
+                    <label style="display: flex; align-items: center; gap: 5px; white-space: nowrap; cursor: pointer; font-size: 0.9rem;">
+                        <input type="checkbox" id="chk_no_vence"> No vence
+                    </label>
+                </div>
             </div>
 
             <div id="contenedor_cantidad">

@@ -81,7 +81,7 @@
             <div class="modal-content" style="background:#fff; margin:5% auto; padding:20px; width:80%; max-width:600px; border-radius:8px;">
                 <span class="close" onclick="cerrarModalLotes()" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
                 <h2 id="tituloModalLotes">Lotes del Producto</h2>
-                
+
                 <table class="producto-tabla" style="margin-top:15px;">
                     <thead>
                         <tr>
@@ -98,13 +98,14 @@
                 <h3 style="margin-top:20px;">Agregar Nuevo Lote</h3>
                 <form id="formAgregarLote" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
                     <input type="hidden" id="lote_codigo_producto">
-                    <div style="flex:1; min-width:120px;">
-                        <label>Lote:</label>
-                        <input type="text" id="nuevo_numero_lote" required>
-                    </div>
-                    <div style="flex:1; min-width:120px;">
+                    <div style="flex:1; min-width:150px;">
                         <label>Caducidad:</label>
-                        <input type="date" id="nueva_fecha_caducidad" required>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="date" id="nueva_fecha_caducidad" required style="flex: 1;">
+                            <label style="font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                                <input type="checkbox" id="lote_no_vence"> No vence
+                            </label>
+                        </div>
                     </div>
                     <div style="flex:1; min-width:120px;">
                         <label>Cantidad:</label>
@@ -121,7 +122,7 @@
     <script src="../../../javascript/gestion_de_producto.js"></script>
     <script src="../../../javascript/logout_global.js"></script>
 
-<script src="../../../javascript/apariencia.js"></script>
+    <script src="../../../javascript/apariencia.js"></script>
 </body>
 
 </html>

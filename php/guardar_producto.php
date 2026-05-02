@@ -29,7 +29,6 @@ $conIva       = intval($data['conIva'] ?? 0);
 $esEdicion    = isset($data['esEdicion']) && $data['esEdicion'] === true;
 
 // Nuevos campos para lotes
-$numero_lote     = $data['numero_lote'] ?? '';
 $fecha_caducidad = $data['fecha_caducidad'] ?? '';
 
 try {
@@ -83,15 +82,26 @@ try {
         ]);
         
         // Registrar el lote inicial si hay cantidad
-        if ($cantidad > 0 && !empty($numero_lote) && !empty($fecha_caducidad)) {
+        $numero_lote_para_log = 'N/A';
+        if ($cantidad > 0 && !empty($fecha_caducidad)) {
+            if ($fecha_caducidad === '9999-12-31') {
+                $fecha_str = "000000";
+            } else {
+                $fecha_obj = new DateTime($fecha_caducidad);
+                $fecha_str = $fecha_obj->format('ymd');
+            }
+            $numero_lote_generado = "$codigo-001-$fecha_str";
+            
             $sqlLote = "INSERT INTO lotes_producto (codigo_producto, numero_lote, fecha_caducidad, cantidad) 
                         VALUES (?, ?, ?, ?)";
             $stmtLote = $pdo->prepare($sqlLote);
-            $stmtLote->execute([$codigo, $numero_lote, $fecha_caducidad, $cantidad]);
+            $stmtLote->execute([$codigo, $numero_lote_generado, $fecha_caducidad, $cantidad]);
+            
+            $numero_lote_para_log = $numero_lote_generado;
         }
 
         $mensaje = "Producto registrado exitosamente.";
-        $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Lote: $numero_lote, Precio: $$precio";
+        $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Lote: $numero_lote_para_log, Precio: $$precio";
     }
 
     $sqlLog = "INSERT INTO historial_productos (codigo_producto, accion, usuario_ci, detalles, fecha) 

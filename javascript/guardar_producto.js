@@ -37,6 +37,21 @@ window.onload = () => {
         if(contCant) contCant.style.display = 'block';
         document.getElementById('tituloPagina').innerText = "Registrar Nuevo Producto";
     }
+
+    const chkNoVence = document.getElementById('chk_no_vence');
+    if (chkNoVence) {
+        chkNoVence.addEventListener('change', function() {
+            const inputFecha = document.getElementById('fecha_caducidad');
+            if (this.checked) {
+                inputFecha.disabled = true;
+                inputFecha.value = "";
+                inputFecha.style.opacity = "0.5";
+            } else {
+                inputFecha.disabled = false;
+                inputFecha.style.opacity = "1";
+            }
+        });
+    }
 };
 
 form.addEventListener('submit', async function(e) {
@@ -51,8 +66,13 @@ form.addEventListener('submit', async function(e) {
     const precio = parseFloat(document.getElementById('precio').value) || 0;
     const conIva = document.getElementById('iva').checked ? 1 : 0;
     
-    const numero_lote = document.getElementById('numero_lote') ? document.getElementById('numero_lote').value.trim() : "";
-    const fecha_caducidad = document.getElementById('fecha_caducidad') ? document.getElementById('fecha_caducidad').value : "";
+    const chkNoVence = document.getElementById('chk_no_vence');
+    const noVence = chkNoVence && chkNoVence.checked;
+    let fecha_caducidad = document.getElementById('fecha_caducidad') ? document.getElementById('fecha_caducidad').value : "";
+
+    if (noVence) {
+        fecha_caducidad = "9999-12-31";
+    }
 
     const soloNumeros = /^[0-9]+$/;
     if (codigo.length < 7 || /^0+$/.test(codigo) || !soloNumeros.test(codigo)) {
@@ -65,8 +85,8 @@ form.addEventListener('submit', async function(e) {
     }
 
     if (!datosEdicion && cantidad > 0) {
-        if (!numero_lote || !fecha_caducidad) {
-            return alert("⚠️ Debe ingresar un número de lote y fecha de caducidad si la cantidad es mayor a 0.");
+        if (!noVence && !fecha_caducidad) {
+            return alert("⚠️ Debe ingresar una fecha de caducidad o marcar 'No vence' si la cantidad inicial es mayor a 0.");
         }
     }
 
@@ -91,7 +111,6 @@ form.addEventListener('submit', async function(e) {
         cantidad,
         precio,
         conIva,
-        numero_lote,
         fecha_caducidad,
         esEdicion: datosEdicion ? true : false
     };

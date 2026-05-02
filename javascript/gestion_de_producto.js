@@ -216,15 +216,21 @@ async function eliminarLote(id_lote, codigo) {
 document.getElementById('formAgregarLote').addEventListener('submit', async(e) => {
     e.preventDefault();
     const codigo = document.getElementById('lote_codigo_producto').value;
-    const numero_lote = document.getElementById('nuevo_numero_lote').value;
-    const fecha_caducidad = document.getElementById('nueva_fecha_caducidad').value;
+    const chkNoVence = document.getElementById('lote_no_vence');
+    const noVence = chkNoVence && chkNoVence.checked;
+    let fecha_caducidad = document.getElementById('nueva_fecha_caducidad').value;
+
+    if (noVence) {
+        fecha_caducidad = "9999-12-31";
+    }
+
     const cantidad = document.getElementById('nueva_cantidad_lote').value;
 
     try {
         const res = await fetch('../../../php/agregar_lote.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo, numero_lote, fecha_caducidad, cantidad })
+            body: JSON.stringify({ codigo, fecha_caducidad, cantidad })
         });
         const data = await res.json();
         if (data.status === 'success') {
@@ -239,4 +245,23 @@ document.getElementById('formAgregarLote').addEventListener('submit', async(e) =
     }
 });
 
-window.onload = cargarProductos;
+window.onload = () => {
+    cargarProductos();
+
+    const chkNoVence = document.getElementById('lote_no_vence');
+    if (chkNoVence) {
+        chkNoVence.addEventListener('change', function() {
+            const inputFecha = document.getElementById('nueva_fecha_caducidad');
+            if (this.checked) {
+                inputFecha.disabled = true;
+                inputFecha.required = false;
+                inputFecha.value = "";
+                inputFecha.style.opacity = "0.5";
+            } else {
+                inputFecha.disabled = false;
+                inputFecha.required = true;
+                inputFecha.style.opacity = "1";
+            }
+        });
+    }
+};
