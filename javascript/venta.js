@@ -428,6 +428,22 @@ function agregarPagoMixto() {
 
     let montoUSD = (monedaModalPago === "USD") ? montoEscrito : (montoEscrito / tasaDolar);
 
+    // Calcular restante actual
+    let subtotalUSD = 0;
+    let totalIvaUSD = 0;
+    carrito.forEach(p => {
+        subtotalUSD += p.cantidadFactura * p.precio;
+        if (p.tieneIva) totalIvaUSD += (p.cantidadFactura * p.precio * 0.16);
+    });
+    let totalPagado = 0;
+    pagosAñadidos.forEach(p => totalPagado += p.monto);
+    const restante = (subtotalUSD + totalIvaUSD) - totalPagado;
+
+    if (montoUSD > restante + 0.01) {
+        alert("El monto ingresado es mayor al restante a pagar.");
+        return;
+    }
+
     if (metodo === 'Efectivo USD') {
         const igtf = parseFloat((montoUSD * 0.03).toFixed(2));
         pagosAñadidos.push({ metodo: 'Efectivo USD', monto: montoUSD });

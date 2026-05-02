@@ -14,24 +14,62 @@ window.cambiarFiltro = function(periodo, btn) {
     cargarDatosPanel(periodo);
 };
 
-window.abrirModalImprimir = function() {
-    const anioActual = new Date().getFullYear();
-    const selectAnoMes = document.getElementById('selectAnoMes');
-    const selectAno = document.getElementById('selectAnoImprimir');
-    selectAnoMes.innerHTML = '';
-    selectAno.innerHTML = '';
-    for (let a = anioActual; a >= anioActual - 5; a--) {
-        selectAnoMes.innerHTML += `<option value="${a}">${a}</option>`;
-        selectAno.innerHTML += `<option value="${a}">${a}</option>`;
+window.abrirModalImprimir = async function() {
+    try {
+        const res = await fetch('../../../php/obtener_periodos_activos.php');
+        const resultado = await res.json();
+        let periodos = [];
+        if(resultado.status === 'success') {
+            periodos = resultado.data;
+        }
+
+        const selectAnoMes = document.getElementById('selectAnoMes');
+        const selectAno = document.getElementById('selectAnoImprimir');
+        const selectMes = document.getElementById('selectMesImprimir');
+        
+        selectAnoMes.innerHTML = '';
+        selectAno.innerHTML = '';
+        selectMes.innerHTML = '';
+
+        if (!periodos || periodos.length === 0) {
+            // Si no hay datos, mostrar algo por defecto
+            const y = new Date().getFullYear();
+            selectAnoMes.innerHTML = `<option value="${y}">${y}</option>`;
+            selectAno.innerHTML = `<option value="${y}">${y}</option>`;
+            selectMes.innerHTML = `<option value="${new Date().getMonth() + 1}">Mes Actual</option>`;
+        } else {
+            // Años únicos
+            const anos = [...new Set(periodos.map(p => p.ano))];
+            anos.forEach(a => {
+                selectAnoMes.innerHTML += `<option value="${a}">${a}</option>`;
+                selectAno.innerHTML += `<option value="${a}">${a}</option>`;
+            });
+
+            window.actualizarMesesDisponibles = function() {
+                const anoSeleccionado = selectAnoMes.value;
+                const mesesDisponibles = periodos.filter(p => p.ano == anoSeleccionado).map(p => p.mes);
+                
+                const nombresMeses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                
+                selectMes.innerHTML = '';
+                mesesDisponibles.forEach(m => {
+                    selectMes.innerHTML += `<option value="${m}">${nombresMeses[m]}</option>`;
+                });
+            };
+
+            selectAnoMes.onchange = window.actualizarMesesDisponibles;
+            window.actualizarMesesDisponibles(); // Carga inicial
+        }
+
+        document.querySelector('input[name="tipoPrint"][value="actual"]').checked = true;
+        actualizarOpcionesPrint('actual');
+
+        const modal = document.getElementById('modalImprimir');
+        modal.style.display = 'flex';
+    } catch (e) {
+        alert("Error al cargar los períodos disponibles.");
+        console.error(e);
     }
-    const mesActual = new Date().getMonth() + 1;
-    document.getElementById('selectMesImprimir').value = mesActual;
-
-    document.querySelector('input[name="tipoPrint"][value="actual"]').checked = true;
-    actualizarOpcionesPrint('actual');
-
-    const modal = document.getElementById('modalImprimir');
-    modal.style.display = 'flex';
 };
 
 window.actualizarOpcionesPrint = function(tipo) {

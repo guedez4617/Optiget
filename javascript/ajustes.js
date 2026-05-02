@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async() => {
         const u = JSON.parse(usuarioRaw);
         document.getElementById('perNombre').value = u.NOMBRE || "";
         document.getElementById('perApellido').value = u.APELLIDO || "";
-        document.getElementById('perCedula').value = u.CI || "";
+        document.getElementById('perCedula').value = u.CI || u['C.I'] || "";
         document.getElementById('perUsuario').value = u.N_USUARIO || "";
         document.getElementById('perTelefono').value = u.telefono || "";
         document.getElementById('perRango').value = u.nombre_rol || "";
@@ -173,7 +173,7 @@ const cargarApariencia = async() => {
 };
 cargarApariencia();
 
-document.getElementById('formDiseno') ? .addEventListener('submit', async(e) => {
+document.getElementById('formDiseno')?.addEventListener('submit', async(e) => {
     e.preventDefault();
 
     const formData = new FormData();
