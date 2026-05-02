@@ -236,12 +236,20 @@ function abrirModalCantidad(producto) {
 
 function confirmarAgregarCarrito() {
     const cant = parseInt(document.getElementById("inputCantidadProducto").value);
-    if (isNaN(cant) || cant <= 0 || (productoSeleccionado && cant > productoSeleccionado.unidades)) {
+    if (isNaN(cant) || cant <= 0) {
         alert("Cantidad no válida");
         return;
     }
 
-    const item = carrito.find(i => i.codigo === productoSeleccionado.codigo);
+    const itemExistente = carrito.find(i => i.codigo === productoSeleccionado?.codigo);
+    const cantEnCarrito = itemExistente ? itemExistente.cantidadFactura : 0;
+
+    if (productoSeleccionado && (cant + cantEnCarrito) > productoSeleccionado.unidades) {
+        alert(`No hay suficiente stock. Disponible: ${productoSeleccionado.unidades}, En Carrito: ${cantEnCarrito}`);
+        return;
+    }
+
+    const item = itemExistente;
     if (item) {
         item.cantidadFactura += cant;
         const sub = item.cantidadFactura * item.precio;

@@ -28,6 +28,10 @@ $precio       = floatval($data['precio'] ?? 0);
 $conIva       = intval($data['conIva'] ?? 0);
 $esEdicion    = isset($data['esEdicion']) && $data['esEdicion'] === true;
 
+// Nuevos campos para lotes
+$numero_lote     = $data['numero_lote'] ?? '';
+$fecha_caducidad = $data['fecha_caducidad'] ?? '';
+
 try {
     $pdo->beginTransaction();
 
@@ -42,13 +46,13 @@ try {
 
         $sql = "UPDATE productos SET 
                 categoria = ?, marca = ?, nombre = ?, presentacion = ?, 
-                unidades = ?, precio = ?, `i.v.a.` = ?, estado = ? 
+                precio = ?, `i.v.a.` = ?, estado = ? 
                 WHERE Codigo = ?";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $categoria, $marca, $nombre, $presentacion,
-            $cantidad, $precio, $conIva, $nuevoEstado, $codigo
+            $precio, $conIva, $nuevoEstado, $codigo
         ]);
         $mensaje = "Producto actualizado correctamente.";
         
@@ -58,7 +62,6 @@ try {
             if ($productoAnterior['marca'] != $marca) $cambios[] = "Marca: '{$productoAnterior['marca']}' -> '$marca'";
             if ($productoAnterior['nombre'] != $nombre) $cambios[] = "Nombre: '{$productoAnterior['nombre']}' -> '$nombre'";
             if ($productoAnterior['presentacion'] != $presentacion) $cambios[] = "Descripción: '{$productoAnterior['presentacion']}' -> '$presentacion'";
-            if ($productoAnterior['unidades'] != $cantidad) $cambios[] = "Cantidad: {$productoAnterior['unidades']} -> $cantidad";
             if ($productoAnterior['precio'] != $precio) $cambios[] = "Precio: \${$productoAnterior['precio']} -> \$$precio";
             if ($productoAnterior['i.v.a.'] != $conIva) $cambios[] = "I.V.A: " . ($productoAnterior['i.v.a.'] ? "Sí" : "No") . " -> " . ($conIva ? "Sí" : "No");
         }
@@ -78,8 +81,17 @@ try {
             $codigo, $categoria, $marca, $nombre, $presentacion,
             $cantidad, $precio, $conIva, $nuevoEstado
         ]);
+        
+        // Registrar el lote inicial si hay cantidad
+        if ($cantidad > 0 && !empty($numero_lote) && !empty($fecha_caducidad)) {
+            $sqlLote = "INSERT INTO lotes_producto (codigo_producto, numero_lote, fecha_caducidad, cantidad) 
+                        VALUES (?, ?, ?, ?)";
+            $stmtLote = $pdo->prepare($sqlLote);
+            $stmtLote->execute([$codigo, $numero_lote, $fecha_caducidad, $cantidad]);
+        }
+
         $mensaje = "Producto registrado exitosamente.";
-        $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Precio: $$precio";
+        $detalles = "Producto nuevo registrado: $nombre. Cantidad: $cantidad, Lote: $numero_lote, Precio: $$precio";
     }
 
     $sqlLog = "INSERT INTO historial_productos (codigo_producto, accion, usuario_ci, detalles, fecha) 

@@ -11,7 +11,9 @@ body {
 }
 
 .ancho_linea {
-    width: 200px;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-tema, #c54b00);
     color: white;
     padding: 20px;
@@ -69,7 +71,7 @@ body {
     content: "";
     position: fixed;
     top: 0;
-    left: 200px;
+    left: 160px;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.4);

@@ -45,6 +45,7 @@ function renderizarTabla(datos) {
         const botonAccion = mostrandoInactivos ?
             `<span class="icono-reactivar" title="Reactivar" onclick="reactivarProducto('${p.Codigo}')" style="cursor:pointer; font-size:1.2rem;">🔄</span>` :
             `<span class="icono-eliminar" title="Eliminar" onclick="eliminarProducto('${p.Codigo}')" style="cursor:pointer;">🗑️</span>`;
+        const botonLotes = `<button onclick="abrirModalLotes('${p.Codigo}', '${p.nombre.replace(/'/g, "\\'")}')" title="Ver Lotes" class="icono-auditoria">⌕</button>`;
 
         fila.innerHTML = `
             <td>${p.Codigo}</td>
@@ -65,6 +66,7 @@ function renderizarTabla(datos) {
 
             <td><span class="tamaño ${stockClase}">${stockTexto}</span></td>
             <td><span class="icono-editar" style="cursor:pointer;" onclick='editarProducto(${JSON.stringify(p)})'>✎</span></td>
+            <td>${botonLotes}</td>
             <td>${botonAccion}</td>
         `;
         tbody.appendChild(fila);
@@ -147,5 +149,94 @@ function nuevoProducto() {
     localStorage.removeItem("productoAEditar");
     window.location.href = "../registro_de_producto/registro_de_producto.html";
 }
+
+// === GESTION DE LOTES ===
+function abrirModalLotes(codigo, nombre) {
+    document.getElementById('modalLotes').style.display = 'block';
+    document.getElementById('tituloModalLotes').innerText = `Lotes: ${nombre}`;
+    document.getElementById('lote_codigo_producto').value = codigo;
+    cargarLotes(codigo);
+}
+
+function cerrarModalLotes() {
+    document.getElementById('modalLotes').style.display = 'none';
+    cargarProductos(); // Recargar para actualizar stock general si hubo cambios
+}
+
+async function cargarLotes(codigo) {
+    const tbody = document.getElementById('cuerpoTablaLotes');
+    tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
+    try {
+        const res = await fetch(`../../../php/obtener_lotes.php?codigo=${codigo}`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            tbody.innerHTML = '';
+            if (data.lotes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">No hay lotes activos.</td></tr>';
+                return;
+            }
+            data.lotes.forEach(lote => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${lote.numero_lote}</td>
+                        <td>${lote.fecha_caducidad}</td>
+                        <td>${lote.cantidad}</td>
+                        <td><button onclick="eliminarLote(${lote.id_lote}, '${codigo}')" style="background:#e74c3c; color:white; border:none; padding:2px 5px; cursor:pointer; border-radius:3px;">Eliminar</button></td>
+                    </tr>
+                `;
+            });
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4">${data.message}</td></tr>`;
+        }
+    } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4">Error de conexión</td></tr>';
+    }
+}
+
+async function eliminarLote(id_lote, codigo) {
+    if (!confirm('¿Seguro que deseas eliminar este lote? Esto restará el stock.')) return;
+    try {
+        const res = await fetch('../../../php/eliminar_lote.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_lote })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            cargarLotes(codigo);
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert('Error al eliminar el lote.');
+    }
+}
+
+document.getElementById('formAgregarLote').addEventListener('submit', async(e) => {
+    e.preventDefault();
+    const codigo = document.getElementById('lote_codigo_producto').value;
+    const numero_lote = document.getElementById('nuevo_numero_lote').value;
+    const fecha_caducidad = document.getElementById('nueva_fecha_caducidad').value;
+    const cantidad = document.getElementById('nueva_cantidad_lote').value;
+
+    try {
+        const res = await fetch('../../../php/agregar_lote.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo, numero_lote, fecha_caducidad, cantidad })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            document.getElementById('formAgregarLote').reset();
+            document.getElementById('lote_codigo_producto').value = codigo; // restaurar el hidden input
+            cargarLotes(codigo);
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert('Error al agregar el lote.');
+    }
+});
 
 window.onload = cargarProductos;

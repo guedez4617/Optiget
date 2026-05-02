@@ -15,13 +15,26 @@ window.onload = () => {
         document.getElementById('marca').value = p.marca || "";
         document.getElementById('nombre').value = p.nombre;
         document.getElementById('Precentacion').value = p.presentacion || "";
+        
+        // Al editar, deshabilitamos cantidad y ocultamos lote
         document.getElementById('cantidad').value = p.cantidad;
+        document.getElementById('cantidad').readOnly = true;
+        const contLote = document.getElementById('contenedor_lote');
+        if(contLote) contLote.style.display = 'none';
+        const contCant = document.getElementById('contenedor_cantidad');
+        if(contCant) contCant.style.display = 'none';
+
         document.getElementById('precio').value = p.precio;
         document.getElementById('iva').checked = (p.conIva == 1 || p.conIva === true);
 
     } else {
         form.reset();
         document.getElementById('codigo_barra').readOnly = false;
+        document.getElementById('cantidad').readOnly = false;
+        const contLote = document.getElementById('contenedor_lote');
+        if(contLote) contLote.style.display = 'block';
+        const contCant = document.getElementById('contenedor_cantidad');
+        if(contCant) contCant.style.display = 'block';
         document.getElementById('tituloPagina').innerText = "Registrar Nuevo Producto";
     }
 };
@@ -37,6 +50,9 @@ form.addEventListener('submit', async function(e) {
     const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
     const precio = parseFloat(document.getElementById('precio').value) || 0;
     const conIva = document.getElementById('iva').checked ? 1 : 0;
+    
+    const numero_lote = document.getElementById('numero_lote') ? document.getElementById('numero_lote').value.trim() : "";
+    const fecha_caducidad = document.getElementById('fecha_caducidad') ? document.getElementById('fecha_caducidad').value : "";
 
     const soloNumeros = /^[0-9]+$/;
     if (codigo.length < 7 || /^0+$/.test(codigo) || !soloNumeros.test(codigo)) {
@@ -46,6 +62,12 @@ form.addEventListener('submit', async function(e) {
     const soloLetrasEspacios = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
     if (!soloLetrasEspacios.test(marca) || !soloLetrasEspacios.test(nombre)) {
         return alert("⚠️ 'Marca' y 'Nombre' solo permiten letras y espacios.");
+    }
+
+    if (!datosEdicion && cantidad > 0) {
+        if (!numero_lote || !fecha_caducidad) {
+            return alert("⚠️ Debe ingresar un número de lote y fecha de caducidad si la cantidad es mayor a 0.");
+        }
     }
 
     if (!datosEdicion) {
@@ -69,6 +91,8 @@ form.addEventListener('submit', async function(e) {
         cantidad,
         precio,
         conIva,
+        numero_lote,
+        fecha_caducidad,
         esEdicion: datosEdicion ? true : false
     };
 

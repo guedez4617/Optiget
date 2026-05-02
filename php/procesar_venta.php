@@ -74,7 +74,31 @@ try {
         ]);
 
         if ($item['codigo'] !== "0") {
+            // Descontar del stock general
             $stmt_stock->execute([$item['cantidadFactura'], $item['codigo']]);
+
+            // Descontar de los lotes (FIFO)
+            $cant_a_descontar = $item['cantidadFactura'];
+            $sql_lotes = "SELECT id_lote, cantidad FROM lotes_producto WHERE codigo_producto = ? AND cantidad > 0 ORDER BY fecha_caducidad ASC";
+            $stmt_lotes = $pdo->prepare($sql_lotes);
+            $stmt_lotes->execute([$item['codigo']]);
+            $lotes_activos = $stmt_lotes->fetchAll(PDO::FETCH_ASSOC);
+
+            $sql_upd_lote = "UPDATE lotes_producto SET cantidad = ? WHERE id_lote = ?";
+            $stmt_upd_lote = $pdo->prepare($sql_upd_lote);
+
+            foreach ($lotes_activos as $lote) {
+                if ($cant_a_descontar <= 0) break;
+                
+                if ($lote['cantidad'] <= $cant_a_descontar) {
+                    $cant_a_descontar -= $lote['cantidad'];
+                    $stmt_upd_lote->execute([0, $lote['id_lote']]);
+                } else {
+                    $nueva_cant = $lote['cantidad'] - $cant_a_descontar;
+                    $stmt_upd_lote->execute([$nueva_cant, $lote['id_lote']]);
+                    $cant_a_descontar = 0;
+                }
+            }
         }
     }
 

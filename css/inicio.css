@@ -11,13 +11,15 @@ body {
 }
 
 .ancho_linea {
-    width: 200px;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-tema, #c54b00);
     color: white;
     padding: 20px;
     flex-shrink: 0;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .ancho_linea h2 {
@@ -26,8 +28,9 @@ body {
 }
 
 .ancho_linea ul {
-    list-style: none;
-    padding: 0;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0;
 }
 
 .ancho_linea li {
@@ -40,7 +43,7 @@ body {
     display: block;
     padding: 8px 12px;
     border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 .ancho_linea a:hover {
