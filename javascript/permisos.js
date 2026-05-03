@@ -22,6 +22,7 @@ const inicializarSeguridad = () => {
         'opcion-historial',
         'opcion-almacen',
         'opcion-configuracion',
+        'opcion-vencer',
         'seccion-negocio',
         'seccion-apariencia'
     ];
@@ -31,7 +32,12 @@ const inicializarSeguridad = () => {
 
         if (elemento) {
             if (!permisos.includes(idHtml)) {
-                elemento.style.setProperty('display', 'none', 'important');
+                // Caso especial para la nueva opción de vencimientos
+                if (idHtml === 'opcion-vencer' && (rol === 'Gerente' || rol === 'Almacen' || rol === 'Administrador')) {
+                    elemento.style.setProperty('display', 'list-item', 'important');
+                } else {
+                    elemento.style.setProperty('display', 'none', 'important');
+                }
             } else {
                 const displayType = elemento.tagName === 'SECTION' ? 'block' : 'list-item';
                 elemento.style.setProperty('display', displayType, 'important');

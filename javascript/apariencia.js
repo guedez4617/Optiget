@@ -14,6 +14,13 @@
 
     const phpUrl = baseUrl + 'php/obtener_apariencia.php';
     const imgBase = baseUrl + 'imagenes/';
+    const cssBase = baseUrl + 'css/';
+
+    // Inyectar CSS de notificaciones
+    const linkNotif = document.createElement('link');
+    linkNotif.rel = 'stylesheet';
+    linkNotif.href = cssBase + 'notificaciones.css';
+    document.head.appendChild(linkNotif);
 
     fetch(phpUrl)
         .then(r => r.json())
@@ -74,8 +81,90 @@
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', inyectarReloj);
+        document.addEventListener('DOMContentLoaded', () => {
+            inyectarReloj();
+            verificarVencimientos();
+        });
     } else {
         inyectarReloj();
+        verificarVencimientos();
+    }
+
+    async function verificarVencimientos() {
+        const rol = localStorage.getItem("rol");
+        if (rol !== "Gerente" && rol !== "Almacen") return;
+
+        try {
+            const res = await fetch(baseUrl + 'php/obtener_productos_vencer.php');
+            const data = await res.json();
+
+            if (data.status === 'success' && data.cantidad > 0) {
+                inyectarAlertaMenu(data.cantidad);
+                
+                // Lógica de una vez al día para el Toast
+                const hoy = new Date().toISOString().split('T')[0];
+                const ultimoAviso = localStorage.getItem("ultimo_aviso_vencimiento");
+
+                if (ultimoAviso !== hoy) {
+                    mostrarToastVencimiento(data.cantidad);
+                    localStorage.setItem("ultimo_aviso_vencimiento", hoy);
+                }
+            }
+        } catch (error) {
+            console.error("Error al verificar vencimientos:", error);
+        }
+    }
+
+    function inyectarAlertaMenu(cantidad) {
+        const opcionVencer = document.getElementById('opcion-vencer');
+        if (!opcionVencer) return;
+
+        // Agregar punto rojo/badge
+        const link = opcionVencer.querySelector('a');
+        if (link && !link.querySelector('.badge-vencimiento')) {
+            const badge = document.createElement('span');
+            badge.className = 'badge-vencimiento';
+            badge.innerText = cantidad;
+            link.appendChild(badge);
+        }
+    }
+
+    function mostrarToastVencimiento(cantidad) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-vencimiento';
+        
+        // Determinar ruta de redirección
+        const pathVencer = baseUrl + 'pantallas/Almacen/proximos_vencer.html';
+
+        toast.innerHTML = `
+            <div class="toast-header">
+                <span class="toast-icon">⚠️</span>
+                <span class="toast-title">Alerta de Inventario</span>
+            </div>
+            <div class="toast-body">
+                Hay <b>${cantidad}</b> lote(s) que vencerán en los próximos 7 días.
+            </div>
+            <div style="text-align: right; margin-bottom: 5px;">
+                <a href="${pathVencer}" style="color: var(--color-tema); text-decoration: none; font-weight: bold; font-size: 0.85rem;">VER DETALLES</a>
+            </div>
+            <div class="toast-progress" id="toast-progress-bar"></div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Animación de la barra de progreso (8 segundos)
+        const progressBar = toast.querySelector('#toast-progress-bar');
+        progressBar.style.transition = 'width 8s linear';
+        progressBar.style.width = '100%';
+        
+        setTimeout(() => {
+            progressBar.style.width = '0%';
+        }, 10);
+
+        // Desvanecer y eliminar después de 8 segundos
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 8000);
     }
 })();

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Próximos a Vencer</title>
+    <link rel="stylesheet" href="../../css/proximos_vencer.css" />
+    <link rel="stylesheet" href="../../css/notificaciones.css" />
+</head>
+
+<body>
+    <div class="fondo capa1"></div>
+
+    <div class="linea_azul">
+        <aside class="ancho_linea">
+            <h2>Almacén</h2>
+            <nav>
+                <ul>
+                    <li><a href="../inicio/inicio.html">Inicio</a></li>
+                    <li id="opcion-panel"><a href="../Gerente/panel_general/panel_general.html">Panel General</a></li>
+                    <li id="opcion-usuarios"><a href="../Gerente/personal/per.html">Usuarios</a></li>
+                    <li id="opcion-creditos"><a href="../Gerente/lista de deudore/lis.html">Créditos</a></li>
+                    <li id="opcion-facturacion"><a href="../Cajera/caja/principal.html">Facturación</a></li>
+                    <li id="opcion-historial"><a href="../Cajera/historial_ventas/his.html">Historial de ventas</a></li>
+                    <li id="opcion-almacen"><a href="../Almacen/Gestión de Productos/gestion_de_produtos.html">Almacén</a></li>
+                    <li id="opcion-vencer"><a href="../Almacen/proximos_vencer.html">Próximos a Vencer</a></li>
+                    <li id="opcion-configuracion"><a href="../configuracion/ajustes.html">Configuración</a></li>
+                    <li><a href="javascript:void(0)" onclick="abrirModalSalir()">Salir</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="panel">
+            <header class="product-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1>Productos Próximos a Vencer</h1>
+                    </div>
+                    <div class="ancho_boton" style="margin-bottom: 0;">
+                        <select id="filtroColumnaVencer">
+                            <option value="nombre">Producto</option>
+                            <option value="codigo">Código</option>
+                            <option value="lote">Lote</option>
+                        </select>
+                        <input type="text" id="buscarInputVencer" placeholder="Buscar vencimientos..." onkeyup="filtrarVencimientos()" />
+                        <button onclick="imprimirListaVencimientos()" class="btn-secundario">🖨️ Imprimir</button>
+                    </div>
+                </div>
+            </header>
+
+            <table class="producto-tabla">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Lote</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Cantidad</th>
+                        <th>Días Restantes</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaVencer">
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:20px;">Cargando...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script src="../../javascript/permisos.js"></script>
+    <script src="../../javascript/proximos_vencer.js"></script>
+    <script src="../../javascript/logout_global.js"></script>
+    <script src="../../javascript/apariencia.js"></script>
+</body>
+
+</html>

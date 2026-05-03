@@ -24,7 +24,7 @@ try {
     $pdo->beginTransaction();
 
     // Obtener información del lote
-    $sql_info = "SELECT codigo_producto, cantidad FROM lotes_producto WHERE id_lote = ?";
+    $sql_info = "SELECT codigo_producto, numero_lote, cantidad FROM lotes_producto WHERE id_lote = ?";
     $stmt_info = $pdo->prepare($sql_info);
     $stmt_info->execute([$id_lote]);
     $lote = $stmt_info->fetch(PDO::FETCH_ASSOC);
@@ -34,6 +34,7 @@ try {
     }
 
     $codigo = $lote['codigo_producto'];
+    $numero_lote = $lote['numero_lote'];
     $cantidad = intval($lote['cantidad']);
 
     // Eliminar el lote
@@ -49,7 +50,7 @@ try {
     }
     
     // Registrar en historial
-    $detalles = "Lote eliminado (ID: $id_lote). Cantidad restada: $cantidad.";
+    $detalles = "Lote eliminado (Código: $numero_lote). Cantidad restada del inventario: $cantidad.";
     $sqlLog = "INSERT INTO historial_productos (codigo_producto, accion, usuario_ci, detalles, fecha) 
                 VALUES (?, 'ELIMINACION LOTE', ?, ?, NOW())";
     $stmtLog = $pdo->prepare($sqlLog);

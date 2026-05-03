@@ -27,7 +27,7 @@ async function buscarHistorial() {
                     accionesHtml += `
                         <div class="accion-item">
                             <span><span class="tag-accion">${acc.accion}:</span> ${acc.detalles}</span>
-                            <span class="hora-accion">${new Date(acc.fecha).toLocaleTimeString('es-VE', { hour12: true })}</span>
+                            <span class="hora-accion">${new Date(acc.fecha_completa).toLocaleTimeString('es-VE', { hour12: true })}</span>
                         </div>
                     `;
                 });

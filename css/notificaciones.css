@@ -1,0 +1,101 @@
+/* Estilos para el Toast de Notificación */
+.toast-vencimiento {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #2c3e50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    border-left: 5px solid var(--color-tema, #c54b00);
+    animation: slideInRight 0.5s ease-out forwards;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.toast-vencimiento.fade-out {
+    animation: slideOutRight 0.5s ease-in forwards;
+}
+
+.toast-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+}
+
+.toast-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.toast-body {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--color-tema, #c54b00);
+    width: 100%;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(120%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); }
+    to { transform: translateX(120%); }
+}
+
+/* Badge en el menú lateral */
+.badge-vencimiento {
+    background: #e74c3c;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 10px rgba(231, 76, 60, 0.8); }
+    100% { transform: scale(1); }
+}
+
+/* Enlace dinámico en el menú */
+.enlace-vencimiento-lateral {
+    font-size: 0.8rem !important;
+    padding-left: 10px !important;
+    opacity: 0.85;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.enlace-vencimiento-lateral:hover {
+    opacity: 1;
+    padding-left: 20px !important;
+}

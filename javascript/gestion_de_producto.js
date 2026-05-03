@@ -1,5 +1,6 @@
 let listaProductosGlobal = [];
 let mostrandoInactivos = false;
+let loteIdAEditar = null; // Para rastrear si estamos editando un lote
 
 async function cargarProductos() {
     const tbody = document.getElementById("cuerpoTabla");
@@ -160,7 +161,24 @@ function abrirModalLotes(codigo, nombre) {
 
 function cerrarModalLotes() {
     document.getElementById('modalLotes').style.display = 'none';
+    loteIdAEditar = null; // Resetear modo edición
+    resetearFormularioLote();
     cargarProductos(); // Recargar para actualizar stock general si hubo cambios
+}
+
+function resetearFormularioLote() {
+    loteIdAEditar = null;
+    const form = document.getElementById('formAgregarLote');
+    if (form) form.reset();
+    
+    document.getElementById('nueva_fecha_caducidad').disabled = false;
+    document.getElementById('lote_no_vence').disabled = false;
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) btn.innerText = "Guardar Lote";
+    
+    // Quitar resaltado de edición si existe
+    const filas = document.querySelectorAll('#cuerpoTablaLotes tr');
+    filas.forEach(f => f.style.background = "");
 }
 
 async function cargarLotes(codigo) {
@@ -182,7 +200,10 @@ async function cargarLotes(codigo) {
                         <td>${lote.numero_lote}</td>
                         <td>${lote.fecha_caducidad}</td>
                         <td>${lote.cantidad}</td>
-                        <td><button onclick="eliminarLote(${lote.id_lote}, '${codigo}')" style="background:#e74c3c; color:white; border:none; padding:2px 5px; cursor:pointer; border-radius:3px;">Eliminar</button></td>
+                        <td style="display:flex; gap:5px;">
+                            <button onclick="editarCantidadLote(${lote.id_lote}, ${lote.cantidad}, '${lote.fecha_caducidad}', '${codigo}')" style="background:#3498db; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:3px; font-size:10px;">Editar</button>
+                            <button onclick="eliminarLote(${lote.id_lote}, '${codigo}')" style="background:#e74c3c; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:3px; font-size:10px;">Eliminar</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -213,6 +234,43 @@ async function eliminarLote(id_lote, codigo) {
     }
 }
 
+async function editarCantidadLote(id_lote, cantidadActual, fechaCaducidad, codigoProducto) {
+    loteIdAEditar = id_lote;
+    
+    // Cargar datos en el formulario
+    document.getElementById('nueva_cantidad_lote').value = cantidadActual;
+    
+    const inputFecha = document.getElementById('nueva_fecha_caducidad');
+    const chkNoVence = document.getElementById('lote_no_vence');
+    
+    if (fechaCaducidad === '9999-12-31') {
+        chkNoVence.checked = true;
+        inputFecha.value = "";
+    } else {
+        chkNoVence.checked = false;
+        inputFecha.value = fechaCaducidad;
+    }
+    
+    // Bloquear campos de fecha
+    inputFecha.disabled = true;
+    chkNoVence.disabled = true;
+    
+    // Cambiar texto del botón
+    const btn = document.getElementById('formAgregarLote').querySelector('button[type="submit"]');
+    btn.innerText = "Actualizar Cantidad";
+    
+    // Resaltar la fila que se está editando
+    const filas = document.querySelectorAll('#cuerpoTablaLotes tr');
+    filas.forEach(f => {
+        f.style.background = "";
+        if (f.innerHTML.includes(`editarCantidadLote(${id_lote}`)) {
+            f.style.background = "rgba(52, 152, 219, 0.2)";
+        }
+    });
+
+    document.getElementById('nueva_cantidad_lote').focus();
+}
+
 document.getElementById('formAgregarLote').addEventListener('submit', async(e) => {
     e.preventDefault();
     const codigo = document.getElementById('lote_codigo_producto').value;
@@ -227,21 +285,29 @@ document.getElementById('formAgregarLote').addEventListener('submit', async(e) =
     const cantidad = document.getElementById('nueva_cantidad_lote').value;
 
     try {
-        const res = await fetch('../../../php/agregar_lote.php', {
+        let endpoint = '../../../php/agregar_lote.php';
+        let body = { codigo, fecha_caducidad, cantidad };
+
+        if (loteIdAEditar) {
+            endpoint = '../../../php/editar_cantidad_lote.php';
+            body = { id_lote: loteIdAEditar, nueva_cantidad: cantidad };
+        }
+
+        const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo, fecha_caducidad, cantidad })
+            body: JSON.stringify(body)
         });
         const data = await res.json();
         if (data.status === 'success') {
-            document.getElementById('formAgregarLote').reset();
+            resetearFormularioLote();
             document.getElementById('lote_codigo_producto').value = codigo; // restaurar el hidden input
             cargarLotes(codigo);
         } else {
             alert(data.message);
         }
     } catch (error) {
-        alert('Error al agregar el lote.');
+        alert('Error al procesar el lote.');
     }
 });
 
