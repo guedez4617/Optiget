@@ -15,6 +15,7 @@ try {
             FROM lotes_producto l
             JOIN productos p ON l.codigo_producto = p.Codigo
             WHERE p.estado = 1 
+              AND l.cantidad > 0
               AND l.fecha_caducidad != '9999-12-31'
               AND (
                 (l.fecha_caducidad BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) AND l.estado_lote = 'Activo')

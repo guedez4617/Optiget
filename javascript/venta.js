@@ -517,6 +517,9 @@ async function enviarFactura() {
         const r = await res.json();
         if (r.status === "ok") {
             localStorage.setItem("idFacturaReciente", r.id_factura);
+            if (r.transiciones && r.transiciones.length > 0) {
+                localStorage.setItem("transicionesLote", JSON.stringify(r.transiciones));
+            }
             localStorage.removeItem("nombreClienteSeleccionado");
             localStorage.removeItem("cedulaClienteSeleccionado");
             localStorage.removeItem("carritoTemporal");

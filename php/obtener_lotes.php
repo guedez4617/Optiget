@@ -18,10 +18,10 @@ if (!isset($_GET['codigo'])) {
 $codigo = trim($_GET['codigo']);
 
 try {
-    $sql = "SELECT id_lote, numero_lote, fecha_caducidad, cantidad, fecha_ingreso 
+    $sql = "SELECT id_lote, numero_lote, fecha_caducidad, cantidad, fecha_ingreso, en_uso 
             FROM lotes_producto 
             WHERE codigo_producto = ? AND cantidad > 0 
-            ORDER BY fecha_caducidad ASC";
+            ORDER BY en_uso DESC, fecha_caducidad ASC";
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$codigo]);

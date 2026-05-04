@@ -154,6 +154,7 @@ body::before {
     font-size: 13px;
     letter-spacing: 1px;
     border-bottom: 2px solid var(--color-tema, #c54b00);
+    text-align: center;
 }
 
 .producto-tabla td {
@@ -161,6 +162,7 @@ body::before {
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 15px;
+    text-align: center;
 }
 
 .producto-tabla tr:hover td {
@@ -245,4 +247,40 @@ body::before {
     border-radius: 6px;
     box-sizing: border-box;
     outline: none;
+}
+
+/* Estilo switch para el checkbox "No vence" */
+#lote_no_vence {
+    appearance: none;
+    width: 40px !important;
+    height: 20px !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 20px !important;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    vertical-align: middle;
+}
+
+#lote_no_vence:checked {
+    background-color: var(--color-tema, #c54b00) !important;
+}
+
+#lote_no_vence::before {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+}
+
+#lote_no_vence:checked::before {
+    transform: translateX(20px);
 }

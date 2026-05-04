@@ -167,4 +167,60 @@
             setTimeout(() => toast.remove(), 500);
         }, 8000);
     }
+
+    // --- FUNCIÓN GLOBAL DE NOTIFICACIONES ---
+    window.mostrarNotificacion = function(titulo, mensaje, icono = 'ℹ️') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-vencimiento'; // Reutilizamos el estilo
+        toast.style.borderLeftColor = '#3498db';
+        
+        toast.innerHTML = `
+            <div class="toast-header">
+                <span class="toast-icon">${icono}</span>
+                <span class="toast-title">${titulo}</span>
+            </div>
+            <div class="toast-body">
+                ${mensaje}
+            </div>
+            <div class="toast-progress" style="background:#3498db;"></div>
+        `;
+        document.body.appendChild(toast);
+
+        const progressBar = toast.querySelector('.toast-progress');
+        progressBar.style.transition = 'width 6s linear';
+        progressBar.style.width = '100%';
+        setTimeout(() => { progressBar.style.width = '0%'; }, 10);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 6000);
+    };
+
+    // --- MOSTRAR TRANSICIONES DE LOTE PENDIENTES ---
+    function revisarTransicionesLote() {
+        const transData = localStorage.getItem("transicionesLote");
+        if (transData) {
+            try {
+                const transiciones = JSON.parse(transData);
+                // Mostrar con un pequeño retraso intercalado si hay varias
+                transiciones.forEach((t, i) => {
+                    setTimeout(() => {
+                        window.mostrarNotificacion(
+                            '🔄 Cambio de Lote', 
+                            `Lote <b>${t.lote_agotado}</b> agotado para <b>${t.producto}</b>.<br>Ahora usando: <b>${t.lote_nuevo}</b> (Vence: ${t.fecha_nuevo})`,
+                            '⚠️'
+                        );
+                    }, i * 1500); // 1.5s entre cada notificación
+                });
+            } catch(e) {
+                console.error("Error parseando transiciones", e);
+            }
+            localStorage.removeItem("transicionesLote");
+        }
+    }
+
+    // Ejecutar al iniciar
+    revisarTransicionesLote();
+
 })();

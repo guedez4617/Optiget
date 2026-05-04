@@ -22,6 +22,7 @@ $tasa = $input['tasa'];
 $cedula_cliente = $input['cliente']['cedula'];
 
 $total_factura_usd = 0;
+$transiciones = []; // Array para almacenar transiciones de lote
 foreach ($carrito as $item) {
     $sub = $item['precio'] * $item['cantidadFactura'];
     $iva = (isset($item['tieneIva']) && $item['tieneIva']) ? ($sub * 0.16) : 0;
@@ -77,22 +78,46 @@ try {
             // Descontar del stock general
             $stmt_stock->execute([$item['cantidadFactura'], $item['codigo']]);
 
-            // Descontar de los lotes (FIFO)
+            // Descontar de los lotes (FEFO con Override)
             $cant_a_descontar = $item['cantidadFactura'];
-            $sql_lotes = "SELECT id_lote, cantidad FROM lotes_producto WHERE codigo_producto = ? AND cantidad > 0 ORDER BY fecha_caducidad ASC";
+            $sql_lotes = "SELECT id_lote, cantidad, numero_lote, fecha_caducidad FROM lotes_producto WHERE codigo_producto = ? AND cantidad > 0 ORDER BY en_uso DESC, fecha_caducidad ASC";
             $stmt_lotes = $pdo->prepare($sql_lotes);
             $stmt_lotes->execute([$item['codigo']]);
             $lotes_activos = $stmt_lotes->fetchAll(PDO::FETCH_ASSOC);
 
             $sql_upd_lote = "UPDATE lotes_producto SET cantidad = ? WHERE id_lote = ?";
             $stmt_upd_lote = $pdo->prepare($sql_upd_lote);
+            
+            $stmt_historial = $pdo->prepare("INSERT INTO historial_transiciones_lote (codigo_producto, producto_nombre, lote_agotado, lote_nuevo) VALUES (?, ?, ?, ?)");
 
-            foreach ($lotes_activos as $lote) {
+            foreach ($lotes_activos as $index => $lote) {
                 if ($cant_a_descontar <= 0) break;
                 
                 if ($lote['cantidad'] <= $cant_a_descontar) {
                     $cant_a_descontar -= $lote['cantidad'];
                     $stmt_upd_lote->execute([0, $lote['id_lote']]);
+
+                    // Si el lote se agota, buscar el siguiente disponible en el array
+                    if (isset($lotes_activos[$index + 1])) {
+                        $next_lote = $lotes_activos[$index + 1];
+                        
+                        $producto_nombre = $item['nombre'] ?? 'Producto (' . $item['codigo'] . ')';
+                        
+                        $transiciones[] = [
+                            'producto' => $producto_nombre,
+                            'lote_agotado' => $lote['numero_lote'],
+                            'lote_nuevo' => $next_lote['numero_lote'],
+                            'fecha_nuevo' => $next_lote['fecha_caducidad']
+                        ];
+                        
+                        // Guardar en la base de datos
+                        $stmt_historial->execute([
+                            $item['codigo'],
+                            $producto_nombre,
+                            $lote['numero_lote'],
+                            $next_lote['numero_lote']
+                        ]);
+                    }
                 } else {
                     $nueva_cant = $lote['cantidad'] - $cant_a_descontar;
                     $stmt_upd_lote->execute([$nueva_cant, $lote['id_lote']]);
@@ -118,7 +143,7 @@ try {
     }
 
     $pdo->commit();
-    echo json_encode(["status" => "ok", "id_factura" => $id_factura]);
+    echo json_encode(["status" => "ok", "id_factura" => $id_factura, "transiciones" => $transiciones]);
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();

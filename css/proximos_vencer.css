@@ -154,6 +154,7 @@ body::before {
     font-size: 13px;
     letter-spacing: 1px;
     border-bottom: 2px solid var(--color-tema, #c54b00);
+    text-align: center;
 }
 
 .producto-tabla td {
@@ -161,6 +162,7 @@ body::before {
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 15px;
+    text-align: center;
 }
 
 .producto-tabla tr:hover td {

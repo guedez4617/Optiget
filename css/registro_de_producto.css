@@ -175,7 +175,7 @@ body::before {
     line-height: 1;
 }
 
-#iva {
+#iva, #chk_no_vence {
     appearance: none;
     width: 50px;
     height: 26px;
@@ -184,13 +184,15 @@ body::before {
     position: relative;
     cursor: pointer;
     flex-shrink: 0;
+    margin: 0;
+    vertical-align: middle;
 }
 
-#iva:checked {
+#iva:checked, #chk_no_vence:checked {
     background-color: var(--color-tema, #c54b00);
 }
 
-#iva::before {
+#iva::before, #chk_no_vence::before {
     content: "";
     position: absolute;
     width: 18px;
@@ -202,6 +204,6 @@ body::before {
     transition: transform 0.3s;
 }
 
-#iva:checked::before {
+#iva:checked::before, #chk_no_vence:checked::before {
     transform: translateX(24px);
 }

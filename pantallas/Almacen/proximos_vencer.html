@@ -38,18 +38,20 @@
                         <h1>Productos Próximos a Vencer</h1>
                     </div>
                     <div class="ancho_boton" style="margin-bottom: 0;">
-                        <select id="filtroColumnaVencer">
+                        <button id="btnAlternarVista" class="btn-secundario" onclick="alternarVista()">Ver Historial de Cambios</button>
+
+                        <select id="filtroColumnaVencer" style="margin-left: 10px;">
                             <option value="nombre">Producto</option>
                             <option value="codigo">Código</option>
                             <option value="lote">Lote</option>
                         </select>
-                        <input type="text" id="buscarInputVencer" placeholder="Buscar vencimientos..." onkeyup="filtrarVencimientos()" />
-                        <button onclick="imprimirListaVencimientos()" class="btn-secundario">🖨️ Imprimir</button>
+                        <input type="text" id="buscarInputVencer" placeholder="Buscar..." onkeyup="filtrarVencimientos()" />
+                        <button onclick="imprimirListaVencimientos()" class="btn-secundario">Imprimir</button>
                     </div>
                 </div>
             </header>
 
-            <table class="producto-tabla">
+            <table class="producto-tabla" id="tablaVencimientos">
                 <thead>
                     <tr>
                         <th>Código</th>
@@ -66,11 +68,28 @@
                     </tr>
                 </tbody>
             </table>
+
+            <table class="producto-tabla" id="tablaHistorial" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Lote Agotado</th>
+                        <th>Lote Nuevo</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaHistorial">
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:20px;">Cargando historial...</td>
+                    </tr>
+                </tbody>
+            </table>
         </main>
     </div>
 
     <script src="../../javascript/permisos.js"></script>
-    <script src="../../javascript/proximos_vencer.js"></script>
+    <script src="../../javascript/proximos_vencer.js?v=4"></script>
     <script src="../../javascript/logout_global.js"></script>
     <script src="../../javascript/apariencia.js"></script>
 </body>

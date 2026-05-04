@@ -170,12 +170,12 @@ function resetearFormularioLote() {
     loteIdAEditar = null;
     const form = document.getElementById('formAgregarLote');
     if (form) form.reset();
-    
+
     document.getElementById('nueva_fecha_caducidad').disabled = false;
     document.getElementById('lote_no_vence').disabled = false;
     const btn = form.querySelector('button[type="submit"]');
     if (btn) btn.innerText = "Guardar Lote";
-    
+
     // Quitar resaltado de edición si existe
     const filas = document.querySelectorAll('#cuerpoTablaLotes tr');
     filas.forEach(f => f.style.background = "");
@@ -194,10 +194,15 @@ async function cargarLotes(codigo) {
                 tbody.innerHTML = '<tr><td colspan="4">No hay lotes activos.</td></tr>';
                 return;
             }
-            data.lotes.forEach(lote => {
+            data.lotes.forEach((lote, index) => {
+                // El primer lote (index 0) es siempre el actual (ya sea por FEFO o por en_uso = 1)
+                const esLoteActual = (index === 0);
+                const badgeActual = esLoteActual ? '<span style="background:var(--color-tema, #3498db); color:white; font-size:0.7rem; padding:2px 5px; border-radius:3px; margin-left:5px;" title="Lote actual que se está descontando en ventas">Activo</span>' : '';
+                const estiloFila = esLoteActual ? 'background-color: rgba(52, 152, 219, 0.05);' : '';
+
                 tbody.innerHTML += `
-                    <tr>
-                        <td>${lote.numero_lote}</td>
+                    <tr style="${estiloFila}">
+                        <td style="${esLoteActual ? 'font-weight:bold;' : ''}">${lote.numero_lote} ${badgeActual}</td>
                         <td>${lote.fecha_caducidad}</td>
                         <td>${lote.cantidad}</td>
                         <td style="display:flex; gap:5px;">
@@ -236,13 +241,13 @@ async function eliminarLote(id_lote, codigo) {
 
 async function editarCantidadLote(id_lote, cantidadActual, fechaCaducidad, codigoProducto) {
     loteIdAEditar = id_lote;
-    
+
     // Cargar datos en el formulario
     document.getElementById('nueva_cantidad_lote').value = cantidadActual;
-    
+
     const inputFecha = document.getElementById('nueva_fecha_caducidad');
     const chkNoVence = document.getElementById('lote_no_vence');
-    
+
     if (fechaCaducidad === '9999-12-31') {
         chkNoVence.checked = true;
         inputFecha.value = "";
@@ -250,15 +255,15 @@ async function editarCantidadLote(id_lote, cantidadActual, fechaCaducidad, codig
         chkNoVence.checked = false;
         inputFecha.value = fechaCaducidad;
     }
-    
+
     // Bloquear campos de fecha
     inputFecha.disabled = true;
     chkNoVence.disabled = true;
-    
+
     // Cambiar texto del botón
     const btn = document.getElementById('formAgregarLote').querySelector('button[type="submit"]');
     btn.innerText = "Actualizar Cantidad";
-    
+
     // Resaltar la fila que se está editando
     const filas = document.querySelectorAll('#cuerpoTablaLotes tr');
     filas.forEach(f => {
@@ -285,6 +290,25 @@ document.getElementById('formAgregarLote').addEventListener('submit', async(e) =
     const cantidad = document.getElementById('nueva_cantidad_lote').value;
 
     try {
+        if (!loteIdAEditar) {
+            // Obtenemos los lotes actuales para ver si hay uno en curso y comparar fecha
+            const lotesRes = await fetch(`../../../php/obtener_lotes.php?codigo=${codigo}`);
+            const dataLotes = await lotesRes.json();
+            if (dataLotes.status === 'success' && dataLotes.lotes.length > 0) {
+                const loteActivo = dataLotes.lotes[0]; // El primero por FEFO o el que está en uso
+                if (fecha_caducidad < loteActivo.fecha_caducidad) {
+                    const confirmar = confirm(`El nuevo lote vence el ${fecha_caducidad}, antes que el lote activo (${loteActivo.fecha_caducidad}).\n\n¿Deseas terminar primero las ${loteActivo.cantidad} unidades del lote activo?\n\n- [Aceptar]: Terminar lote actual primero.\n- [Cancelar]: Usar el nuevo lote de inmediato.`);
+                    if (confirmar) {
+                        await fetch('../../../php/marcar_lote_en_uso.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id_lote: loteActivo.id_lote, codigo_producto: codigo })
+                        });
+                    }
+                }
+            }
+        }
+
         let endpoint = '../../../php/agregar_lote.php';
         let body = { codigo, fecha_caducidad, cantidad };
 
